@@ -61,8 +61,7 @@ export default function Header() {
                 </Link>
               ),
             )}
-            {/* Placeholder animated CTA — link to be added later */}
-            <Link href="#" className="cta-animated cta-sm ml-2">
+            <Link href="/join" className="cta-animated cta-sm ml-2">
               Join
             </Link>
           </nav>
@@ -137,9 +136,8 @@ export default function Header() {
                 </Link>
               ),
             )}
-            {/* Placeholder animated CTA — link to be added later */}
             <Link
-              href="#"
+              href="/join"
               onClick={() => setOpen(false)}
               className="cta-animated mt-3 w-full"
             >

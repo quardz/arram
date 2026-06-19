@@ -1,0 +1,56 @@
+# arram.org.in IMAGE URLs found in the WordPress export
+# Total: 50
+#
+# To bulk-download these into ./downloaded-images/ run locally:
+#   mkdir -p downloaded-images && xargs -n1 -P4 curl -sSL -O --output-dir downloaded-images < arram-image-urls.txt
+
+https://arram.org.in/wp-content/plugins/wpforms-lite/assets/images/submit-spin.svg
+https://arram.org.in/wp-content/themes/highstand/assets/images/default.jpg
+https://arram.org.in/wp-content/uploads/2016/02/person-44x44xct.png
+https://arram.org.in/wp-content/uploads/2020/10/DSC06261.jpg
+https://arram.org.in/wp-content/uploads/2020/10/Dharmathin-Kural-Sub-Page-Header.jpg
+https://arram.org.in/wp-content/uploads/2020/10/Homam-Sub-Page-Header.jpg
+https://arram.org.in/wp-content/uploads/2020/10/jalbandhara_banner.jpg
+https://arram.org.in/wp-content/uploads/2020/12/Akshaya-Tritiya-2-1.jpg
+https://arram.org.in/wp-content/uploads/2020/12/Hindu-Kudumbam-Sub-Page-scaled.jpg
+https://arram.org.in/wp-content/uploads/2020/12/Navarathiri-2-scaled.jpg
+https://arram.org.in/wp-content/uploads/2021/01/Krishna-Jeyanthi-1-1.jpg
+https://arram.org.in/wp-content/uploads/2021/01/Krishna-Jeyanthi-2-1-scaled.jpg
+https://arram.org.in/wp-content/uploads/2021/03/Kovil-Maiyam-1-scaled.jpg
+https://arram.org.in/wp-content/uploads/2021/03/volunteer-1-150x150.jpg
+https://arram.org.in/wp-content/uploads/2021/04/20201017_192827-scaled.jpg
+https://arram.org.in/wp-content/uploads/2021/04/DSC3346-scaled.jpg
+https://arram.org.in/wp-content/uploads/2021/04/Dhanvanthiri-Maiyam2.jpeg
+https://arram.org.in/wp-content/uploads/2021/04/IMG-20190123-WA0013.jpg
+https://arram.org.in/wp-content/uploads/2021/04/Prapancha-Maiyam.jpg
+https://arram.org.in/wp-content/uploads/2021/04/SAM_1252-scaled.jpg
+https://arram.org.in/wp-content/uploads/2021/04/SAM_2255.jpg
+https://arram.org.in/wp-content/uploads/2021/04/WhatsApp-Image-2019-12-31-at-5.04.02-PM.jpeg
+https://arram.org.in/wp-content/uploads/2021/04/WhatsApp-Image-2021-04-09-at-10.06.44-PM.jpeg
+https://arram.org.in/wp-content/uploads/2021/10/arram.jpg
+https://arram.org.in/wp-content/uploads/2022/05/476449c87016b8f62c26935ef368000b.gif
+https://arram.org.in/wp-content/uploads/2022/05/Training-Camp-3.jpeg
+https://arram.org.in/wp-content/uploads/2022/05/WhatsApp-Image-2022-05-21-at-12.58.58-PM.jpeg
+https://arram.org.in/wp-content/uploads/2022/07/20220705_130845-scaled.jpg
+https://arram.org.in/wp-content/uploads/2022/08/DSC_2827-scaled.jpg
+https://arram.org.in/wp-content/uploads/2022/10/IMG_E4025-scaled.jpg
+https://arram.org.in/wp-content/uploads/cache/2020/10/DSC06261/4200171742.jpg
+https://arram.org.in/wp-content/uploads/cache/2020/12/Akshaya-Tritiya-2-1/502757691.jpg
+https://arram.org.in/wp-content/uploads/cache/2020/12/Navarathiri-2-scaled/2195081105.jpg
+https://arram.org.in/wp-content/uploads/cache/2021/01/Krishna-Jeyanthi-1-1/1630784786.jpg
+https://arram.org.in/wp-content/uploads/cache/2021/01/Krishna-Jeyanthi-2-1-scaled/2469831439.jpg
+https://arram.org.in/wp-content/uploads/cache/2021/04/20201017_192827-scaled/3148424933.jpg
+https://arram.org.in/wp-content/uploads/cache/2021/04/DSC3346-scaled/4174145036.jpg
+https://arram.org.in/wp-content/uploads/cache/2021/04/Dhanvanthiri-Maiyam2/1023228700.jpeg
+https://arram.org.in/wp-content/uploads/cache/2021/04/IMG-20190123-WA0013/1611986338.jpg
+https://arram.org.in/wp-content/uploads/cache/2021/04/Prapancha-Maiyam/874858646.jpg
+https://arram.org.in/wp-content/uploads/cache/2021/04/SAM_1252-scaled/680907825.jpg
+https://arram.org.in/wp-content/uploads/cache/2021/04/SAM_2255/2953937740.jpg
+https://arram.org.in/wp-content/uploads/cache/2021/04/WhatsApp-Image-2019-12-31-at-5_04_02-PM/2115610040.jpeg
+https://arram.org.in/wp-content/uploads/cache/2021/04/WhatsApp-Image-2021-04-09-at-10_06_44-PM/4203603341.jpeg
+https://arram.org.in/wp-content/uploads/cache/2022/05/Training-Camp-3/1260391153.jpeg
+https://arram.org.in/wp-content/uploads/cache/2022/05/WhatsApp-Image-2022-05-21-at-12_58_58-PM/2669334330.jpeg
+https://arram.org.in/wp-content/uploads/cache/2022/07/20220705_130845-scaled/3277966832.jpg
+https://arram.org.in/wp-content/uploads/cache/2022/08/DSC_2827-scaled/2823175575.jpg
+https://arram.org.in/wp-content/uploads/cache/2022/10/IMG_E4025-scaled/3926216569.jpg
+https://arram.org.in/wp-includes/js/thickbox/loadingAnimation.gif

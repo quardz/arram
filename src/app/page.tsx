@@ -32,8 +32,7 @@ export default function HomePage() {
             <Button href={site.donateUrl} external variant="gold">
               Donate Now
             </Button>
-            {/* Placeholder animated CTA — link to be added later */}
-            <Link href="#" className="cta-animated">
+            <Link href="/join" className="cta-animated">
               Join
             </Link>
             <Button href="/volunteer" variant="outlineLight">

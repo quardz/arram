@@ -1,0 +1,35 @@
+Join Page is form with some intro text. 
+
+Name 
+Phone Number (mandatory, only indian number, 10 digits)
+Pincode (6 digit Tamilnadu pincode, Mandatory)
+
+Referral Code (optional)
+DOB (Optional)
+Gender (only male and female, optional)
+
+
+Next step ask OTP and verify it. 
+
+Once verify, Show the user page with his message, 
+
+List of people who have joined with referral code (if any) and the number of people they have referred.
+
+if URL have "referral" query param, then prefill the referral code field with that value also store it in cookie for later use. 1 year expiration. 
+Preload the referral code from cookie if available and prefill the referral code field. 
+
+Priority is 
+    1) URL query param
+    2) Cookie
+
+If new URL with referral query param, then override the cookie value with new value.
+
+Create Referral code from alphanumeric string of length 7 from 10 digit number. Base 36 encoding, only uppercase. 
+
+Should able to generate referral code from phone number and also able to decode referral code to get the phone number.
+
+There is no backend, just frontend validation and console log. 
+
+Once logout, clear the authentication but keep the referral code in cookie. 
+
+We can add the proper backend later. 
