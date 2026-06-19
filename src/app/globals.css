@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+@theme {
+  /* Warm temple palette — maroon, saffron & gold on ivory */
+  --color-maroon: #4d0d0a;
+  --color-maroon-700: #5e1512;
+  --color-maroon-600: #7a201b;
+  --color-saffron: #d9822b;
+  --color-saffron-light: #ecae5d;
+  --color-gold: #b8893b;
+  --color-gold-light: #d8b772;
+  --color-cream: #faf4e9;
+  --color-sand: #f1e6d2;
+  --color-ink: #36281f;
+
+  --font-sans: "Mulish", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Arial, sans-serif;
+  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-heading: "Marcellus", Georgia, serif;
+}
+
+/* Base element defaults live in @layer base so Tailwind utility classes
+   (e.g. text-white, text-saffron-light) always win over them. */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.7;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--color-maroon);
+    line-height: 1.15;
+  }
+}
+
+/* ---- Signature pieces from the temple kit ---- */
+
+/* Small uppercase label above a heading, flanked by a short rule */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-saffron);
+}
+.eyebrow::before,
+.eyebrow.center::after {
+  content: "";
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.7;
+}
+.eyebrow.center::before {
+  content: "";
+}
+
+/* Temple-window arch: rounded top, square base */
+.arch {
+  border-top-left-radius: 9999px;
+  border-top-right-radius: 9999px;
+  overflow: hidden;
+}
+.arch-soft {
+  border-top-left-radius: 7rem;
+  border-top-right-radius: 7rem;
+  overflow: hidden;
+}
+
+/* Decorative diamond/ornament divider */
+.ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--color-gold);
+}
+.ornament::before,
+.ornament::after {
+  content: "";
+  height: 1px;
+  width: clamp(2rem, 12vw, 6rem);
+  background: linear-gradient(
+    to var(--dir, right),
+    transparent,
+    var(--color-gold)
+  );
+}
+.ornament::after {
+  --dir: left;
+}
+
+/* Long-form content typography */
+.prose-asm p {
+  margin-bottom: 1.1rem;
+  line-height: 1.9;
+  color: #4a3a2e;
+  font-size: 1.02rem;
+}
+.prose-asm h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 0.85rem;
+  font-size: 1.9rem;
+}
+.prose-asm h3 {
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+}
+.prose-asm ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 1.2rem;
+}
+.prose-asm ul li {
+  position: relative;
+  padding-left: 1.6rem;
+  margin-bottom: 0.55rem;
+  line-height: 1.75;
+  color: #4a3a2e;
+}
+.prose-asm ul li::before {
+  content: "❖";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--color-saffron);
+  font-size: 0.8rem;
+}
