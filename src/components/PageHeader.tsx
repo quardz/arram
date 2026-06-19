@@ -23,11 +23,11 @@ export default function PageHeader({
         className="pointer-events-none absolute -bottom-24 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full border border-gold/20"
         aria-hidden
       />
-      <div className="relative mx-auto max-w-7xl px-4 py-8 text-center sm:py-10 lg:px-8">
-        <Ornament className="mb-3 text-gold-light/80" />
-        <h1 className="text-3xl text-saffron-light sm:text-4xl">{title}</h1>
+      <div className="relative mx-auto max-w-7xl px-4 py-5 text-center sm:py-10 lg:px-8">
+        <Ornament className="mb-2 text-gold-light/80 sm:mb-3" />
+        <h1 className="text-2xl text-saffron-light sm:text-4xl">{title}</h1>
         {subtitle && (
-          <p className="mx-auto mt-2.5 max-w-2xl text-sm text-cream/85 sm:text-base">
+          <p className="mx-auto mt-2 max-w-2xl text-sm text-cream/85 sm:text-base">
             {subtitle}
           </p>
         )}

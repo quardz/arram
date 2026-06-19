@@ -198,6 +198,13 @@
   letter-spacing: 0.04em;
   border-width: 2px;
 }
+/* Extra-small variant for the mobile top bar (won't enlarge the navbar) */
+.cta-animated.cta-xs {
+  padding: 0.3rem 0.85rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  border-width: 2px;
+}
 @media (prefers-reduced-motion: reduce) {
   .cta-animated {
     animation: none;

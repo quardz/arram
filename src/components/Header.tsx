@@ -66,12 +66,16 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* Mobile toggle */}
-          <button
-            aria-label="Toggle menu"
-            className="rounded-md p-2 text-maroon lg:hidden"
-            onClick={() => setOpen((v) => !v)}
-          >
+          {/* Mobile actions: compact Join + toggle */}
+          <div className="flex items-center gap-1.5 lg:hidden">
+            <Link href="/join" className="cta-animated cta-xs">
+              Join
+            </Link>
+            <button
+              aria-label="Toggle menu"
+              className="rounded-md p-2 text-maroon"
+              onClick={() => setOpen((v) => !v)}
+            >
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               {open ? (
                 <path d="M6 6l12 12M6 18L18 6" strokeLinecap="round" />
@@ -79,7 +83,8 @@ export default function Header() {
                 <path d="M3 6h18M3 12h18M3 18h18" strokeLinecap="round" />
               )}
             </svg>
-          </button>
+            </button>
+          </div>
         </div>
       </div>
 
