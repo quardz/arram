@@ -15,10 +15,12 @@ export const site = {
   },
 } as const;
 
+export type NavChild = { label: string; href: string; external?: boolean };
+
 export type NavLink = {
   label: string;
   href?: string;
-  children?: { label: string; href: string }[];
+  children?: NavChild[];
 };
 
 export const nav: NavLink[] = [
@@ -39,6 +41,7 @@ export const nav: NavLink[] = [
     children: [
       { label: "Volunteer", href: "/volunteer" },
       { label: "CSR", href: "/csr" },
+      { label: "Donate", href: site.donateUrl, external: true },
     ],
   },
   { label: "Gallery", href: "/gallery" },

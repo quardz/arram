@@ -4,41 +4,44 @@ import { activities, stats } from "@/content/activities";
 import { news } from "@/content/news";
 import { site } from "@/content/site";
 import { Eyebrow, SectionHeading, Ornament, ArchImage, Stat, Button } from "@/components/ui";
+import HeroCarousel from "@/components/HeroCarousel";
+
+const heroSlides = [
+  { src: "/images/home/Main-Page-Slider-4.jpg", alt: "Temple festival celebration" },
+  { src: "/images/home/eve-learning-scaled.jpg", alt: "Community learning programme" },
+  { src: "/images/home/IMG_4067-1-scaled.jpg", alt: "Volunteers serving the community" },
+  { src: "/images/home/20221003_065607-scaled.jpg", alt: "Temple programme" },
+  { src: "/images/home/20211027_155930-scaled.jpg", alt: "Cultural gathering" },
+  { src: "/images/home/IMG_1975-scaled.jpg", alt: "Devotees at a programme" },
+];
 
 export default function HomePage() {
   return (
     <>
       {/* ---------------- Hero ---------------- */}
-      <section className="relative isolate flex min-h-[88vh] items-center">
-        <Image
-          src="/images/home/Main-Page-Slider-4.jpg"
-          alt="Aram Valartha Naayaki Sevai Maiyam"
-          fill
-          priority
-          sizes="100vw"
-          className="-z-10 object-cover"
-        />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-maroon/90 via-maroon/65 to-maroon/20" />
-        <div className="mx-auto w-full max-w-7xl px-4 py-24 lg:px-8">
-          <div className="max-w-2xl text-white">
-            <Eyebrow className="!text-gold-light">Aram Valartha Naayaki Sevai Maiyam</Eyebrow>
-            <h1 className="mt-5 font-display text-5xl leading-[1.05] text-white sm:text-6xl lg:text-7xl">
-              Protecting our culture, restoring our way of life
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-cream/90">
-              {site.tagline}
-            </p>
-            <div className="mt-9 flex flex-wrap gap-4">
-              <Button href={site.donateUrl} external variant="gold">
-                Donate Now
-              </Button>
-              <Button href="/volunteer" variant="outlineLight">
-                Become a Volunteer
-              </Button>
-            </div>
+      <HeroCarousel slides={heroSlides}>
+        <div className="max-w-2xl text-white">
+          <Eyebrow className="!text-gold-light">Aram Valartha Naayaki Sevai Maiyam</Eyebrow>
+          <h1 className="mt-5 font-display text-5xl leading-[1.05] text-white sm:text-6xl lg:text-7xl">
+            Protecting our culture, restoring our way of life
+          </h1>
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-cream/90">
+            {site.tagline}
+          </p>
+          <div className="mt-9 flex flex-wrap gap-4">
+            <Button href={site.donateUrl} external variant="gold">
+              Donate Now
+            </Button>
+            {/* Placeholder animated CTA — link to be added later */}
+            <Link href="#" className="cta-animated">
+              Join
+            </Link>
+            <Button href="/volunteer" variant="outlineLight">
+              Become a Volunteer
+            </Button>
           </div>
         </div>
-      </section>
+      </HeroCarousel>
 
       {/* ---------------- Welcome / About ---------------- */}
       <section className="overflow-hidden py-20 lg:py-28">

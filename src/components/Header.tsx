@@ -11,23 +11,6 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50">
-      {/* Top contact bar */}
-      <div className="hidden bg-maroon text-cream/90 md:block">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 text-xs lg:px-8">
-          <div className="flex items-center gap-6">
-            <a href={`tel:${site.contact.phoneHref}`} className="hover:text-saffron-light">
-              ☎ {site.contact.phone}
-            </a>
-            <a href={`mailto:${site.contact.email}`} className="hover:text-saffron-light">
-              ✉ {site.contact.email}
-            </a>
-          </div>
-          <span className="tracking-[0.18em] text-gold-light uppercase">
-            Aram&nbsp;Valartha&nbsp;Naayaki&nbsp;Sevai&nbsp;Maiyam
-          </span>
-        </div>
-      </div>
-
       {/* Main bar */}
       <div className="border-b border-gold/20 bg-cream/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 lg:px-8">
@@ -45,15 +28,27 @@ export default function Header() {
                     <span className="text-[10px]">▾</span>
                   </button>
                   <div className="invisible absolute left-0 top-full w-60 translate-y-1 rounded-b-lg border border-gold/20 bg-cream py-2 opacity-0 shadow-xl transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-                    {item.children.map((c) => (
-                      <Link
-                        key={c.href}
-                        href={c.href}
-                        className="block px-4 py-2 text-sm text-ink/80 transition hover:bg-sand hover:text-maroon"
-                      >
-                        {c.label}
-                      </Link>
-                    ))}
+                    {item.children.map((c) =>
+                      c.external ? (
+                        <a
+                          key={c.href}
+                          href={c.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block px-4 py-2 text-sm font-semibold text-saffron transition hover:bg-sand hover:text-maroon"
+                        >
+                          {c.label}
+                        </a>
+                      ) : (
+                        <Link
+                          key={c.href}
+                          href={c.href}
+                          className="block px-4 py-2 text-sm text-ink/80 transition hover:bg-sand hover:text-maroon"
+                        >
+                          {c.label}
+                        </Link>
+                      ),
+                    )}
                   </div>
                 </div>
               ) : (
@@ -66,14 +61,10 @@ export default function Header() {
                 </Link>
               ),
             )}
-            <a
-              href={site.donateUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ml-2 rounded-full bg-saffron px-6 py-2.5 text-[13px] font-semibold uppercase tracking-wide text-white transition hover:bg-saffron-light hover:text-maroon"
-            >
-              Donate
-            </a>
+            {/* Placeholder animated CTA — link to be added later */}
+            <Link href="#" className="cta-animated cta-sm ml-2">
+              Join
+            </Link>
           </nav>
 
           {/* Mobile toggle */}
@@ -109,16 +100,29 @@ export default function Header() {
                   </button>
                   {openGroup === item.label && (
                     <div className="ml-3 border-l border-gold/30 pl-3">
-                      {item.children.map((c) => (
-                        <Link
-                          key={c.href}
-                          href={c.href}
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm text-ink/70 hover:text-maroon"
-                        >
-                          {c.label}
-                        </Link>
-                      ))}
+                      {item.children.map((c) =>
+                        c.external ? (
+                          <a
+                            key={c.href}
+                            href={c.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => setOpen(false)}
+                            className="block py-2 text-sm font-semibold text-saffron hover:text-maroon"
+                          >
+                            {c.label}
+                          </a>
+                        ) : (
+                          <Link
+                            key={c.href}
+                            href={c.href}
+                            onClick={() => setOpen(false)}
+                            className="block py-2 text-sm text-ink/70 hover:text-maroon"
+                          >
+                            {c.label}
+                          </Link>
+                        ),
+                      )}
                     </div>
                   )}
                 </div>
@@ -133,14 +137,14 @@ export default function Header() {
                 </Link>
               ),
             )}
-            <a
-              href={site.donateUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-2 block rounded-full bg-saffron px-5 py-3 text-center text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-saffron-light hover:text-maroon"
+            {/* Placeholder animated CTA — link to be added later */}
+            <Link
+              href="#"
+              onClick={() => setOpen(false)}
+              className="cta-animated mt-3 w-full"
             >
-              Donate
-            </a>
+              Join
+            </Link>
           </div>
         </nav>
       )}
