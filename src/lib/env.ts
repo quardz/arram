@@ -37,8 +37,22 @@ export const env = {
   ALLOW_MULTIPLE_PER_NODE: str(process.env.ALLOW_MULTIPLE_PER_NODE) === "true",
 } as const;
 
-/** The connection string used for schema push / migrations (prefers the direct URL). */
-export const DB_CONNECTION_STRING = env.DATABASE_URI_DIRECT || env.DATABASE_URI;
+/**
+ * Connection string selection:
+ *  - Serverless runtime (production) wants the POOLED url (DATABASE_URI) to avoid
+ *    exhausting Neon connections.
+ *  - DDL — dev "push" and `payload migrate` — wants the DIRECT (non-pooled) url,
+ *    which reliably supports schema changes.
+ */
+const isProd = process.env.NODE_ENV === "production";
+const isMigrating =
+  process.env.PAYLOAD_MIGRATING === "true" ||
+  process.argv.some((a) => a.includes("migrate"));
+
+export const DB_CONNECTION_STRING =
+  !isProd || isMigrating
+    ? env.DATABASE_URI_DIRECT || env.DATABASE_URI
+    : env.DATABASE_URI || env.DATABASE_URI_DIRECT;
 
 /** Capability flags — check these before using a feature. */
 export const flags = {
