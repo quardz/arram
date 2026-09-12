@@ -43,6 +43,14 @@ export const People: CollectionConfig = {
         "Enter a valid 10-digit Indian mobile number",
     },
     { name: "name", type: "text" },
+    {
+      name: "altNames",
+      type: "text",
+      admin: {
+        description:
+          "Set only when one phone was shared by different names in the import: all distinct names, joined with ' | '. In that case name is set to 'multiple'.",
+      },
+    },
     { name: "dob", type: "date", admin: { date: { pickerAppearance: "dayOnly" } } },
     {
       name: "gender",
