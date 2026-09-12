@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { anyone, isOrgUser } from "../access";
+import { anyone, isSignedIn } from "../access";
 
 /**
  * Upload collection. When R2 is configured the storage plugin (in payload.config)
@@ -18,7 +18,7 @@ export const Media: CollectionConfig = {
     ],
   },
   admin: { group: "Content" },
-  access: { read: anyone, create: isOrgUser, update: isOrgUser, delete: isOrgUser },
+  access: { read: anyone, create: isSignedIn, update: isSignedIn, delete: isSignedIn },
   fields: [{ name: "alt", type: "text" }],
 };
 

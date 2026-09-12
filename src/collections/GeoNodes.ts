@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { anyone, isOrgUser } from "../access";
+import { anyone, isSignedIn } from "../access";
 
 /** Geography tree (adjacency list) — State→Region→Mandalam→District→Union→Panchayat→Temple. */
 export const GeoNodes: CollectionConfig = {
@@ -11,9 +11,9 @@ export const GeoNodes: CollectionConfig = {
   },
   access: {
     read: anyone,
-    create: isOrgUser,
-    update: isOrgUser,
-    delete: isOrgUser,
+    create: isSignedIn,
+    update: isSignedIn,
+    delete: isSignedIn,
   },
   fields: [
     { name: "name", type: "text", required: true, index: true },

@@ -1,12 +1,12 @@
 import type { CollectionConfig } from "payload";
-import { anyone, isOrgUser } from "../access";
+import { anyone, isSignedIn } from "../access";
 
 /** A project = a group of events across time/geography/stages (e.g. "Pongal 2026"). */
 export const Projects: CollectionConfig = {
   slug: "projects",
   admin: { useAsTitle: "name", defaultColumns: ["name", "status", "startDate", "endDate"], group: "Projects" },
   versions: { drafts: true },
-  access: { read: anyone, create: isOrgUser, update: isOrgUser, delete: isOrgUser },
+  access: { read: anyone, create: isSignedIn, update: isSignedIn, delete: isSignedIn },
   fields: [
     { name: "name", type: "text", required: true },
     { name: "slug", type: "text", unique: true, index: true },

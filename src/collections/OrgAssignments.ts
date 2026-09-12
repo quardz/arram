@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { isOrgUser, isSignedIn } from "../access";
+import { isSignedIn } from "../access";
 
 /**
  * Links a person to a geo node with a role. This is what makes someone "org staff":
@@ -17,9 +17,9 @@ export const OrgAssignments: CollectionConfig = {
   },
   access: {
     read: isSignedIn,
-    create: isOrgUser,
-    update: isOrgUser,
-    delete: isOrgUser,
+    create: isSignedIn,
+    update: isSignedIn,
+    delete: isSignedIn,
   },
   fields: [
     { name: "person", type: "relationship", relationTo: "people", required: true, index: true },

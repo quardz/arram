@@ -1,11 +1,11 @@
 import type { CollectionConfig } from "payload";
-import { isOrgUser } from "../access";
+import { isSignedIn } from "../access";
 
 /** Per-event attendance — the source of truth for funnel progression. */
 export const Attendance: CollectionConfig = {
   slug: "attendance",
   admin: { useAsTitle: "id", defaultColumns: ["event", "person", "present", "recordedBy"], group: "Projects" },
-  access: { read: isOrgUser, create: isOrgUser, update: isOrgUser, delete: isOrgUser },
+  access: { read: isSignedIn, create: isSignedIn, update: isSignedIn, delete: isSignedIn },
   fields: [
     { name: "event", type: "relationship", relationTo: "events", required: true, index: true },
     { name: "person", type: "relationship", relationTo: "people", required: true, index: true },

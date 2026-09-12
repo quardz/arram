@@ -1,11 +1,11 @@
 import type { CollectionConfig } from "payload";
-import { anyone, isOrgUser } from "../access";
+import { anyone, isSignedIn } from "../access";
 
 /** Editable copy of gallery albums (mirror of src/content/gallery.ts). */
 export const GalleryAlbums: CollectionConfig = {
   slug: "galleryAlbums",
   admin: { useAsTitle: "title", defaultColumns: ["title", "groupTitle", "order"], group: "Content" },
-  access: { read: anyone, create: isOrgUser, update: isOrgUser, delete: isOrgUser },
+  access: { read: anyone, create: isSignedIn, update: isSignedIn, delete: isSignedIn },
   fields: [
     { name: "groupTitle", type: "text", admin: { description: "Album group heading" } },
     { name: "title", type: "text", required: true },

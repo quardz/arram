@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { anyone, isOrgUser } from "../access";
+import { anyone, isSignedIn } from "../access";
 
 /**
  * Org people post image+caption scoped to their geo node (or any node below it).
@@ -11,9 +11,9 @@ export const SocialPosts: CollectionConfig = {
   admin: { useAsTitle: "caption", defaultColumns: ["caption", "author", "geoNode", "curatedForSocial", "status"], group: "Community" },
   access: {
     read: anyone, // public feed
-    create: isOrgUser,
-    update: isOrgUser,
-    delete: isOrgUser,
+    create: isSignedIn,
+    update: isSignedIn,
+    delete: isSignedIn,
   },
   fields: [
     { name: "author", type: "relationship", relationTo: "people", index: true },

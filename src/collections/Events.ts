@@ -1,11 +1,11 @@
 import type { CollectionConfig } from "payload";
-import { anyone, isOrgUser } from "../access";
+import { anyone, isSignedIn } from "../access";
 
 /** A project instance at a place/time, tied to a stage (e.g. "Pongal 2026 – Coimbatore"). */
 export const Events: CollectionConfig = {
   slug: "events",
   admin: { useAsTitle: "name", defaultColumns: ["name", "project", "stage", "geoNode", "date"], group: "Projects" },
-  access: { read: anyone, create: isOrgUser, update: isOrgUser, delete: isOrgUser },
+  access: { read: anyone, create: isSignedIn, update: isSignedIn, delete: isSignedIn },
   fields: [
     { name: "name", type: "text", required: true },
     { name: "project", type: "relationship", relationTo: "projects", required: true, index: true },

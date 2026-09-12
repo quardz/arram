@@ -49,8 +49,20 @@ const isMigrating =
   process.env.PAYLOAD_MIGRATING === "true" ||
   process.argv.some((a) => a.includes("migrate"));
 
+/**
+ * Dev auto-syncs the schema ("push"). We DEFAULT push ON (even in production)
+ * until DB_PUSH=false, so the first production deploy can create its own tables
+ * on a fresh database. Once the schema exists, set DB_PUSH=false in the host env
+ * and the app will stop pushing and use the pooled connection.
+ */
+export const DB_PUSH = process.env.DB_PUSH !== "false";
+
+/**
+ * DDL (dev push, `payload migrate`, and the prod bring-up push) needs the DIRECT
+ * (non-pooled) url. Steady-state serverless runtime uses the POOLED url.
+ */
 export const DB_CONNECTION_STRING =
-  !isProd || isMigrating
+  !isProd || isMigrating || DB_PUSH
     ? env.DATABASE_URI_DIRECT || env.DATABASE_URI
     : env.DATABASE_URI || env.DATABASE_URI_DIRECT;
 

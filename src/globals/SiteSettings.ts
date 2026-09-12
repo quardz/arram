@@ -1,11 +1,11 @@
 import type { GlobalConfig } from "payload";
-import { anyone, isOrgUser } from "../access";
+import { anyone, isSignedIn } from "../access";
 
 /** Editable copy of site config (mirror of src/content/site.ts). */
 export const SiteSettings: GlobalConfig = {
   slug: "siteSettings",
   admin: { group: "Content" },
-  access: { read: anyone, update: isOrgUser },
+  access: { read: anyone, update: isSignedIn },
   fields: [
     { name: "name", type: "text" },
     { name: "shortName", type: "text" },

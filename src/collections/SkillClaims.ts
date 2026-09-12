@@ -1,10 +1,10 @@
 import type { CollectionConfig } from "payload";
-import { isOrgUser } from "../access";
+import { isSignedIn } from "../access";
 
 export const SkillClaims: CollectionConfig = {
   slug: "skillClaims",
   admin: { useAsTitle: "id", defaultColumns: ["skill", "claimedBy", "status"], group: "Community" },
-  access: { read: isOrgUser, create: isOrgUser, update: isOrgUser, delete: isOrgUser },
+  access: { read: isSignedIn, create: isSignedIn, update: isSignedIn, delete: isSignedIn },
   fields: [
     { name: "skill", type: "relationship", relationTo: "skills", required: true, index: true },
     { name: "claimedBy", type: "relationship", relationTo: "people", required: true },

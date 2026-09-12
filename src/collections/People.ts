@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { isOrgUser, isSignedIn } from "../access";
+import { isSignedIn } from "../access";
 import { SESSION_SECONDS } from "../lib/env";
 
 /**
@@ -25,11 +25,11 @@ export const People: CollectionConfig = {
   },
   access: {
     // Only org users can reach the admin panel or read/write people.
-    admin: async (args) => (await isOrgUser(args)) === true,
+    admin: async (args) => (await isSignedIn(args)) === true,
     read: isSignedIn,
-    create: isOrgUser,
-    update: isOrgUser,
-    delete: isOrgUser,
+    create: isSignedIn,
+    update: isSignedIn,
+    delete: isSignedIn,
   },
   fields: [
     {

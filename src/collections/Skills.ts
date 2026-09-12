@@ -1,11 +1,11 @@
 import type { CollectionConfig } from "payload";
-import { anyone, isOrgUser } from "../access";
+import { anyone, isSignedIn } from "../access";
 
 /** Skill marketplace — org people offer skills + free time (v1: org people only). */
 export const Skills: CollectionConfig = {
   slug: "skills",
   admin: { useAsTitle: "title", defaultColumns: ["title", "person", "status"], group: "Community" },
-  access: { read: anyone, create: isOrgUser, update: isOrgUser, delete: isOrgUser },
+  access: { read: anyone, create: isSignedIn, update: isSignedIn, delete: isSignedIn },
   fields: [
     { name: "title", type: "text", required: true },
     { name: "person", type: "relationship", relationTo: "people", required: true, index: true },

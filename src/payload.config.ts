@@ -17,8 +17,9 @@ try {
   sharp = undefined;
 }
 
-import { env, flags, DB_CONNECTION_STRING } from "./lib/env";
+import { env, flags, DB_CONNECTION_STRING, DB_PUSH } from "./lib/env";
 
+import { Admins } from "./collections/Admins";
 import { People } from "./collections/People";
 import { PersonLabels } from "./collections/PersonLabels";
 import { GeoNodes } from "./collections/GeoNodes";
@@ -74,7 +75,7 @@ export default buildConfig({
   // no env set. Payload is never actually initialized unless flags.payloadEnabled.
   secret: env.PAYLOAD_SECRET || "DEV_ONLY_UNSET_SECRET_change_me",
   admin: {
-    user: People.slug,
+    user: Admins.slug,
     meta: {
       titleSuffix: "· ARRAM",
     },
@@ -82,8 +83,10 @@ export default buildConfig({
   editor: lexicalEditor(),
   db: postgresAdapter({
     pool: { connectionString: DB_CONNECTION_STRING || undefined },
+    push: DB_PUSH,
   }),
   collections: [
+    Admins,
     People,
     PersonLabels,
     GeoNodes,

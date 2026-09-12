@@ -1,11 +1,11 @@
 import type { CollectionConfig } from "payload";
-import { anyone, isOrgUser } from "../access";
+import { anyone, isSignedIn } from "../access";
 
 /** Ordered funnel stages within a project. */
 export const ProjectStages: CollectionConfig = {
   slug: "projectStages",
   admin: { useAsTitle: "name", defaultColumns: ["project", "order", "name"], group: "Projects" },
-  access: { read: anyone, create: isOrgUser, update: isOrgUser, delete: isOrgUser },
+  access: { read: anyone, create: isSignedIn, update: isSignedIn, delete: isSignedIn },
   fields: [
     { name: "project", type: "relationship", relationTo: "projects", required: true, index: true },
     { name: "name", type: "text", required: true },
