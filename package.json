@@ -2,6 +2,7 @@
   "name": "arram-website",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Aram Valartha Naayaki Sevai Maiyam (ASM) — official website. Next.js 16 + Tailwind CSS, SSR, Vercel-ready.",
   "scripts": {
     "dev": "next dev",
