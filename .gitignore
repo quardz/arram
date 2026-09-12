@@ -31,3 +31,7 @@ yarn-error.log*
 next-env.d.ts
 .verify/
 _verify_src*
+
+.verify/
+.mig_archive/
+.mig_stale/

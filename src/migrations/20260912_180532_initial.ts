@@ -6,6 +6,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TYPE "public"."enum_people_source" AS ENUM('signup', 'excel-import', 'org-added', 'event');
   CREATE TYPE "public"."enum_geo_nodes_level" AS ENUM('state', 'region', 'mandalam', 'district', 'union', 'panchayat', 'temple');
   CREATE TYPE "public"."enum_org_assignments_role" AS ENUM('state_admin', 'regional_organiser', 'zonal_organiser', 'district_organiser', 'union_coordinator', 'panchayat_coordinator', 'temple_coordinator');
+  CREATE TYPE "public"."enum_projects_lifecycle" AS ENUM('planned', 'active', 'completed', 'archived');
   CREATE TYPE "public"."enum_projects_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum__projects_v_version_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum_lists_acquisition_channel" AS ENUM('social_media', 'otp_verification', 'event', 'import', 'other');
@@ -113,7 +114,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"description" jsonb,
   	"start_date" timestamp(3) with time zone,
   	"end_date" timestamp(3) with time zone,
-  	"status" "enum_projects_status" DEFAULT 'planned',
+  	"status" "enum_projects_lifecycle" DEFAULT 'planned',
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"_status" "enum_projects_status" DEFAULT 'draft'
@@ -127,7 +128,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"version_description" jsonb,
   	"version_start_date" timestamp(3) with time zone,
   	"version_end_date" timestamp(3) with time zone,
-  	"version_status" "enum__projects_v_version_status" DEFAULT 'planned',
+  	"version_status" "enum_projects_lifecycle" DEFAULT 'planned',
   	"version_updated_at" timestamp(3) with time zone,
   	"version_created_at" timestamp(3) with time zone,
   	"version__status" "enum__projects_v_version_status" DEFAULT 'draft',
@@ -747,6 +748,7 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum_people_source";
   DROP TYPE "public"."enum_geo_nodes_level";
   DROP TYPE "public"."enum_org_assignments_role";
+  DROP TYPE "public"."enum_projects_lifecycle";
   DROP TYPE "public"."enum_projects_status";
   DROP TYPE "public"."enum__projects_v_version_status";
   DROP TYPE "public"."enum_lists_acquisition_channel";

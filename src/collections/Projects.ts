@@ -16,6 +16,9 @@ export const Projects: CollectionConfig = {
     {
       name: "status",
       type: "select",
+      // Distinct enum name: avoids colliding with the drafts "_status" enum
+      // (both would otherwise map to enum_projects_status).
+      enumName: "enum_projects_lifecycle",
       defaultValue: "planned",
       options: [
         { label: "Planned", value: "planned" },

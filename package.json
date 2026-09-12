@@ -13,7 +13,8 @@
     "generate:types": "payload generate:types",
     "generate:importmap": "payload generate:importmap",
     "migrate": "payload migrate",
-    "migrate:create": "payload migrate:create"
+    "migrate:create": "payload migrate:create",
+    "vercel-build": "if [ -n \"$DATABASE_URI_DIRECT\" ] || [ -n \"$DATABASE_URI\" ]; then payload migrate; fi && next build"
   },
   "dependencies": {
     "next": "16.2.9",

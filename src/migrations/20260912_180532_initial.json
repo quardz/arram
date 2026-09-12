@@ -1235,7 +1235,7 @@
         },
         "status": {
           "name": "status",
-          "type": "enum_projects_status",
+          "type": "enum_projects_lifecycle",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
@@ -1381,7 +1381,7 @@
         },
         "version_status": {
           "name": "version_status",
-          "type": "enum__projects_v_version_status",
+          "type": "enum_projects_lifecycle",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
@@ -6152,6 +6152,16 @@
         "temple_coordinator"
       ]
     },
+    "public.enum_projects_lifecycle": {
+      "name": "enum_projects_lifecycle",
+      "schema": "public",
+      "values": [
+        "planned",
+        "active",
+        "completed",
+        "archived"
+      ]
+    },
     "public.enum_projects_status": {
       "name": "enum_projects_status",
       "schema": "public",
@@ -6258,6 +6268,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "c7185e2a-aa78-4277-90f0-723e57911d89",
+  "id": "e677ce66-bc1d-4bfb-bf57-03bb2614f81b",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
