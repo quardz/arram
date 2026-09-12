@@ -59,16 +59,20 @@ const isMigrating =
 export const DB_PUSH = !isProd && process.env.DB_PUSH !== "false";
 
 /**
- * Connection selection:
- *  - DDL — dev push and `payload migrate` (build/CLI) — needs the DIRECT
- *    (non-pooled) Neon url, which reliably supports schema changes.
- *  - Steady-state production serverless runtime uses the POOLED url to avoid
- *    exhausting Neon connections.
+ * Connection selection — use the DIRECT (non-pooled) Neon url EVERYWHERE,
+ * including production runtime.
+ *
+ * Why not the pooled url at runtime: Payload/Drizzle rely on prepared
+ * statements, which Neon's PgBouncer "-pooler" endpoint (transaction pooling)
+ * does not support — that produced runtime 500s on /admin while the schema was
+ * already in place. The direct endpoint handles this app's low admin/API
+ * concurrency fine. Revisit with a pooler-compatible driver only if connection
+ * counts become a problem. (`isMigrating`/`isProd` kept for clarity/future use.)
  */
+void isMigrating;
+void isProd;
 export const DB_CONNECTION_STRING =
-  isMigrating || !isProd
-    ? env.DATABASE_URI_DIRECT || env.DATABASE_URI
-    : env.DATABASE_URI || env.DATABASE_URI_DIRECT;
+  env.DATABASE_URI_DIRECT || env.DATABASE_URI;
 
 /** Capability flags — check these before using a feature. */
 export const flags = {
