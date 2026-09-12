@@ -4,7 +4,18 @@ import { buildConfig } from "payload";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { s3Storage } from "@payloadcms/storage-s3";
-import sharp from "sharp";
+import { createRequire } from "module";
+
+// sharp is OPTIONAL: it powers image resizing but Payload runs fine without it.
+// If it isn't installed (e.g. prebuilt binary unavailable), uploads still work
+// (originals only) instead of the whole app failing to start.
+const nodeRequire = createRequire(import.meta.url);
+let sharp: unknown = undefined;
+try {
+  sharp = nodeRequire("sharp");
+} catch {
+  sharp = undefined;
+}
 
 import { env, flags, DB_CONNECTION_STRING } from "./lib/env";
 
@@ -95,7 +106,8 @@ export default buildConfig({
   ],
   globals: [SiteSettings],
   plugins,
-  sharp,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  sharp: sharp as any,
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
   },
