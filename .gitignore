@@ -29,3 +29,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.verify/
+_verify_src*

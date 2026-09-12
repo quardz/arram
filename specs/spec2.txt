@@ -1,0 +1,61 @@
+
+
+Arram.org.in is a website / App for an NGO. Which is alead live from this project.
+
+It works around temple / spritual field. All the data are in that website. 
+
+Now we want multiple modules. Most are interlinked.
+
+Org Structure (and org level people)
+    There is orgalization structure. People can see the tree below them, phone, name, place.
+    Each have login (phone / sms), login session stays long period, like 30 days (configurable)
+    People at top can add can add people just below them. 
+    Org structure is in PDF. Check this "specs/Kovil%20Konda%20Tamizhakam-E.pdf" Page no: 18.
+    All the people comes under each level will have login.
+    Its both vertical and horozontal with geographical divisions. It targets Tamilnadu. 
+    
+
+People. 10 digit phone number should be the unique ID for table. 
+    People table. Name, Phone(10 digit indian number only), DOB(optional), gender, Pincode, Who referred (phone), program_id (which program they joined)
+    A verification switch if that people verified their phone number via OTP. 
+    These people wont have login access for now but may be in future. 
+    May by be another table like "people_label" to get more data about this user. 
+    People are added from different route and method, including the import from excel. 
+        This is different topic. 
+    This holds unique people. 
+
+Project
+    Project is a group of events, span across time, geography and stages. 
+    Example cow worship festeval in temples. 
+    In Each geography, respective org people conduct it. 
+    Each project will have stages. 
+    Example, "Pongal 2026" is a project. 
+    "Pongal 2026 - Coimbatore" is an event to that project, happended in Coimbatore. 
+
+List 
+    List is list of people (referred to people ID)
+    It may tied to a project/stage/event(tells how we got them)
+    Each list will have stages, tide to stage of the project ID 
+    Lets take the "Cow workshop" project, inital reachout may be via social media, or just OTP verification. 
+    Next stage we invite this for another event, we take attendence at each stage (taken by district represent from the org)
+    Who ever attended the previous event will be invited to next event. Again there will be attendence. 
+    It goes until the final stage. 
+
+    The idea is to get the potential volunters who are interested in our idea. 
+    People who are serious are the one who keep on coming to all the stages. 
+
+Social Posts: 
+    Org people at all level can pust even images with caption (they can select only location they belong to downward)
+    People at top can see and choose for socail media post (just mark a lable so the social media team manually post)
+    A feed of post where anyone can see. 
+
+
+Skill marketplace. 
+    People post their skill and volunteer free time so others can pick it up. 
+
+        
+
+
+
+Technology 
+    Next js latest with 16, shadcn, tailwind, neon, drizzle, payload cms for content editing and versioning. 

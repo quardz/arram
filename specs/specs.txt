@@ -32,4 +32,6 @@ There is no backend, just frontend validation and console log.
 
 Once logout, clear the authentication but keep the referral code in cookie. 
 
+
+
 We can add the proper backend later. 

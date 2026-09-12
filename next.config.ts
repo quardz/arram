@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withPayload } from "@payloadcms/next/withPayload";
 
 // One year, immutable — used for fingerprinted/static assets.
 const ONE_YEAR = "public, max-age=31536000, immutable";
@@ -16,8 +17,6 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        // All images shipped in /public/images are content-stable assets:
-        // cache them aggressively at the CDN and in the browser.
         source: "/images/:path*",
         headers: [{ key: "Cache-Control", value: ONE_YEAR }],
       },
@@ -29,4 +28,6 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// withPayload mounts the Payload admin + API. It is safe at build time and does
+// not require a live database (Payload connects lazily at request time).
+export default withPayload(nextConfig, { devBundleServerPackages: false });
