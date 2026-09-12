@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Aram Valartha Naayaki Sevai Maiyam (ASM) — official website. Next.js 16 + Tailwind CSS, SSR, Vercel-ready.",
+  "description": "Aram Valartha Naayaki Sevai Maiyam (ASM) \u2014 official website. Next.js 16 + Tailwind CSS, SSR, Vercel-ready.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -13,7 +13,8 @@
     "generate:types": "payload generate:types",
     "generate:importmap": "payload generate:importmap",
     "migrate": "payload migrate",
-    "migrate:create": "payload migrate:create"
+    "migrate:create": "payload migrate:create",
+    "vercel-build": "if [ -n \"$DATABASE_URI\" ] || [ -n \"$DATABASE_URI_DIRECT\" ]; then payload migrate; fi && next build"
   },
   "dependencies": {
     "next": "16.2.9",

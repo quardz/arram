@@ -50,19 +50,23 @@ const isMigrating =
   process.argv.some((a) => a.includes("migrate"));
 
 /**
- * Dev auto-syncs the schema ("push"). We DEFAULT push ON (even in production)
- * until DB_PUSH=false, so the first production deploy can create its own tables
- * on a fresh database. Once the schema exists, set DB_PUSH=false in the host env
- * and the app will stop pushing and use the pooled connection.
+ * Drizzle "push" auto-syncs the schema in DEV only. Payload ignores push in
+ * production (connect.js gates it behind NODE_ENV !== "production"); prod uses
+ * the committed migrations in src/migrations instead, applied by `payload
+ * migrate` (run at build time via the "vercel-build" script). Set DB_PUSH=false
+ * to also use migrations locally.
  */
-export const DB_PUSH = process.env.DB_PUSH !== "false";
+export const DB_PUSH = !isProd && process.env.DB_PUSH !== "false";
 
 /**
- * DDL (dev push, `payload migrate`, and the prod bring-up push) needs the DIRECT
- * (non-pooled) url. Steady-state serverless runtime uses the POOLED url.
+ * Connection selection:
+ *  - DDL — dev push and `payload migrate` (build/CLI) — needs the DIRECT
+ *    (non-pooled) Neon url, which reliably supports schema changes.
+ *  - Steady-state production serverless runtime uses the POOLED url to avoid
+ *    exhausting Neon connections.
  */
 export const DB_CONNECTION_STRING =
-  !isProd || isMigrating || DB_PUSH
+  isMigrating || !isProd
     ? env.DATABASE_URI_DIRECT || env.DATABASE_URI
     : env.DATABASE_URI || env.DATABASE_URI_DIRECT;
 
