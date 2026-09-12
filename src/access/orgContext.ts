@@ -30,7 +30,7 @@ export async function getOrgContext(req: PayloadRequest): Promise<OrgContext> {
       limit: 1000,
       req,
     });
-    assignments = res.docs.map((d: Record<string, unknown>) => ({
+    assignments = (res.docs as unknown as Record<string, unknown>[]).map((d) => ({
       id: String(d.id),
       role: String(d.role ?? ""),
       geoNode:
