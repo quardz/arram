@@ -23,6 +23,8 @@ import { Admins } from "./collections/Admins";
 import { People } from "./collections/People";
 import { PersonLabels } from "./collections/PersonLabels";
 import { GeoNodes } from "./collections/GeoNodes";
+import { GeoVillages } from "./collections/GeoVillages";
+import { GeoPincodes } from "./collections/GeoPincodes";
 import { OrgAssignments } from "./collections/OrgAssignments";
 import { Projects } from "./collections/Projects";
 import { ProjectStages } from "./collections/ProjectStages";
@@ -90,6 +92,8 @@ export default buildConfig({
     People,
     PersonLabels,
     GeoNodes,
+    GeoVillages,
+    GeoPincodes,
     OrgAssignments,
     Projects,
     ProjectStages,
