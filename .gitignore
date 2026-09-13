@@ -37,3 +37,6 @@ _verify_src*
 .mig_stale/
 
 scripts/people_import.json
+
+# Files delivered to the user by Claude (SendUserFile) — not source
+Claude outputs/
