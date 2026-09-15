@@ -14,7 +14,7 @@
     "generate:importmap": "payload generate:importmap",
     "migrate": "payload migrate",
     "migrate:create": "payload migrate:create",
-    "vercel-build": "if [ -n \"$DATABASE_URI_DIRECT\" ] || [ -n \"$DATABASE_URI\" ]; then payload migrate && (node scripts/seed-geo.mjs || echo \"seed-geo skipped\") && (node scripts/seed-org-geo.mjs || echo \"seed-org-geo skipped\"); fi && next build"
+    "vercel-build": "if [ -n \"$DATABASE_URI_DIRECT\" ] || [ -n \"$DATABASE_URI\" ]; then payload migrate && (node scripts/seed-geo.mjs || echo \"seed-geo skipped\") && (node scripts/seed-org-geo.mjs || echo \"seed-org-geo skipped\") && (node scripts/seed-bootstrap-admin.mjs || echo \"bootstrap-admin skipped\"); fi && next build"
   },
   "dependencies": {
     "next": "16.2.9",
