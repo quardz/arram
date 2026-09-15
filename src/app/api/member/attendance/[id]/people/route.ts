@@ -10,5 +10,5 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
   const { id } = await ctx.params;
   const ev = await getAccessibleSession(member, Number(id));
   if (!ev) return NextResponse.json({ ok: false, error: "no_access" }, { status: 403 });
-  return NextResponse.json({ ok: true, people: await listAttendees(ev) });
+  return NextResponse.json({ ok: true, people: await listAttendees(ev, member) });
 }

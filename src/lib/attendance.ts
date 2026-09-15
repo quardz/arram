@@ -34,12 +34,16 @@ export async function getAccessibleSession(member: CurrentMember, eventId: numbe
 
 export type Attendee = { id: number; name: string | null; phone: string; present: boolean };
 
-/** ALL people in the session's district, with present state for this event.
-    Loaded once; the client filters locally (no per-keystroke server call). */
-export async function listAttendees(ev: Event): Promise<Attendee[]> {
+/** ALL people in the session's district that this member is assigned to.
+    Returns nothing if the session's district is not within the member's assignment
+    (belt-and-suspenders on top of getAccessibleSession). Loaded once; the client
+    filters locally. No sub-district (union/pincode) filtering yet. */
+export async function listAttendees(ev: Event, member: CurrentMember): Promise<Attendee[]> {
   const payload = await getPayloadClient();
   const districtId = rel(ev.geoNode);
   if (!districtId) return [];
+  const mine = await myDistrictIds(member);
+  if (!mine.includes(districtId)) return []; // only people in the member's assigned district(s)
   const ppl = await payload.find({
     collection: "people", overrideAccess: true, depth: 0, limit: 20000,
     where: { geoNode: { equals: districtId } }, sort: "name",
