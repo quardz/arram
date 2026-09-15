@@ -1,0 +1,20 @@
+// AAS org-node helpers shared by the org chart + its editor.
+
+export const LEVEL_ROLE: Record<string, string> = {
+  state: "state_admin",
+  region: "regional_organiser",
+  mandalam: "zonal_organiser",
+  district: "district_organiser",
+  union: "union_coordinator",
+  panchayat: "panchayat_coordinator",
+  temple: "temple_coordinator",
+};
+
+export const ROLE_VALUES = [
+  "state_admin", "regional_organiser", "zonal_organiser", "district_organiser",
+  "union_coordinator", "panchayat_coordinator", "temple_coordinator",
+];
+
+export function defaultRoleForLevel(level?: string): string {
+  return (level && LEVEL_ROLE[level]) || "district_organiser";
+}

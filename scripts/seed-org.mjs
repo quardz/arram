@@ -6,6 +6,10 @@ function loadEnvLocal(){try{const t=fs.readFileSync(path.resolve(process.cwd(),"
 loadEnvLocal();
 const url=process.env.DATABASE_URI_DIRECT||process.env.DATABASE_URI;
 if(!url){console.log("seed-org: no DB url; skipping");process.exit(0);}
+// FROZEN: assignments/people are now edited in-app (DB is source of truth).
+// This seed would DELETE+rebuild geo_nodes + org_assignments, wiping those edits.
+// It only runs when explicitly forced. Structure will not be re-seeded.
+if(process.env.ORG_SEED_FORCE!=="true"){console.log("seed-org: frozen (set ORG_SEED_FORCE=true to run)");process.exit(0);}
 const data=JSON.parse(fs.readFileSync(new URL("./geo/org_structure.json",import.meta.url).pathname,"utf8"));
 const VERSION=data.version;
 const c=new pg.Client({connectionString:url});

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 type Labels = {
   menu: string; home: string; attendance: string; activity: string;
-  impersonate: string; logout: string; appName: string; lang_ta: string; lang_en: string;
+  org: string; impersonate: string; logout: string; appName: string; lang_ta: string; lang_en: string;
   theme: string; theme_light: string; theme_dark: string;
 };
 
@@ -84,6 +84,7 @@ export default function NavDrawer({
           <nav className="asm-sheet-nav">
             {nav && <Link href="/app" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>🏠</span>{labels.home}</Link>}
             {nav && <Link href="/app/attendance" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>📝</span>{labels.attendance}</Link>}
+            <Link href="/app/org" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>🗂️</span>{labels.org}</Link>
             <Link href="/app/activity" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>🗒️</span>{labels.activity}</Link>
             {isAdmin && <Link href="/app/impersonate" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>🧑‍🤝‍🧑</span>{labels.impersonate}</Link>}
           </nav>
