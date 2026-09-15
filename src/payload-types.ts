@@ -72,6 +72,8 @@ export interface Config {
     people: Person;
     personLabels: PersonLabel;
     geoNodes: GeoNode;
+    geoVillages: GeoVillage;
+    geoPincodes: GeoPincode;
     orgAssignments: OrgAssignment;
     projects: Project;
     projectStages: ProjectStage;
@@ -99,6 +101,8 @@ export interface Config {
     people: PeopleSelect<false> | PeopleSelect<true>;
     personLabels: PersonLabelsSelect<false> | PersonLabelsSelect<true>;
     geoNodes: GeoNodesSelect<false> | GeoNodesSelect<true>;
+    geoVillages: GeoVillagesSelect<false> | GeoVillagesSelect<true>;
+    geoPincodes: GeoPincodesSelect<false> | GeoPincodesSelect<true>;
     orgAssignments: OrgAssignmentsSelect<false> | OrgAssignmentsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     projectStages: ProjectStagesSelect<false> | ProjectStagesSelect<true>;
@@ -210,6 +214,10 @@ export interface Person {
   id: number;
   phone: string;
   name?: string | null;
+  /**
+   * Set only when one phone was shared by different names in the import: all distinct names, joined with ' | '. In that case name is set to 'multiple'.
+   */
+  altNames?: string | null;
   dob?: string | null;
   gender?: ('male' | 'female') | null;
   pincode?: string | null;
@@ -321,6 +329,54 @@ export interface PersonLabel {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "geoVillages".
+ */
+export interface GeoVillage {
+  id: number;
+  /**
+   * LGD village code
+   */
+  villageCode: string;
+  village: string;
+  villageTamil?: string | null;
+  gramPanchayat?: string | null;
+  /**
+   * Panchayat union block
+   */
+  block?: string | null;
+  taluk?: string | null;
+  district?: string | null;
+  districtCode?: string | null;
+  talukCode?: string | null;
+  blockCode?: string | null;
+  pincode?: string | null;
+  /**
+   * Confidence of the derived pincode
+   */
+  pincodeMatchLevel?: ('high' | 'good' | 'medium' | 'low') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "geoPincodes".
+ */
+export interface GeoPincode {
+  id: number;
+  pincode: string;
+  office: string;
+  /**
+   * H.O / S.O / B.O
+   */
+  officeType?: string | null;
+  delivery?: string | null;
+  taluk?: string | null;
+  district?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "orgAssignments".
  */
 export interface OrgAssignment {
@@ -360,10 +416,19 @@ export interface ProjectStage {
 export interface Event {
   id: number;
   name: string;
-  project: number | Project;
+  kind: 'local' | 'campaign_parent' | 'campaign_session';
+  project?: (number | null) | Project;
   stage?: (number | null) | ProjectStage;
+  /**
+   * For local/district sessions: the district. For a campaign: the scope (state/region/mandalam/district) to fan out across.
+   */
   geoNode?: (number | null) | GeoNode;
+  /**
+   * The campaign this district session belongs to.
+   */
+  parentEvent?: (number | null) | Event;
   date?: string | null;
+  createdBy?: (number | null) | Person;
   /**
    * District reps running this event
    */
@@ -669,6 +734,14 @@ export interface PayloadLockedDocument {
         value: number | GeoNode;
       } | null)
     | ({
+        relationTo: 'geoVillages';
+        value: number | GeoVillage;
+      } | null)
+    | ({
+        relationTo: 'geoPincodes';
+        value: number | GeoPincode;
+      } | null)
+    | ({
         relationTo: 'orgAssignments';
         value: number | OrgAssignment;
       } | null)
@@ -814,6 +887,7 @@ export interface AdminsSelect<T extends boolean = true> {
 export interface PeopleSelect<T extends boolean = true> {
   phone?: T;
   name?: T;
+  altNames?: T;
   dob?: T;
   gender?: T;
   pincode?: T;
@@ -873,6 +947,40 @@ export interface GeoNodesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "geoVillages_select".
+ */
+export interface GeoVillagesSelect<T extends boolean = true> {
+  villageCode?: T;
+  village?: T;
+  villageTamil?: T;
+  gramPanchayat?: T;
+  block?: T;
+  taluk?: T;
+  district?: T;
+  districtCode?: T;
+  talukCode?: T;
+  blockCode?: T;
+  pincode?: T;
+  pincodeMatchLevel?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "geoPincodes_select".
+ */
+export interface GeoPincodesSelect<T extends boolean = true> {
+  pincode?: T;
+  office?: T;
+  officeType?: T;
+  delivery?: T;
+  taluk?: T;
+  district?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "orgAssignments_select".
  */
 export interface OrgAssignmentsSelect<T extends boolean = true> {
@@ -917,10 +1025,13 @@ export interface ProjectStagesSelect<T extends boolean = true> {
  */
 export interface EventsSelect<T extends boolean = true> {
   name?: T;
+  kind?: T;
   project?: T;
   stage?: T;
   geoNode?: T;
+  parentEvent?: T;
   date?: T;
+  createdBy?: T;
   organisers?: T;
   updatedAt?: T;
   createdAt?: T;
