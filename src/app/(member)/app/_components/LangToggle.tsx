@@ -8,9 +8,9 @@ export default function LangToggle({ lang }: { lang: "ta" | "en" }) {
     router.refresh();
   };
   return (
-    <div className="inline-flex overflow-hidden rounded-full border border-neutral-300 text-sm">
-      <button onClick={() => set("ta")} className={`px-3 py-1 ${lang === "ta" ? "bg-neutral-900 text-white" : "bg-white"}`}>தமிழ்</button>
-      <button onClick={() => set("en")} className={`px-3 py-1 ${lang === "en" ? "bg-neutral-900 text-white" : "bg-white"}`}>EN</button>
+    <div className="asm-lang">
+      <button onClick={() => set("ta")} className={lang === "ta" ? "on" : ""}>தமிழ்</button>
+      <button onClick={() => set("en")} className={lang === "en" ? "on" : ""}>EN</button>
     </div>
   );
 }

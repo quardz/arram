@@ -26,29 +26,22 @@ export default function NewLocalForm({ districts, m }: { districts: District[]; 
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-neutral-700">{m.att_title_label}</label>
-        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={m.att_session_title_ph}
-          className="mt-1 w-full rounded-xl border border-neutral-300 px-4 py-3 outline-none focus:border-neutral-900" />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-neutral-700">{m.att_pick_district}</label>
-        <select value={districtId} onChange={(e) => setDistrictId(e.target.value)}
-          className="mt-1 w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 outline-none focus:border-neutral-900">
-          {districts.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
-        </select>
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-neutral-700">{m.att_date}</label>
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-          className="mt-1 w-full rounded-xl border border-neutral-300 px-4 py-3 outline-none focus:border-neutral-900" />
-      </div>
-      <button onClick={create} disabled={busy || !title.trim() || !districtId}
-        className="w-full rounded-xl bg-neutral-900 px-4 py-3 text-lg font-semibold text-white disabled:opacity-50">
-        {m.att_create}
+    <div>
+      <label className="asm-fld">{m.att_title_label}</label>
+      <input className="asm-input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={m.att_session_title_ph} />
+
+      <label className="asm-fld">{m.att_pick_district}</label>
+      <select className="asm-input asm-select" value={districtId} onChange={(e) => setDistrictId(e.target.value)}>
+        {districts.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+      </select>
+
+      <label className="asm-fld">{m.att_date}</label>
+      <input className="asm-input" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+
+      <button className="asm-btn gold" onClick={create} disabled={busy || !title.trim() || !districtId}>
+        {m.att_create} ✚
       </button>
-      {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+      {error && <p className="asm-error">{error}</p>}
     </div>
   );
 }

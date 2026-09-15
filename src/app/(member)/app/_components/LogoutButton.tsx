@@ -5,7 +5,7 @@ export default function LogoutButton({ label }: { label: string }) {
     window.location.href = "/app/login";
   }
   return (
-    <button onClick={logout} className="rounded-xl border border-neutral-300 px-4 py-2 font-medium">
+    <button onClick={logout} className="asm-btn ghost" style={{ maxWidth: 220, margin: "0 auto" }}>
       {label}
     </button>
   );

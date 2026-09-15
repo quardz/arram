@@ -1,11 +1,22 @@
 import type { ReactNode } from "react";
+import "./theme.css";
 
-export const metadata = { title: "ASM Members", robots: { index: false } };
+export const metadata = { title: "ASM உறுப்பினர்", robots: { index: false } };
 
 export default function MemberLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-dvh bg-neutral-50 text-neutral-900">
-      <div className="mx-auto w-full max-w-md px-4 py-6">{children}</div>
-    </div>
+    <html lang="ta">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
+        <div className="asm-shell">{children}</div>
+      </body>
+    </html>
   );
 }

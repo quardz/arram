@@ -1,0 +1,169 @@
+/* ASM member app — Theme 1 "Temple Warm" (saffron / maroon / gold on cream).
+   Self-contained: this route group has no other stylesheet. Mobile-first. */
+
+:root{
+  --asm-bg:#f6ede0;
+  --asm-card:#fffaf2;
+  --asm-ink:#3a2416;
+  --asm-muted:#8a715c;
+  --asm-line:#ecdcc7;
+  --asm-brand:#c1440e;
+  --asm-brand-2:#e8751a;
+  --asm-gold:#b8860b;
+  --asm-maroon:#7b1e1e;
+  --asm-ok:#2f8f5b;
+  --asm-field:#fbf3e8;
+  --asm-danger:#b3261e;
+  --asm-radius:18px;
+  --asm-shadow:0 8px 24px rgba(123,30,30,.10);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Noto Sans Tamil','Poppins',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  color:var(--asm-ink);
+  background:
+    radial-gradient(1200px 460px at 50% -220px,#fbe3c9 0%,transparent 60%),
+    var(--asm-bg);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* shell + layout */
+.asm-shell{min-height:100dvh;display:flex;flex-direction:column}
+.asm-main{width:100%;max-width:520px;margin:0 auto;padding:22px 18px 40px;flex:1}
+
+/* app bar */
+.asm-appbar{
+  position:sticky;top:0;z-index:20;
+  background:linear-gradient(120deg,var(--asm-maroon),var(--asm-brand));
+  color:#fff;padding:15px 18px 17px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  box-shadow:0 4px 14px rgba(123,30,30,.18);
+}
+.asm-appbar::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:12px;
+  background:repeating-linear-gradient(90deg,var(--asm-gold) 0 10px,transparent 10px 20px);opacity:.45;
+}
+.asm-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;min-width:0}
+.asm-brand .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.asm-om{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center;font-size:16px;flex:none}
+.asm-back{display:inline-flex;align-items:center;gap:8px;color:#fff;text-decoration:none;font-weight:700;font-size:16px}
+.asm-back .arw{font-size:22px;line-height:1}
+
+/* language toggle (sits in appbar) */
+.asm-lang{display:inline-flex;gap:6px;font-size:13px;flex:none}
+.asm-lang button{
+  border:none;cursor:pointer;padding:6px 11px;border-radius:999px;
+  background:rgba(255,255,255,.16);color:#fff;font-family:inherit;font-weight:600;font-size:13px;
+}
+.asm-lang button.on{background:#fff;color:var(--asm-maroon);font-weight:700}
+
+/* hero / headings */
+.asm-hero{margin:6px 0 4px}
+.asm-hero h1{font-size:23px;font-weight:800;color:var(--asm-maroon);margin:0}
+.asm-hero p{font-size:14.5px;color:var(--asm-muted);margin:8px 0 0;line-height:1.55}
+
+/* greeting card (home) */
+.asm-greet{
+  background:linear-gradient(120deg,var(--asm-maroon),var(--asm-brand));
+  color:#fff;border-radius:22px;padding:20px;margin:6px 0 20px;box-shadow:var(--asm-shadow);
+}
+.asm-greet .hi{font-size:13px;opacity:.85}
+.asm-greet .nm{font-size:22px;font-weight:800;margin-top:2px}
+.asm-greet .role{font-size:13.5px;opacity:.9;margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+
+/* forms */
+.asm-fld{display:block;font-size:14px;font-weight:600;color:var(--asm-ink);margin:20px 0 8px}
+.asm-input{
+  width:100%;background:var(--asm-field);border:1.5px solid var(--asm-line);border-radius:14px;
+  padding:15px 16px;font-size:18px;color:var(--asm-ink);font-family:inherit;
+}
+.asm-input:focus{outline:none;border-color:var(--asm-brand);background:#fff}
+.asm-input::placeholder{color:#c3ac93}
+.asm-otp{letter-spacing:.5em;text-align:center;font-size:24px;font-weight:700}
+.asm-select{
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='%238a715c' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat:no-repeat;background-position:right 14px center;
+}
+
+/* buttons */
+.asm-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;margin-top:20px;border:none;cursor:pointer;font-family:inherit;
+  background:linear-gradient(120deg,var(--asm-brand-2),var(--asm-brand));
+  color:#fff;border-radius:16px;padding:16px;font-size:18px;font-weight:700;
+  box-shadow:0 8px 18px rgba(193,68,14,.26);
+}
+.asm-btn:disabled{opacity:.5;box-shadow:none}
+.asm-btn.gold{background:linear-gradient(120deg,#d99a2b,var(--asm-gold));box-shadow:0 8px 18px rgba(184,134,11,.24)}
+.asm-btn.ghost{background:#fff;color:var(--asm-brand);border:1.5px solid var(--asm-line);box-shadow:none}
+.asm-links{display:flex;justify-content:space-between;margin-top:16px;font-size:14px;font-weight:600}
+.asm-links button{background:none;border:none;color:var(--asm-brand);font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;padding:0}
+.asm-helper{margin-top:14px;background:#fff4e0;border:1px solid #f2d9a8;color:#9a6a12;border-radius:12px;padding:10px 12px;font-size:13px;text-align:center}
+.asm-error{margin-top:14px;background:#fdecea;border:1px solid #f5c6c2;color:var(--asm-danger);border-radius:12px;padding:10px 12px;font-size:13.5px;text-align:center}
+.asm-devcode{margin-top:12px;background:#fff4e0;border:1px dashed #e6b877;color:#9a6a12;border-radius:10px;padding:8px 10px;font-size:13px;text-align:center}
+
+/* list header + add pill */
+.asm-listhdr{display:flex;align-items:center;justify-content:space-between;margin:6px 0 14px}
+.asm-listhdr h1{font-size:20px;font-weight:800;color:var(--asm-maroon);margin:0}
+.asm-add{
+  display:inline-flex;align-items:center;gap:6px;text-decoration:none;
+  background:var(--asm-brand);color:#fff;border-radius:999px;padding:9px 15px;font-size:14px;font-weight:700;
+}
+
+/* session cards */
+.asm-cards{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.asm-card{
+  display:flex;gap:14px;align-items:center;text-decoration:none;color:inherit;
+  background:#fff;border:1px solid var(--asm-line);border-radius:var(--asm-radius);
+  padding:16px;box-shadow:0 4px 14px rgba(123,30,30,.05);
+}
+.asm-card:active{transform:scale(.99)}
+.asm-icn{width:46px;height:46px;border-radius:14px;background:#fbe6d3;display:grid;place-items:center;font-size:22px;flex:none}
+.asm-cmeta{flex:1;min-width:0}
+.asm-cmeta .top{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.asm-cmeta b{font-size:16px;font-weight:700;color:var(--asm-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.asm-cmeta small{display:block;color:var(--asm-muted);font-size:13px;margin-top:3px}
+.asm-badge{font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;flex:none;white-space:nowrap}
+.asm-badge.campaign{background:#fdeccb;color:#9a6a12}
+.asm-badge.local{background:#f0e6d8;color:#8a715c}
+
+/* empty state */
+.asm-empty{
+  text-align:center;color:var(--asm-muted);border:1.5px dashed #dcc6a8;border-radius:var(--asm-radius);
+  background:#fffaf2;padding:44px 20px;
+}
+.asm-empty .big{font-size:40px;margin-bottom:10px}
+
+/* attendance marker */
+.asm-search{position:relative;margin-bottom:6px}
+.asm-search .asm-input{padding-left:44px}
+.asm-search .mag{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--asm-muted)}
+.asm-note{font-size:13.5px;color:var(--asm-muted);text-align:center;margin:12px 0 6px}
+.asm-note b{color:var(--asm-brand)}
+.asm-people{list-style:none;margin:8px 0 0;padding:0}
+.asm-person{display:flex;align-items:center;gap:12px;padding:13px 2px;border-bottom:1px solid var(--asm-line)}
+.asm-avatar{width:42px;height:42px;border-radius:50%;background:#f0dcc6;display:grid;place-items:center;font-weight:700;color:var(--asm-brand);flex:none;font-size:17px}
+.asm-pnm{flex:1;min-width:0}
+.asm-pnm b{display:block;font-size:16px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.asm-pnm small{color:var(--asm-muted);font-size:12.5px}
+.asm-mark{
+  width:48px;height:48px;border-radius:50%;border:2px solid var(--asm-line);background:#fff;
+  display:grid;place-items:center;font-size:22px;color:#cbb69c;flex:none;cursor:pointer;font-family:inherit;
+}
+.asm-mark.on{background:var(--asm-ok);border-color:var(--asm-ok);color:#fff}
+
+/* quick add panel */
+.asm-quick{margin-top:18px;background:#fff;border:1.5px dashed #dcc6a8;border-radius:var(--asm-radius);padding:16px}
+.asm-quick .qh{font-size:14px;font-weight:700;color:var(--asm-maroon);margin:0 0 10px}
+.asm-quick .asm-input{margin-bottom:10px;font-size:16px;padding:13px 14px}
+.asm-quick .asm-btn{margin-top:4px;padding:13px;font-size:16px}
+
+/* generic card (no-access etc.) */
+.asm-panel{background:#fff;border:1px solid var(--asm-line);border-radius:var(--asm-radius);padding:24px;text-align:center;box-shadow:var(--asm-shadow);margin-top:24px}
+.asm-panel h1{font-size:20px;font-weight:800;color:var(--asm-maroon);margin:0}
+.asm-panel p{color:var(--asm-muted);margin:10px 0 0;line-height:1.55}
+.asm-center{text-align:center;margin-top:22px}
