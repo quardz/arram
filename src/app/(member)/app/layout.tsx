@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import "./theme.css";
+import ImpersonationBanner from "./_components/ImpersonationBanner";
 
 export const metadata = { title: "ASM உறுப்பினர்", robots: { index: false } };
 
@@ -15,7 +16,10 @@ export default function MemberLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
-        <div className="asm-shell">{children}</div>
+        <div className="asm-shell">
+          <ImpersonationBanner />
+          {children}
+        </div>
       </body>
     </html>
   );

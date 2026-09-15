@@ -3,6 +3,7 @@ import { getCurrentMember } from "@/lib/member";
 import { getAccessibleSession, markAttendance } from "@/lib/attendance";
 import { normalizePhone } from "@/lib/member";
 import { getPayloadClient } from "@/lib/payload";
+import { audit, auditActor } from "@/lib/audit";
 
 const rel = (v: unknown) => (v && typeof v === "object" ? (v as { id?: number }).id : (v as number | undefined));
 
@@ -28,5 +29,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     personId = p.id as number;
   }
   await markAttendance(ev, personId, true, member.person.id as number);
+  const actx = await auditActor();
+  if (actx) await audit({ ...actx, action: "quickadd_person", eventId: ev.id as number, targetPersonId: personId, detail: name + " · " + phone });
   return NextResponse.json({ ok: true, personId });
 }

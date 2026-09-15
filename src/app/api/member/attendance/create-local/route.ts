@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentMember } from "@/lib/member";
 import { myDistrictIds } from "@/lib/attendance";
 import { getPayloadClient } from "@/lib/payload";
+import { audit, auditActor } from "@/lib/audit";
 
 export async function POST(req: Request) {
   const member = await getCurrentMember();
@@ -18,5 +19,7 @@ export async function POST(req: Request) {
     collection: "events", overrideAccess: true,
     data: { name: title, kind: "local", geoNode: districtId, date, createdBy: member.person.id },
   });
+  const ctx = await auditActor();
+  if (ctx) await audit({ ...ctx, action: "create_session", eventId: ev.id as number, actorRole: member.assignments[0]?.role as string | undefined, detail: title });
   return NextResponse.json({ ok: true, id: ev.id });
 }

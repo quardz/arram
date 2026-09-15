@@ -3,6 +3,7 @@ import { verifyOtp } from "@/lib/otp";
 import { findPersonByPhone, normalizePhone } from "@/lib/member";
 import { createSessionToken, setSessionCookie } from "@/lib/session";
 import { TEST_LOGIN } from "@/lib/testlogin";
+import { audit } from "@/lib/audit";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
@@ -14,6 +15,7 @@ export async function POST(req: Request) {
     const tp = await findPersonByPhone(TEST_LOGIN.loginAsPhone);
     if (!tp) return NextResponse.json({ ok: false, error: "generic" }, { status: 500 });
     await setSessionCookie(await createSessionToken({ personId: tp.id as number, phone: tp.phone }));
+    await audit({ actorId: tp.id as number, action: "login", detail: "test-login" });
     console.log(`[test-login] signed in as ${TEST_LOGIN.loginAsPhone} via test bypass`);
     return NextResponse.json({ ok: true });
   }
@@ -28,5 +30,6 @@ export async function POST(req: Request) {
   if (!person) return NextResponse.json({ ok: false, error: "not_member" }, { status: 403 });
 
   await setSessionCookie(await createSessionToken({ personId: person.id as number, phone }));
+  await audit({ actorId: person.id as number, action: "login", detail: phone });
   return NextResponse.json({ ok: true });
 }

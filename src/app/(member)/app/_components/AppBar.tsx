@@ -4,16 +4,17 @@ import NavDrawer from "./NavDrawer";
 
 type Props = {
   lang: "ta" | "en";
-  title?: string;        // brand text (when no back link)
-  backHref?: string;     // if set, show a back arrow + backLabel after the menu
+  title?: string;
+  backHref?: string;
   backLabel?: string;
-  loggedIn?: boolean;    // show logout in the drawer
-  nav?: boolean;         // show Home / Attendance links in the drawer
+  loggedIn?: boolean;
+  nav?: boolean;
+  isAdmin?: boolean;
   userName?: string;
-  userRole?: string;     // already-translated role text
+  userRole?: string;
 };
 
-export default function AppBar({ lang, title, backHref, backLabel, loggedIn, nav, userName, userRole }: Props) {
+export default function AppBar({ lang, title, backHref, backLabel, loggedIn, nav, isAdmin, userName, userRole }: Props) {
   return (
     <header className="asm-appbar">
       <div className="asm-appbar-left">
@@ -21,12 +22,15 @@ export default function AppBar({ lang, title, backHref, backLabel, loggedIn, nav
           lang={lang}
           loggedIn={!!loggedIn}
           nav={!!nav}
+          isAdmin={!!isAdmin}
           userName={userName}
           userRole={userRole}
           labels={{
             menu: tr(lang, "menu_title"),
             home: tr(lang, "nav_home"),
             attendance: tr(lang, "home_attendance"),
+            activity: tr(lang, "act_title"),
+            impersonate: tr(lang, "nav_impersonate"),
             logout: tr(lang, "home_logout"),
             appName: tr(lang, "appName"),
             lang_ta: "தமிழ்",

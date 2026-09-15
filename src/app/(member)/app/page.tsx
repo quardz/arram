@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getLang, tr } from "@/lib/i18n";
-import { getCurrentMember } from "@/lib/member";
+import { getCurrentMember, isStateAdmin } from "@/lib/member";
 import type { GeoNode } from "@/payload-types";
 import AppBar from "./_components/AppBar";
 import LogoutButton from "./_components/LogoutButton";
@@ -21,7 +21,7 @@ export default async function MemberHome() {
 
   return (
     <>
-      <AppBar lang={lang} title={tr(lang, "appName")} loggedIn nav userName={name} userRole={role} />
+      <AppBar lang={lang} title={tr(lang, "appName")} loggedIn nav isAdmin={isStateAdmin(member)} userName={name} userRole={role} />
       <main className="asm-main">
         <div className="asm-greet">
           <div className="hi">{tr(lang, "home_hi")}</div>

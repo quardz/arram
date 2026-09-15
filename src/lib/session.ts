@@ -5,10 +5,13 @@ import { env, SESSION_SECONDS } from "@/lib/env";
 export const SESSION_COOKIE = "asm_session";
 const secret = new TextEncoder().encode(env.PAYLOAD_SECRET || "dev-secret-change-me");
 
-export type Session = { personId: number; phone: string };
+export type Actor = { personId: number; phone: string };
+/** `act` is the REAL admin when the session is impersonating someone; the
+ *  top-level personId/phone are always the EFFECTIVE (viewed-as) member. */
+export type Session = { personId: number; phone: string; act?: Actor };
 
 export async function createSessionToken(s: Session): Promise<string> {
-  return new SignJWT({ phone: s.phone })
+  return new SignJWT({ phone: s.phone, ...(s.act ? { act: s.act } : {}) })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(String(s.personId))
     .setIssuedAt()
@@ -22,7 +25,10 @@ export async function readSessionToken(token?: string): Promise<Session | null> 
     const { payload } = await jwtVerify(token, secret);
     const personId = Number(payload.sub);
     if (!personId) return null;
-    return { personId, phone: String(payload.phone || "") };
+    let act: Actor | undefined;
+    const a = payload.act as { personId?: unknown; phone?: unknown } | undefined;
+    if (a && Number(a.personId)) act = { personId: Number(a.personId), phone: String(a.phone || "") };
+    return { personId, phone: String(payload.phone || ""), ...(act ? { act } : {}) };
   } catch {
     return null;
   }

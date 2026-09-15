@@ -4,16 +4,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 type Labels = {
-  menu: string; home: string; attendance: string; logout: string;
-  appName: string; lang_ta: string; lang_en: string;
+  menu: string; home: string; attendance: string; activity: string;
+  impersonate: string; logout: string; appName: string; lang_ta: string; lang_en: string;
 };
 
 export default function NavDrawer({
-  lang, loggedIn, nav, userName, userRole, labels,
+  lang, loggedIn, nav, isAdmin, userName, userRole, labels,
 }: {
   lang: "ta" | "en";
   loggedIn: boolean;
   nav: boolean;
+  isAdmin: boolean;
   userName?: string;
   userRole?: string;
   labels: Labels;
@@ -65,10 +66,12 @@ export default function NavDrawer({
           </div>
         )}
 
-        {nav && (
+        {loggedIn && (
           <nav className="asm-sheet-nav">
-            <Link href="/app" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>🏠</span>{labels.home}</Link>
-            <Link href="/app/attendance" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>📝</span>{labels.attendance}</Link>
+            {nav && <Link href="/app" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>🏠</span>{labels.home}</Link>}
+            {nav && <Link href="/app/attendance" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>📝</span>{labels.attendance}</Link>}
+            <Link href="/app/activity" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>🗒️</span>{labels.activity}</Link>
+            {isAdmin && <Link href="/app/impersonate" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>🧑‍🤝‍🧑</span>{labels.impersonate}</Link>}
           </nav>
         )}
 

@@ -41,6 +41,7 @@ import { News } from "./collections/News";
 import { Activities } from "./collections/Activities";
 import { GalleryAlbums } from "./collections/GalleryAlbums";
 import { Pages } from "./collections/Pages";
+import { AuditLog } from "./collections/AuditLog";
 import { SiteSettings } from "./globals/SiteSettings";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -110,6 +111,7 @@ export default buildConfig({
     Activities,
     GalleryAlbums,
     Pages,
+    AuditLog,
   ],
   globals: [SiteSettings],
   plugins,
