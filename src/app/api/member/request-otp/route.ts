@@ -2,11 +2,15 @@ import { NextResponse } from "next/server";
 import { issueOtp } from "@/lib/otp";
 import { sendOtpSms } from "@/lib/fast2sms";
 import { findPersonByPhone, activeAssignmentCount, normalizePhone } from "@/lib/member";
+import { TEST_LOGIN } from "@/lib/testlogin";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
   const phone = normalizePhone(String(body?.phone || ""));
   if (!/^[6-9]\d{9}$/.test(phone)) return NextResponse.json({ ok: false, error: "bad_phone" }, { status: 400 });
+
+  // TEST login bypass: allow the test phone to advance to the OTP step.
+  if (TEST_LOGIN.enabled && phone === TEST_LOGIN.phone) return NextResponse.json({ ok: true });
 
   const person = await findPersonByPhone(phone);
   if (!person) return NextResponse.json({ ok: false, error: "not_member" }, { status: 403 });
