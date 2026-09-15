@@ -3,7 +3,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type P = { id: number; name: string | null; phone: string; present: boolean };
 
-const DISPLAY_CAP = 100; // max rows rendered at once (keeps big districts smooth)
+const DISPLAY_CAP = 100; // max rows rendered at once while searching (keeps big districts smooth)
+const IDLE_COUNT = 10;   // rows shown (alphabetical) when the search box is empty
 
 function displayName(p: P) {
   return p.name && p.name !== "multiple" ? p.name : p.phone;
@@ -40,8 +41,8 @@ export default function AttendanceMarker({ eventId, m }: { eventId: number; m: R
   const { view, truncated } = useMemo(() => {
     const term = q.trim().toLowerCase();
     if (!term) {
-      const present = all.filter((p) => p.present);
-      return { view: present, truncated: false };
+      // Nothing typed: show the first N people alphabetically (list is name-sorted).
+      return { view: all.slice(0, IDLE_COUNT), truncated: all.length > IDLE_COUNT };
     }
     const digits = term.replace(/\D/g, "");
     const matches = all.filter((p) => {
@@ -73,7 +74,6 @@ export default function AttendanceMarker({ eventId, m }: { eventId: number; m: R
     } finally { setBusy(false); }
   }
 
-  const searching = q.trim().length > 0;
 
   return (
     <div>
@@ -104,7 +104,7 @@ export default function AttendanceMarker({ eventId, m }: { eventId: number; m: R
 
         {loaded && view.length === 0 && (
           <li className="asm-note" style={{ padding: "22px 0" }}>
-            {searching ? m.att_none_found : (m.att_type_to_search || m.att_search_ph)}
+            {m.att_none_found}
           </li>
         )}
       </ul>
