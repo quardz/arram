@@ -1,6 +1,7 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ROLE_VALUES, defaultRoleForLevel } from "@/lib/org";
+import ContactButtons from "./ContactButtons";
 
 type Node = { id: number; name: string; nameTamil: string | null; level: string; parentId: number | null };
 type Asg = { id: number; nodeId: number; personId: number; name: string; phone: string; role: string };
@@ -21,6 +22,20 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
   }, [nodes]);
   const roots = childrenBy.get(null) || nodes.filter((n) => !n.parentId);
   const [currentId, setCurrentId] = useState<number | null>(roots.length === 1 ? roots[0].id : null);
+
+  // URL hash = current unit, so the phone back button walks up the tree.
+  useEffect(() => {
+    const apply = () => {
+      const h = window.location.hash.replace("#", "");
+      const id = h ? Number(h) : NaN;
+      setCurrentId(h && byId.has(id) ? id : (roots.length === 1 ? roots[0].id : null));
+    };
+    apply();
+    window.addEventListener("hashchange", apply);
+    return () => window.removeEventListener("hashchange", apply);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [byId]);
+  const go = (id: number | null) => { window.location.hash = id != null ? String(id) : ""; };
 
   const nodeLabel = (n: Node) => (lang === "ta" && n.nameTamil ? n.nameTamil : n.name);
   const nodeAlt = (n: Node) => (lang === "ta" ? n.name : n.nameTamil || "");
@@ -86,12 +101,12 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
 
       <div className="org2-crumbs">
         {roots.length > 1 && (
-          <button className={`org2-crumb ${current == null ? "on" : ""}`} onClick={() => setCurrentId(null)}>{m.org_root}</button>
+          <button className={`org2-crumb ${current == null ? "on" : ""}`} onClick={() => go(null)}>{m.org_root}</button>
         )}
         {path.map((n, i) => (
           <span key={n.id} className="org2-crumbwrap">
             {(i > 0 || roots.length > 1) ? <span className="org2-sep">›</span> : null}
-            <button className={`org2-crumb ${i === path.length - 1 ? "on" : ""}`} onClick={() => setCurrentId(n.id)}>{nodeLabel(n)}</button>
+            <button className={`org2-crumb ${i === path.length - 1 ? "on" : ""}`} onClick={() => go(n.id)}>{nodeLabel(n)}</button>
           </span>
         ))}
       </div>
@@ -112,6 +127,7 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
               <div key={p.id} className="org2-person">
                 <span className="org2-pav">{p.name[0]}</span>
                 <span className="org2-pinfo"><b>{p.name}</b><small>{p.phone} · {roleLabels[p.role] || p.role}</small></span>
+                <ContactButtons phone={p.phone} m={m} />
               </div>
             ))}
           </div>
@@ -128,7 +144,7 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
             {kids.map((k) => {
               const kp = peopleAt(k.id);
               return (
-                <li key={k.id} className="org2-row" onClick={() => setCurrentId(k.id)}>
+                <li key={k.id} className="org2-row" onClick={() => go(k.id)}>
                   <div className="org2-row-main">
                     <div className="org2-row-name">{nodeLabel(k)}{nodeAlt(k) ? <span className="org2-row-alt"> · {nodeAlt(k)}</span> : null}</div>
                     <div className="org2-row-sub">
