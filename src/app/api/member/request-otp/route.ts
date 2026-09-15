@@ -23,3 +23,9 @@ export async function POST(req: Request) {
   if (!sent.ok) return NextResponse.json({ ok: false, error: sent.error || "generic" }, { status: 502 });
   return NextResponse.json({ ok: true, ...(sent.devCode ? { devCode: sent.devCode } : {}) });
 }
+
+// Lightweight health/diagnostic (GET): confirms this build is live and whether
+// the test-login bypass is enabled. Safe: exposes only a boolean + marker.
+export async function GET() {
+  return NextResponse.json({ ok: true, marker: "otp-diag-1", testLoginEnabled: TEST_LOGIN.enabled, testPhone: TEST_LOGIN.phone });
+}
