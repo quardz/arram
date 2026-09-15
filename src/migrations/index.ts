@@ -1,6 +1,7 @@
 import * as migration_20260912_180532_initial from './20260912_180532_initial';
 import * as migration_20260912_184057_add_alt_names from './20260912_184057_add_alt_names';
 import * as migration_20260913_173201_add_geo_tables from './20260913_173201_add_geo_tables';
+import * as migration_20260915_073609_add_event_session_fields from './20260915_073609_add_event_session_fields';
 
 export const migrations = [
   {
@@ -16,6 +17,11 @@ export const migrations = [
   {
     up: migration_20260913_173201_add_geo_tables.up,
     down: migration_20260913_173201_add_geo_tables.down,
-    name: '20260913_173201_add_geo_tables'
+    name: '20260913_173201_add_geo_tables',
+  },
+  {
+    up: migration_20260915_073609_add_event_session_fields.up,
+    down: migration_20260915_073609_add_event_session_fields.down,
+    name: '20260915_073609_add_event_session_fields'
   },
 ];
