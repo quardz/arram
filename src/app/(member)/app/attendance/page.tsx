@@ -14,6 +14,10 @@ export default async function AttendanceList() {
   if (!member) redirect("/app/login");
   if (!member.assignments.length) redirect("/app/no-access");
   const lang = await getLang();
+  const primary = member.assignments[0];
+  const pnode = typeof primary.geoNode === "object" ? (primary.geoNode as GeoNode) : null;
+  const uname = member.person.name && member.person.name !== "multiple" ? member.person.name : member.person.phone;
+  const urole = `${tr(lang, `role_${primary.role}`)}${pnode ? ` · ${pnode.name}` : ""}`;
   const mine = await myDistrictIds(member);
   const payload = await getPayloadClient();
   const evs = mine.length
@@ -25,7 +29,7 @@ export default async function AttendanceList() {
   const fmt = (d?: string | null) => (d ? new Date(d).toLocaleDateString(lang === "ta" ? "ta-IN" : "en-IN") : "");
   return (
     <>
-      <AppBar lang={lang} backHref="/app" backLabel={tr(lang, "appName")} />
+      <AppBar lang={lang} backHref="/app" backLabel={tr(lang, "appName")} loggedIn nav userName={uname} userRole={urole} />
       <main className="asm-main">
         <div className="asm-listhdr">
           <h1>{tr(lang, "att_title")}</h1>

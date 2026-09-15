@@ -17,10 +17,11 @@ export default async function MemberHome() {
   const primary = member.assignments[0];
   const node = typeof primary.geoNode === "object" ? (primary.geoNode as GeoNode) : null;
   const name = member.person.name && member.person.name !== "multiple" ? member.person.name : member.person.phone;
+  const role = `${tr(lang, `role_${primary.role}`)}${node ? ` · ${node.name}` : ""}`;
 
   return (
     <>
-      <AppBar lang={lang} title={tr(lang, "appName")} />
+      <AppBar lang={lang} title={tr(lang, "appName")} loggedIn nav userName={name} userRole={role} />
       <main className="asm-main">
         <div className="asm-greet">
           <div className="hi">{tr(lang, "home_hi")}</div>

@@ -1,28 +1,50 @@
 import Link from "next/link";
-import LangToggle from "./LangToggle";
+import { tr } from "@/lib/i18n";
+import NavDrawer from "./NavDrawer";
 
 type Props = {
   lang: "ta" | "en";
   title?: string;        // brand text (when no back link)
-  backHref?: string;     // if set, show a back arrow + backLabel instead of brand
+  backHref?: string;     // if set, show a back arrow + backLabel after the menu
   backLabel?: string;
+  loggedIn?: boolean;    // show logout in the drawer
+  nav?: boolean;         // show Home / Attendance links in the drawer
+  userName?: string;
+  userRole?: string;     // already-translated role text
 };
 
-export default function AppBar({ lang, title, backHref, backLabel }: Props) {
+export default function AppBar({ lang, title, backHref, backLabel, loggedIn, nav, userName, userRole }: Props) {
   return (
     <header className="asm-appbar">
-      {backHref ? (
-        <Link href={backHref} className="asm-back">
-          <span className="arw" aria-hidden>←</span>
-          <span className="t">{backLabel}</span>
-        </Link>
-      ) : (
-        <div className="asm-brand">
-          <span className="asm-om" aria-hidden>ॐ</span>
-          <span className="t">{title}</span>
-        </div>
-      )}
-      <LangToggle lang={lang} />
+      <div className="asm-appbar-left">
+        <NavDrawer
+          lang={lang}
+          loggedIn={!!loggedIn}
+          nav={!!nav}
+          userName={userName}
+          userRole={userRole}
+          labels={{
+            menu: tr(lang, "menu_title"),
+            home: tr(lang, "nav_home"),
+            attendance: tr(lang, "home_attendance"),
+            logout: tr(lang, "home_logout"),
+            appName: tr(lang, "appName"),
+            lang_ta: "தமிழ்",
+            lang_en: "EN",
+          }}
+        />
+        {backHref ? (
+          <Link href={backHref} className="asm-back">
+            <span className="arw" aria-hidden>←</span>
+            <span className="t">{backLabel}</span>
+          </Link>
+        ) : (
+          <div className="asm-brand">
+            <span className="asm-om" aria-hidden>ॐ</span>
+            <span className="t">{title}</span>
+          </div>
+        )}
+      </div>
     </header>
   );
 }

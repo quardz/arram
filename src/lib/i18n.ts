@@ -12,6 +12,8 @@ type Dict = Record<string, string>;
 const en: Dict = {
   appName: "ASM Members",
   login_title: "Member Login",
+  menu_title: "Menu",
+  nav_home: "Home",
   login_sub: "Sign in with your phone number",
   phone_label: "Mobile number",
   phone_ph: "10-digit mobile",
@@ -73,6 +75,8 @@ const en: Dict = {
 const ta: Dict = {
   appName: "ASM உறுப்பினர்",
   login_title: "உறுப்பினர் உள்நுழைவு",
+  menu_title: "பட்டி",
+  nav_home: "முகப்பு",
   login_sub: "உங்கள் கைபேசி எண்ணால் உள்நுழையவும்",
   phone_label: "கைபேசி எண்",
   phone_ph: "10 இலக்க எண்",

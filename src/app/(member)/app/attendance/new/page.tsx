@@ -14,6 +14,10 @@ export default async function NewLocal() {
   if (!member) redirect("/app/login");
   if (!member.assignments.length) redirect("/app/no-access");
   const lang = await getLang();
+  const primary = member.assignments[0];
+  const pnode = typeof primary.geoNode === "object" ? (primary.geoNode as GeoNode) : null;
+  const uname = member.person.name && member.person.name !== "multiple" ? member.person.name : member.person.phone;
+  const urole = `${tr(lang, `role_${primary.role}`)}${pnode ? ` · ${pnode.name}` : ""}`;
   const mine = await myDistrictIds(member);
   const payload = await getPayloadClient();
   const nodes = mine.length
@@ -22,7 +26,7 @@ export default async function NewLocal() {
   const districts = (nodes.docs as GeoNode[]).map((n) => ({ id: n.id as number, name: n.name }));
   return (
     <>
-      <AppBar lang={lang} backHref="/app/attendance" backLabel={tr(lang, "att_title")} />
+      <AppBar lang={lang} backHref="/app/attendance" backLabel={tr(lang, "att_title")} loggedIn nav userName={uname} userRole={urole} />
       <main className="asm-main">
         <div className="asm-hero"><h1>{tr(lang, "att_new_local")}</h1></div>
         <NewLocalForm districts={districts} m={messages(lang)} />

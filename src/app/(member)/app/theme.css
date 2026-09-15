@@ -167,3 +167,58 @@ body{
 .asm-panel h1{font-size:20px;font-weight:800;color:var(--asm-maroon);margin:0}
 .asm-panel p{color:var(--asm-muted);margin:10px 0 0;line-height:1.55}
 .asm-center{text-align:center;margin-top:22px}
+
+/* ---- Top-bar menu + left drawer ---------------------------------------- */
+.asm-appbar-left{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+
+.asm-hamburger{
+  flex:none;width:44px;height:44px;display:inline-flex;flex-direction:column;
+  justify-content:center;gap:5px;padding:0 11px;cursor:pointer;
+  background:rgba(255,255,255,.15);border:none;border-radius:12px;
+}
+.asm-hamburger span{display:block;height:3px;border-radius:2px;background:#fff}
+
+.asm-scrim{
+  position:fixed;inset:0;z-index:40;background:rgba(58,20,10,.5);
+  opacity:0;pointer-events:none;transition:opacity .25s ease;
+}
+.asm-scrim.open{opacity:1;pointer-events:auto}
+
+.asm-sheet{
+  position:fixed;top:0;left:0;height:100dvh;width:90vw;max-width:400px;z-index:50;
+  background:var(--asm-card);display:flex;flex-direction:column;overflow-y:auto;
+  transform:translateX(-100%);transition:transform .28s ease;
+  box-shadow:0 0 44px rgba(0,0,0,.32);
+}
+.asm-sheet.open{transform:translateX(0)}
+
+.asm-sheet-head{
+  background:linear-gradient(120deg,var(--asm-maroon),var(--asm-brand));color:#fff;
+  padding:18px;display:flex;align-items:center;justify-content:space-between;flex:none;
+}
+.asm-sheet-head .asm-brand{color:#fff;font-size:17px}
+.asm-sheet-close{background:rgba(255,255,255,.16);border:none;color:#fff;width:38px;height:38px;border-radius:10px;font-size:18px;cursor:pointer;flex:none}
+
+.asm-sheet-user{padding:18px;border-bottom:1px solid var(--asm-line)}
+.asm-sheet-user .nm{font-size:19px;font-weight:800;color:var(--asm-maroon)}
+.asm-sheet-user .role{font-size:13.5px;color:var(--asm-muted);margin-top:4px}
+
+.asm-sheet-nav{display:flex;flex-direction:column}
+.asm-navlink{
+  display:flex;align-items:center;gap:14px;padding:17px 18px;font-size:17px;font-weight:600;
+  color:var(--asm-ink);text-decoration:none;border-bottom:1px solid var(--asm-line);
+}
+.asm-navlink .ic{font-size:21px;width:26px;text-align:center}
+.asm-navlink:active{background:var(--asm-field)}
+
+.asm-sheet-section{padding:18px;border-bottom:1px solid var(--asm-line)}
+.asm-sheet-label{font-size:13px;font-weight:700;color:var(--asm-muted);text-transform:uppercase;letter-spacing:.4px}
+.asm-lang-row{display:flex;gap:10px;margin-top:12px}
+.asm-lang-row button{
+  flex:1;padding:13px;border-radius:12px;border:1.5px solid var(--asm-line);background:#fff;
+  font-family:inherit;font-weight:700;font-size:16px;color:var(--asm-ink);cursor:pointer;
+}
+.asm-lang-row button.on{background:var(--asm-brand);color:#fff;border-color:var(--asm-brand)}
+
+.asm-sheet-foot{margin-top:auto;padding:18px;border-top:1px solid var(--asm-line)}
+.asm-sheet-foot .asm-btn{margin-top:0}
