@@ -8,11 +8,11 @@ export async function sendOtpSms(
 ): Promise<{ ok: boolean; devCode?: string; error?: string }> {
   const isProd = process.env.NODE_ENV === "production";
   if (!flags.hasSMS) {
-    if (!isProd) {
-      console.log(`[otp:dev] ${phone} -> ${code}`);
-      return { ok: true, devCode: code };
-    }
-    return { ok: false, error: "SMS not configured" };
+    // No Fast2SMS key configured: log the OTP to the server console (Vercel
+    // function logs) so it can still be retrieved and used to sign in. The code
+    // is never returned to the client in production.
+    console.log(`[otp] FAST2SMS_API_KEY not configured — OTP for ${phone}: ${code}`);
+    return { ok: true, ...(isProd ? {} : { devCode: code }) };
   }
   try {
     const res = await fetch("https://www.fast2sms.com/dev/bulkV2", {
