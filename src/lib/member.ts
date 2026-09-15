@@ -1,0 +1,55 @@
+import { getPayloadClient } from "@/lib/payload";
+import { getSession } from "@/lib/session";
+import type { OrgAssignment, Person } from "@/payload-types";
+
+export const normalizePhone = (raw: string) =>
+  (raw || "").replace(/\D/g, "").replace(/^91(\d{10})$/, "$1").replace(/^0(\d{10})$/, "$1");
+
+export async function findPersonByPhone(phone: string): Promise<Person | null> {
+  const payload = await getPayloadClient();
+  const r = await payload.find({
+    collection: "people",
+    overrideAccess: true,
+    limit: 1,
+    where: { phone: { equals: phone } },
+  });
+  return (r.docs[0] as Person) || null;
+}
+
+export async function activeAssignmentCount(personId: number): Promise<number> {
+  const payload = await getPayloadClient();
+  const r = await payload.count({
+    collection: "orgAssignments",
+    overrideAccess: true,
+    where: { and: [{ person: { equals: personId } }, { active: { equals: true } }] },
+  });
+  return r.totalDocs;
+}
+
+export type CurrentMember = { person: Person; assignments: OrgAssignment[] };
+
+export async function getCurrentMember(): Promise<CurrentMember | null> {
+  const s = await getSession();
+  if (!s) return null;
+  const payload = await getPayloadClient();
+  let person: Person | null = null;
+  try {
+    person = (await payload.findByID({
+      collection: "people",
+      id: s.personId,
+      overrideAccess: true,
+      depth: 0,
+    })) as Person;
+  } catch {
+    return null;
+  }
+  if (!person) return null;
+  const asg = await payload.find({
+    collection: "orgAssignments",
+    overrideAccess: true,
+    depth: 1,
+    limit: 50,
+    where: { and: [{ person: { equals: s.personId } }, { active: { equals: true } }] },
+  });
+  return { person, assignments: asg.docs as OrgAssignment[] };
+}

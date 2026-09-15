@@ -1,0 +1,92 @@
+import { cookies } from "next/headers";
+
+export type Lang = "ta" | "en";
+export const LANG_COOKIE = "lang";
+
+export async function getLang(): Promise<Lang> {
+  const c = await cookies();
+  return c.get(LANG_COOKIE)?.value === "en" ? "en" : "ta";
+}
+
+type Dict = Record<string, string>;
+const en: Dict = {
+  appName: "ASM Members",
+  login_title: "Member Login",
+  login_sub: "Sign in with your phone number",
+  phone_label: "Mobile number",
+  phone_ph: "10-digit mobile",
+  send_otp: "Send OTP",
+  otp_label: "Enter the 6-digit code",
+  otp_ph: "6-digit OTP",
+  verify: "Verify & Sign in",
+  resend: "Resend code",
+  change_number: "Change number",
+  sending: "Sending…",
+  verifying: "Verifying…",
+  home_hi: "Welcome",
+  home_attendance: "Attendance",
+  home_logout: "Log out",
+  your_role: "Your role",
+  noaccess_title: "Not an org member yet",
+  noaccess_body: "This number isn't assigned to any org role. Please contact your coordinator.",
+  back_to_login: "Back to login",
+  err_bad_phone: "Enter a valid 10-digit mobile number.",
+  err_not_member: "This number isn't an org member. Contact your coordinator.",
+  err_too_many: "Too many requests. Try again later.",
+  err_wrong: "Wrong code. Try again.",
+  err_expired: "Code expired. Request a new one.",
+  err_locked: "Too many wrong tries. Request a new code.",
+  err_generic: "Something went wrong. Try again.",
+  role_state_admin: "State Admin",
+  role_regional_organiser: "Regional Organiser",
+  role_zonal_organiser: "Zonal Organiser",
+  role_district_organiser: "District Organiser",
+  role_union_coordinator: "Union Coordinator",
+  role_panchayat_coordinator: "Panchayat Coordinator",
+  role_temple_coordinator: "Temple Coordinator",
+};
+const ta: Dict = {
+  appName: "ASM உறுப்பினர்",
+  login_title: "உறுப்பினர் உள்நுழைவு",
+  login_sub: "உங்கள் கைபேசி எண்ணால் உள்நுழையவும்",
+  phone_label: "கைபேசி எண்",
+  phone_ph: "10 இலக்க எண்",
+  send_otp: "OTP அனுப்பு",
+  otp_label: "6 இலக்க குறியீட்டை உள்ளிடவும்",
+  otp_ph: "6 இலக்க OTP",
+  verify: "சரிபார்த்து உள்நுழை",
+  resend: "மீண்டும் அனுப்பு",
+  change_number: "எண்ணை மாற்று",
+  sending: "அனுப்புகிறது…",
+  verifying: "சரிபார்க்கிறது…",
+  home_hi: "வணக்கம்",
+  home_attendance: "வருகைப் பதிவு",
+  home_logout: "வெளியேறு",
+  your_role: "உங்கள் பொறுப்பு",
+  noaccess_title: "இன்னும் அமைப்பு உறுப்பினர் இல்லை",
+  noaccess_body: "இந்த எண்ணுக்கு எந்த அமைப்புப் பொறுப்பும் ஒதுக்கப்படவில்லை. உங்கள் ஒருங்கிணைப்பாளரை அணுகவும்.",
+  back_to_login: "உள்நுழைவுக்கு திரும்பு",
+  err_bad_phone: "சரியான 10 இலக்க கைபேசி எண்ணை உள்ளிடவும்.",
+  err_not_member: "இந்த எண் அமைப்பு உறுப்பினர் அல்ல. ஒருங்கிணைப்பாளரை அணுகவும்.",
+  err_too_many: "அதிக முயற்சிகள். பின்னர் முயற்சிக்கவும்.",
+  err_wrong: "தவறான குறியீடு. மீண்டும் முயற்சிக்கவும்.",
+  err_expired: "குறியீடு காலாவதியானது. புதியதைக் கோரவும்.",
+  err_locked: "பல தவறான முயற்சிகள். புதிய குறியீட்டைக் கோரவும்.",
+  err_generic: "ஏதோ தவறு நடந்தது. மீண்டும் முயற்சிக்கவும்.",
+  role_state_admin: "மாநில நிர்வாகி",
+  role_regional_organiser: "மண்டல அமைப்பாளர்",
+  role_zonal_organiser: "மண்டல அமைப்பாளர்",
+  role_district_organiser: "மாவட்ட அமைப்பாளர்",
+  role_union_coordinator: "ஒன்றிய ஒருங்கிணைப்பாளர்",
+  role_panchayat_coordinator: "ஊராட்சி ஒருங்கிணைப்பாளர்",
+  role_temple_coordinator: "கோயில் ஒருங்கிணைப்பாளர்",
+};
+const dict: Record<Lang, Dict> = { en, ta };
+
+export function tr(lang: Lang, key: string): string {
+  return dict[lang][key] ?? en[key] ?? key;
+}
+/** Full dictionary for a language (for client components). */
+export function messages(lang: Lang): Dict {
+  return { ...en, ...dict[lang] };
+}
