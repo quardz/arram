@@ -24,8 +24,26 @@ export async function POST(req: Request) {
   return NextResponse.json({ ok: true, ...(sent.devCode ? { devCode: sent.devCode } : {}) });
 }
 
-// Lightweight health/diagnostic (GET): confirms this build is live and whether
-// the test-login bypass is enabled. Safe: exposes only a boolean + marker.
+// Lightweight diagnostic (GET): confirms this build is live, whether the
+// test-login bypass is enabled, and whether the login-as member resolves.
 export async function GET() {
-  return NextResponse.json({ ok: true, marker: "otp-diag-1", testLoginEnabled: TEST_LOGIN.enabled, testPhone: TEST_LOGIN.phone });
+  const out: Record<string, unknown> = {
+    ok: true,
+    marker: "otp-diag-2",
+    testLoginEnabled: TEST_LOGIN.enabled,
+    testPhone: TEST_LOGIN.phone,
+    loginAsPhone: TEST_LOGIN.loginAsPhone,
+  };
+  try {
+    const tp = await findPersonByPhone(TEST_LOGIN.loginAsPhone);
+    out.loginAsFound = !!tp;
+    if (tp) {
+      out.loginAsId = tp.id;
+      out.loginAsName = tp.name;
+      out.loginAsAssignments = await activeAssignmentCount(tp.id as number);
+    }
+  } catch (e) {
+    out.lookupError = e instanceof Error ? e.message : String(e);
+  }
+  return NextResponse.json(out);
 }
