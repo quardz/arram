@@ -64,6 +64,10 @@ const en: Dict = {
   att_present_count: "present",
   att_back: "Back",
   att_none_found: "No one found. Add them below.",
+  att_people: "in district",
+  att_loading: "loading…",
+  att_type_to_search: "Search a name or number to find and mark members.",
+  att_refine: "More matches — keep typing to narrow the list.",
   att_saved: "Saved",
 };
 const ta: Dict = {
@@ -121,6 +125,10 @@ const ta: Dict = {
   att_present_count: "வருகை",
   att_back: "பின்",
   att_none_found: "யாரும் இல்லை. கீழே சேர்க்கவும்.",
+  att_people: "இம்மாவட்டத்தில்",
+  att_loading: "ஏற்றுகிறது…",
+  att_type_to_search: "பெயர் அல்லது எண்ணைத் தேடி வருகை பதியுங்கள்.",
+  att_refine: "மேலும் பொருந்துகின்றன — தேடலைச் சுருக்கவும்.",
   att_saved: "சேமிக்கப்பட்டது",
 };
 const dict: Record<Lang, Dict> = { en, ta };

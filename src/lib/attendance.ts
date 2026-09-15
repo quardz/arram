@@ -1,4 +1,3 @@
-import type { Where } from "payload";
 import { getPayloadClient } from "@/lib/payload";
 import { districtIdsUnder } from "@/lib/campaign";
 import type { CurrentMember } from "@/lib/member";
@@ -35,27 +34,23 @@ export async function getAccessibleSession(member: CurrentMember, eventId: numbe
 
 export type Attendee = { id: number; name: string | null; phone: string; present: boolean };
 
-/** People in the session's district, with present state for this event. */
-export async function searchAttendees(ev: Event, q: string): Promise<Attendee[]> {
+/** ALL people in the session's district, with present state for this event.
+    Loaded once; the client filters locally (no per-keystroke server call). */
+export async function listAttendees(ev: Event): Promise<Attendee[]> {
   const payload = await getPayloadClient();
   const districtId = rel(ev.geoNode);
   if (!districtId) return [];
-  const term = q.trim();
-  const where: Where = term
-    ? { and: [{ geoNode: { equals: districtId } }, { or: [{ name: { like: term } }, { phone: { like: term } }] }] }
-    : { geoNode: { equals: districtId } };
   const ppl = await payload.find({
-    collection: "people", overrideAccess: true, depth: 0, limit: 40, where, sort: "name",
+    collection: "people", overrideAccess: true, depth: 0, limit: 20000,
+    where: { geoNode: { equals: districtId } }, sort: "name",
   });
-  const ids = ppl.docs.map((p) => p.id);
+  // Everyone marked present for this event (not capped to a search page).
   const present = new Set<number>();
-  if (ids.length) {
-    const at = await payload.find({
-      collection: "attendance", overrideAccess: true, depth: 0, limit: 1000,
-      where: { and: [{ event: { equals: ev.id } }, { person: { in: ids } }, { present: { equals: true } }] },
-    });
-    for (const a of at.docs) present.add(rel((a as { person: unknown }).person) as number);
-  }
+  const at = await payload.find({
+    collection: "attendance", overrideAccess: true, depth: 0, limit: 20000,
+    where: { and: [{ event: { equals: ev.id } }, { present: { equals: true } }] },
+  });
+  for (const a of at.docs) present.add(rel((a as { person: unknown }).person) as number);
   return (ppl.docs as Person[]).map((p) => ({
     id: p.id as number, name: p.name ?? null, phone: p.phone, present: present.has(p.id as number),
   }));
