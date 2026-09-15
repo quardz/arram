@@ -30,7 +30,7 @@ export default function LoginForm({ m }: { m: Msgs }) {
 
   async function verify() {
     setError("");
-    if (!/^\d{6}$/.test(code)) { setError(m.err_generic); return; }
+    if (!/^\d{4,6}$/.test(code)) { setError(m.err_generic); return; }
     setBusy(true);
     try {
       const r = await fetch("/api/member/verify-otp", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone, code }) });
