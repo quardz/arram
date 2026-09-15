@@ -5,7 +5,7 @@ function loadEnvLocal(){try{const t=fs.readFileSync(path.resolve(process.cwd(),"
 loadEnvLocal();
 const url=process.env.DATABASE_URI_DIRECT||process.env.DATABASE_URI;
 if(!url){console.log("seed-person-geo: no DB url; skipping");process.exit(0);}
-const VERSION=1;
+const VERSION=2;
 const rows=JSON.parse(fs.readFileSync(new URL("./geo/person_geo.json",import.meta.url).pathname,"utf8"));
 const c=new pg.Client({connectionString:url});
 try{

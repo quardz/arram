@@ -24,12 +24,12 @@ export async function POST(req: Request) {
   return NextResponse.json({ ok: true, ...(sent.devCode ? { devCode: sent.devCode } : {}) });
 }
 
-// Lightweight diagnostic (GET): confirms this build is live, whether the
-// test-login bypass is enabled, and whether the login-as member resolves.
+// Lightweight diagnostic (GET): build liveness, test-login state, login-as
+// member resolution, and people/geo counts (for import verification).
 export async function GET() {
   const out: Record<string, unknown> = {
     ok: true,
-    marker: "otp-diag-2",
+    marker: "otp-diag-3",
     testLoginEnabled: TEST_LOGIN.enabled,
     testPhone: TEST_LOGIN.phone,
     loginAsPhone: TEST_LOGIN.loginAsPhone,
@@ -42,6 +42,12 @@ export async function GET() {
       out.loginAsName = tp.name;
       out.loginAsAssignments = await activeAssignmentCount(tp.id as number);
     }
+    const { getPayloadClient } = await import("@/lib/payload");
+    const payload = await getPayloadClient();
+    out.peopleCount = (await payload.count({ collection: "people", overrideAccess: true })).totalDocs;
+    out.peopleWithGeoNode = (
+      await payload.count({ collection: "people", overrideAccess: true, where: { geoNode: { exists: true } } })
+    ).totalDocs;
   } catch (e) {
     out.lookupError = e instanceof Error ? e.message : String(e);
   }

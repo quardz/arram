@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Aram Valartha Naayaki Sevai Maiyam (ASM) \u2014 official website. Next.js 16 + Tailwind CSS, SSR, Vercel-ready.",
+  "description": "Aram Valartha Naayaki Sevai Maiyam (ASM) — official website. Next.js 16 + Tailwind CSS, SSR, Vercel-ready.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -14,7 +14,7 @@
     "generate:importmap": "payload generate:importmap",
     "migrate": "payload migrate",
     "migrate:create": "payload migrate:create",
-    "vercel-build": "if [ -n \"$DATABASE_URI_DIRECT\" ] || [ -n \"$DATABASE_URI\" ]; then payload migrate && (node scripts/seed-geo.mjs || echo \"seed-geo skipped\") && (node scripts/seed-org.mjs || echo \"seed-org skipped\") && (node scripts/seed-person-geo.mjs || echo \"seed-person-geo skipped\"); fi && payload generate:types && next build"
+    "vercel-build": "if [ -n \"$DATABASE_URI_DIRECT\" ] || [ -n \"$DATABASE_URI\" ]; then payload migrate && (node scripts/seed-geo.mjs || echo \"seed-geo skipped\") && (node scripts/seed-org.mjs || echo \"seed-org skipped\") && (node scripts/import-people.mjs || echo \"import-people skipped\") && (node scripts/seed-person-geo.mjs || echo \"seed-person-geo skipped\"); fi && payload generate:types && next build"
   },
   "dependencies": {
     "next": "16.2.9",
