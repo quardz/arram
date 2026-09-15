@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { ROLE_VALUES, defaultRoleForLevel } from "@/lib/org";
 
 type Node = { id: number; name: string; nameTamil: string | null; level: string; parentId: number | null };
@@ -11,114 +11,30 @@ type Props = {
 
 export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels, m }: Props) {
   const [asg, setAsg] = useState<Asg[]>(assignments);
-  const [collapsed, setCollapsed] = useState<Set<number>>(new Set());
   const [edit, setEdit] = useState(false);
-  const [sheetNode, setSheetNode] = useState<Node | null>(null);
 
-  // zoom / pan
-  const [scale, setScale] = useState(1);
-  const [tx, setTx] = useState(0);
-  const [ty, setTy] = useState(0);
-  const vp = useRef<HTMLDivElement>(null);
-  const ptrs = useRef<Map<number, { x: number; y: number }>>(new Map());
-  const pinchDist = useRef(0);
-  const panning = useRef(false);
-  const moved = useRef(false);
-  const last = useRef({ x: 0, y: 0 });
-
+  const byId = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
   const childrenBy = useMemo(() => {
     const map = new Map<number | null, Node[]>();
-    for (const n of nodes) {
-      const k = n.parentId;
-      if (!map.has(k)) map.set(k, []);
-      map.get(k)!.push(n);
-    }
+    for (const n of nodes) { const k = n.parentId; if (!map.has(k)) map.set(k, []); map.get(k)!.push(n); }
     return map;
   }, [nodes]);
   const roots = childrenBy.get(null) || nodes.filter((n) => !n.parentId);
+  const [currentId, setCurrentId] = useState<number | null>(roots.length === 1 ? roots[0].id : null);
 
-  const peopleAt = (nodeId: number) => asg.filter((a) => a.nodeId === nodeId);
   const nodeLabel = (n: Node) => (lang === "ta" && n.nameTamil ? n.nameTamil : n.name);
   const nodeAlt = (n: Node) => (lang === "ta" ? n.name : n.nameTamil || "");
+  const peopleAt = (id: number) => asg.filter((a) => a.nodeId === id);
+  const scope = (lvl: string) => m[`role_scope_${lvl}`] || lvl;
 
-  const clamp = (s: number) => Math.min(2.5, Math.max(0.35, s));
-  const zoomBy = (f: number) => setScale((s) => clamp(s * f));
-  const reset = () => { setScale(1); setTx(0); setTy(0); };
+  const current = currentId != null ? byId.get(currentId) || null : null;
+  const kids = childrenBy.get(currentId ?? null) || [];
 
-  function onWheel(e: React.WheelEvent) {
-    if (!e.ctrlKey && Math.abs(e.deltaY) < 1) return;
-    e.preventDefault();
-    zoomBy(e.deltaY < 0 ? 1.12 : 0.89);
-  }
-  function onPointerDown(e: React.PointerEvent) {
-    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-    ptrs.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (ptrs.current.size === 1) { panning.current = true; moved.current = false; last.current = { x: e.clientX, y: e.clientY }; }
-    else if (ptrs.current.size === 2) {
-      const [a, b] = [...ptrs.current.values()];
-      pinchDist.current = Math.hypot(a.x - b.x, a.y - b.y);
-    }
-  }
-  function onPointerMove(e: React.PointerEvent) {
-    if (!ptrs.current.has(e.pointerId)) return;
-    ptrs.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (ptrs.current.size === 2) {
-      const [a, b] = [...ptrs.current.values()];
-      const d = Math.hypot(a.x - b.x, a.y - b.y);
-      if (pinchDist.current) setScale((s) => clamp(s * (d / pinchDist.current)));
-      pinchDist.current = d;
-      moved.current = true;
-      return;
-    }
-    if (panning.current) {
-      const dx = e.clientX - last.current.x, dy = e.clientY - last.current.y;
-      if (Math.abs(dx) + Math.abs(dy) > 4) moved.current = true;
-      last.current = { x: e.clientX, y: e.clientY };
-      setTx((v) => v + dx); setTy((v) => v + dy);
-    }
-  }
-  function onPointerUp(e: React.PointerEvent) {
-    ptrs.current.delete(e.pointerId);
-    if (ptrs.current.size < 2) pinchDist.current = 0;
-    if (ptrs.current.size === 0) panning.current = false;
-  }
+  const path: Node[] = [];
+  { let c = current; while (c) { path.unshift(c); c = c.parentId != null ? byId.get(c.parentId) || null : null; } }
 
-  function toggle(id: number) {
-    setCollapsed((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
-  }
-
-  function renderNode(n: Node, depth: number): React.ReactNode {
-    const kids = childrenBy.get(n.id) || [];
-    const isOpen = !collapsed.has(n.id);
-    const ppl = peopleAt(n.id);
-    return (
-      <div key={n.id} className="org-branch" style={{ marginLeft: depth ? 18 : 0 }}>
-        <div className={`org-node lvl-${n.level}`} onClick={() => { if (moved.current) return; if (edit) openSheet(n); else if (kids.length) toggle(n.id); }}>
-          <div className="org-node-top">
-            {kids.length ? <span className="org-caret">{isOpen ? "▾" : "▸"}</span> : <span className="org-caret dot">•</span>}
-            <span className="org-name">{nodeLabel(n)}</span>
-            <span className="org-level">{m[`role_scope_${n.level}`] || n.level}</span>
-          </div>
-          {nodeAlt(n) ? <div className="org-alt">{nodeAlt(n)}</div> : null}
-          <div className="org-people">
-            {ppl.length === 0 ? (
-              <div className="org-empty">{m.org_no_people}</div>
-            ) : ppl.map((p) => (
-              <div key={p.id} className="org-person">
-                <span className="org-pn">{p.name}</span>
-                <span className="org-pp">{p.phone}</span>
-                <span className="org-pr">{roleLabels[p.role] || p.role}</span>
-              </div>
-            ))}
-          </div>
-          {edit ? <div className="org-editcue">✎ {m.org_edit_node}</div> : null}
-        </div>
-        {isOpen && kids.length ? <div className="org-kids">{kids.map((k) => renderNode(k, depth + 1))}</div> : null}
-      </div>
-    );
-  }
-
-  // ---- editor sheet actions ----
+  // ---- editor sheet ----
+  const [sheetNode, setSheetNode] = useState<Node | null>(null);
   const [busy, setBusy] = useState(false);
   const [addName, setAddName] = useState("");
   const [addPhone, setAddPhone] = useState("");
@@ -159,34 +75,81 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
       else if (d.error === "phone_taken") alert(m.org_phone_taken || "Phone already in use");
     } finally { setBusy(false); }
   }
-
   const sheetPeople = sheetNode ? peopleAt(sheetNode.id) : [];
 
   return (
-    <div className="org-wrap">
-      <div className="org-bar">
-        <div className="org-title">{m.org_title}</div>
-        <div className="org-tools">
-          <button onClick={() => zoomBy(0.89)} aria-label="zoom out">−</button>
-          <button onClick={() => zoomBy(1.12)} aria-label="zoom in">+</button>
-          <button onClick={reset} aria-label="reset">⟳</button>
-          {isAdmin ? <button className={`org-editbtn ${edit ? "on" : ""}`} onClick={() => { setEdit((e) => !e); setSheetNode(null); }}>{edit ? m.org_done : m.org_edit}</button> : null}
-        </div>
+    <main className="asm-main org2">
+      <div className="org2-bar">
+        <div className="org2-title">{m.org_title}</div>
+        {isAdmin ? <button className={`org-editbtn ${edit ? "on" : ""}`} onClick={() => setEdit((e) => !e)}>{edit ? m.org_done : m.org_edit}</button> : null}
       </div>
 
-      <div className="org-viewport" ref={vp} onWheel={onWheel}
-        onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
-        <div className="org-canvas" style={{ transform: `translate(${tx}px, ${ty}px) scale(${scale})` }}>
-          {roots.map((r) => renderNode(r, 0))}
-        </div>
+      <div className="org2-crumbs">
+        {roots.length > 1 && (
+          <button className={`org2-crumb ${current == null ? "on" : ""}`} onClick={() => setCurrentId(null)}>{m.org_root}</button>
+        )}
+        {path.map((n, i) => (
+          <span key={n.id} className="org2-crumbwrap">
+            {(i > 0 || roots.length > 1) ? <span className="org2-sep">›</span> : null}
+            <button className={`org2-crumb ${i === path.length - 1 ? "on" : ""}`} onClick={() => setCurrentId(n.id)}>{nodeLabel(n)}</button>
+          </span>
+        ))}
       </div>
 
-      {edit && sheetNode ? (
+      {current && (
+        <div className="org2-current">
+          <div className="org2-cur-head">
+            <div className="org2-cur-names">
+              <div className="org2-cur-name">{nodeLabel(current)}</div>
+              {nodeAlt(current) ? <div className="org2-cur-alt">{nodeAlt(current)}</div> : null}
+            </div>
+            <span className="org-level">{scope(current.level)}</span>
+          </div>
+          <div className="org2-people">
+            {peopleAt(current.id).length === 0 ? (
+              <div className="org-empty">{m.org_no_people}</div>
+            ) : peopleAt(current.id).map((p) => (
+              <div key={p.id} className="org2-person">
+                <span className="org2-pav">{p.name[0]}</span>
+                <span className="org2-pinfo"><b>{p.name}</b><small>{p.phone} · {roleLabels[p.role] || p.role}</small></span>
+              </div>
+            ))}
+          </div>
+          {isAdmin && edit ? <button className="asm-btn ghost org2-manage" onClick={() => openSheet(current)}>✎ {m.org_manage}</button> : null}
+        </div>
+      )}
+
+      <div className="org2-kids">
+        <div className="org2-kids-h">{m.org_subunits}{kids.length ? ` (${kids.length})` : ""}</div>
+        {kids.length === 0 ? (
+          <div className="org-empty" style={{ marginTop: 8 }}>{m.org_no_subunits}</div>
+        ) : (
+          <ul className="org2-list">
+            {kids.map((k) => {
+              const kp = peopleAt(k.id);
+              return (
+                <li key={k.id} className="org2-row" onClick={() => setCurrentId(k.id)}>
+                  <div className="org2-row-main">
+                    <div className="org2-row-name">{nodeLabel(k)}{nodeAlt(k) ? <span className="org2-row-alt"> · {nodeAlt(k)}</span> : null}</div>
+                    <div className="org2-row-sub">
+                      {kp.length ? kp.slice(0, 2).map((p) => p.name).join(", ") + (kp.length > 2 ? ` +${kp.length - 2}` : "") : m.org_no_people}
+                    </div>
+                  </div>
+                  {isAdmin && edit ? <button className="org2-rowedit" aria-label="edit" onClick={(e) => { e.stopPropagation(); openSheet(k); }}>✎</button> : null}
+                  <span className="org2-chev" aria-hidden>›</span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+
+      {sheetNode ? (
         <>
           <div className="asm-scrim open" onClick={() => setSheetNode(null)} />
           <div className="org-sheet">
             <div className="org-sheet-head">
-              <div><b>{nodeLabel(sheetNode)}</b><small>{m[`role_scope_${sheetNode.level}`] || sheetNode.level}</small></div>
+              <div><b>{nodeLabel(sheetNode)}</b><small>{scope(sheetNode.level)}</small></div>
               <button className="asm-sheet-close" onClick={() => setSheetNode(null)}>✕</button>
             </div>
             <div className="org-sheet-body">
@@ -212,7 +175,6 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
                   )}
                 </div>
               ))}
-
               <div className="org-add">
                 <div className="org-add-h">{m.org_add_person}</div>
                 <input className="asm-input" value={addName} onChange={(e) => setAddName(e.target.value)} placeholder={m.org_name} />
@@ -226,6 +188,6 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
           </div>
         </>
       ) : null}
-    </div>
+    </main>
   );
 }
