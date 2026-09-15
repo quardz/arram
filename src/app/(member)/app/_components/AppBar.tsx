@@ -35,6 +35,9 @@ export default function AppBar({ lang, title, backHref, backLabel, loggedIn, nav
             appName: tr(lang, "appName"),
             lang_ta: "தமிழ்",
             lang_en: "EN",
+            theme: tr(lang, "theme_label"),
+            theme_light: tr(lang, "theme_light"),
+            theme_dark: tr(lang, "theme_dark"),
           }}
         />
         {backHref ? (

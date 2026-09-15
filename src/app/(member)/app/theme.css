@@ -13,6 +13,7 @@
   --asm-maroon:#7b1e1e;
   --asm-ok:#2f8f5b;
   --asm-field:#fbf3e8;
+  --asm-tint:#fbe6d3;
   --asm-danger:#b3261e;
   --asm-radius:18px;
   --asm-shadow:0 8px 24px rgba(123,30,30,.10);
@@ -80,7 +81,7 @@ body{
   width:100%;background:var(--asm-field);border:1.5px solid var(--asm-line);border-radius:14px;
   padding:15px 16px;font-size:18px;color:var(--asm-ink);font-family:inherit;
 }
-.asm-input:focus{outline:none;border-color:var(--asm-brand);background:#fff}
+.asm-input:focus{outline:none;border-color:var(--asm-brand);background:var(--asm-card)}
 .asm-input::placeholder{color:#c3ac93}
 .asm-otp{letter-spacing:.5em;text-align:center;font-size:24px;font-weight:700}
 .asm-select{
@@ -99,7 +100,7 @@ body{
 }
 .asm-btn:disabled{opacity:.5;box-shadow:none}
 .asm-btn.gold{background:linear-gradient(120deg,#d99a2b,var(--asm-gold));box-shadow:0 8px 18px rgba(184,134,11,.24)}
-.asm-btn.ghost{background:#fff;color:var(--asm-brand);border:1.5px solid var(--asm-line);box-shadow:none}
+.asm-btn.ghost{background:var(--asm-card);color:var(--asm-brand);border:1.5px solid var(--asm-line);box-shadow:none}
 .asm-links{display:flex;justify-content:space-between;margin-top:16px;font-size:14px;font-weight:600}
 .asm-links button{background:none;border:none;color:var(--asm-brand);font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;padding:0}
 .asm-helper{margin-top:14px;background:#fff4e0;border:1px solid #f2d9a8;color:#9a6a12;border-radius:12px;padding:10px 12px;font-size:13px;text-align:center}
@@ -118,11 +119,11 @@ body{
 .asm-cards{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
 .asm-card{
   display:flex;gap:14px;align-items:center;text-decoration:none;color:inherit;
-  background:#fff;border:1px solid var(--asm-line);border-radius:var(--asm-radius);
-  padding:16px;box-shadow:0 4px 14px rgba(123,30,30,.05);
+  background:var(--asm-card);border:1px solid var(--asm-line);border-radius:var(--asm-radius);
+  padding:16px;box-shadow:var(--asm-shadow);
 }
 .asm-card:active{transform:scale(.99)}
-.asm-icn{width:46px;height:46px;border-radius:14px;background:#fbe6d3;display:grid;place-items:center;font-size:22px;flex:none}
+.asm-icn{width:46px;height:46px;border-radius:14px;background:var(--asm-tint);display:grid;place-items:center;font-size:22px;flex:none}
 .asm-cmeta{flex:1;min-width:0}
 .asm-cmeta .top{display:flex;align-items:center;gap:8px;justify-content:space-between}
 .asm-cmeta b{font-size:16px;font-weight:700;color:var(--asm-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -134,7 +135,7 @@ body{
 /* empty state */
 .asm-empty{
   text-align:center;color:var(--asm-muted);border:1.5px dashed #dcc6a8;border-radius:var(--asm-radius);
-  background:#fffaf2;padding:44px 20px;
+  background:var(--asm-card);padding:44px 20px;
 }
 .asm-empty .big{font-size:40px;margin-bottom:10px}
 
@@ -146,24 +147,24 @@ body{
 .asm-note b{color:var(--asm-brand)}
 .asm-people{list-style:none;margin:8px 0 0;padding:0}
 .asm-person{display:flex;align-items:center;gap:12px;padding:13px 2px;border-bottom:1px solid var(--asm-line)}
-.asm-avatar{width:42px;height:42px;border-radius:50%;background:#f0dcc6;display:grid;place-items:center;font-weight:700;color:var(--asm-brand);flex:none;font-size:17px}
+.asm-avatar{width:42px;height:42px;border-radius:50%;background:var(--asm-tint);display:grid;place-items:center;font-weight:700;color:var(--asm-brand);flex:none;font-size:17px}
 .asm-pnm{flex:1;min-width:0}
 .asm-pnm b{display:block;font-size:16px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .asm-pnm small{color:var(--asm-muted);font-size:12.5px}
 .asm-mark{
-  width:48px;height:48px;border-radius:50%;border:2px solid var(--asm-line);background:#fff;
+  width:48px;height:48px;border-radius:50%;border:2px solid var(--asm-line);background:var(--asm-card);
   display:grid;place-items:center;font-size:22px;color:#cbb69c;flex:none;cursor:pointer;font-family:inherit;
 }
 .asm-mark.on{background:var(--asm-ok);border-color:var(--asm-ok);color:#fff}
 
 /* quick add panel */
-.asm-quick{margin-top:18px;background:#fff;border:1.5px dashed #dcc6a8;border-radius:var(--asm-radius);padding:16px}
+.asm-quick{margin-top:18px;background:var(--asm-card);border:1.5px dashed #dcc6a8;border-radius:var(--asm-radius);padding:16px}
 .asm-quick .qh{font-size:14px;font-weight:700;color:var(--asm-maroon);margin:0 0 10px}
 .asm-quick .asm-input{margin-bottom:10px;font-size:16px;padding:13px 14px}
 .asm-quick .asm-btn{margin-top:4px;padding:13px;font-size:16px}
 
 /* generic card (no-access etc.) */
-.asm-panel{background:#fff;border:1px solid var(--asm-line);border-radius:var(--asm-radius);padding:24px;text-align:center;box-shadow:var(--asm-shadow);margin-top:24px}
+.asm-panel{background:var(--asm-card);border:1px solid var(--asm-line);border-radius:var(--asm-radius);padding:24px;text-align:center;box-shadow:var(--asm-shadow);margin-top:24px}
 .asm-panel h1{font-size:20px;font-weight:800;color:var(--asm-maroon);margin:0}
 .asm-panel p{color:var(--asm-muted);margin:10px 0 0;line-height:1.55}
 .asm-center{text-align:center;margin-top:22px}
@@ -215,7 +216,7 @@ body{
 .asm-sheet-label{font-size:13px;font-weight:700;color:var(--asm-muted);text-transform:uppercase;letter-spacing:.4px}
 .asm-lang-row{display:flex;gap:10px;margin-top:12px}
 .asm-lang-row button{
-  flex:1;padding:13px;border-radius:12px;border:1.5px solid var(--asm-line);background:#fff;
+  flex:1;padding:13px;border-radius:12px;border:1.5px solid var(--asm-line);background:var(--asm-card);
   font-family:inherit;font-weight:700;font-size:16px;color:var(--asm-ink);cursor:pointer;
 }
 .asm-lang-row button.on{background:var(--asm-brand);color:#fff;border-color:var(--asm-brand)}
@@ -242,9 +243,45 @@ body{
 
 /* activity list */
 .asm-log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
-.asm-logitem{background:#fff;border:1px solid var(--asm-line);border-radius:14px;padding:13px 15px;box-shadow:0 3px 10px rgba(123,30,30,.04)}
+.asm-logitem{background:var(--asm-card);border:1px solid var(--asm-line);border-radius:14px;padding:13px 15px;box-shadow:0 3px 10px rgba(123,30,30,.04)}
 .asm-logtop{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .asm-logaction{font-weight:700;color:var(--asm-maroon);font-size:15px}
 .asm-logtime{font-size:12px;color:var(--asm-muted);flex:none}
 .asm-logdetail{margin-top:5px;font-size:13.5px;color:var(--asm-ink);word-break:break-word}
 .asm-logtag{color:var(--asm-muted);font-size:12.5px}
+
+/* ---- Dark theme -------------------------------------------------------- */
+/* Applies when the OS prefers dark AND the user hasn't forced light,
+   or when data-theme="dark" is set explicitly (toggle in the drawer). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --asm-bg:#17110d;
+    --asm-card:#221a13;
+    --asm-ink:#f2e7d8;
+    --asm-muted:#b6a48f;
+    --asm-line:#3a2c20;
+    --asm-field:#2a2018;
+    --asm-tint:#3a2a1c;
+    --asm-shadow:0 8px 24px rgba(0,0,0,.5);
+  }
+  :root:not([data-theme="light"]) body {
+    background:
+      radial-gradient(1200px 460px at 50% -220px,#2c1d10 0%,transparent 60%),
+      var(--asm-bg);
+  }
+}
+:root[data-theme="dark"] {
+  --asm-bg:#17110d;
+  --asm-card:#221a13;
+  --asm-ink:#f2e7d8;
+  --asm-muted:#b6a48f;
+  --asm-line:#3a2c20;
+  --asm-field:#2a2018;
+  --asm-tint:#3a2a1c;
+  --asm-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+:root[data-theme="dark"] body {
+  background:
+    radial-gradient(1200px 460px at 50% -220px,#2c1d10 0%,transparent 60%),
+    var(--asm-bg);
+}

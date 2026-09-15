@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 type Labels = {
   menu: string; home: string; attendance: string; activity: string;
   impersonate: string; logout: string; appName: string; lang_ta: string; lang_en: string;
+  theme: string; theme_light: string; theme_dark: string;
 };
 
 export default function NavDrawer({
@@ -22,6 +23,19 @@ export default function NavDrawer({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
+  const [theme, setThemeState] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const attr = document.documentElement.getAttribute("data-theme");
+    if (attr === "dark" || attr === "light") setThemeState(attr);
+    else setThemeState(window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  }, []);
+
+  const setTheme = (t: "light" | "dark") => {
+    document.documentElement.setAttribute("data-theme", t);
+    document.cookie = `theme=${t}; path=/; max-age=31536000`;
+    setThemeState(t);
+  };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
@@ -80,6 +94,14 @@ export default function NavDrawer({
           <div className="asm-lang-row">
             <button className={lang === "ta" ? "on" : ""} onClick={() => setLang("ta")}>{labels.lang_ta}</button>
             <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>{labels.lang_en}</button>
+          </div>
+        </div>
+
+        <div className="asm-sheet-section">
+          <div className="asm-sheet-label">🎨 {labels.theme}</div>
+          <div className="asm-lang-row">
+            <button className={theme === "light" ? "on" : ""} onClick={() => setTheme("light")}>{labels.theme_light}</button>
+            <button className={theme === "dark" ? "on" : ""} onClick={() => setTheme("dark")}>{labels.theme_dark}</button>
           </div>
         </div>
 
