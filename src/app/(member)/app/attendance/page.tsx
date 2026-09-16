@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getLang, tr } from "@/lib/i18n";
-import { getCurrentMember, isStateAdmin } from "@/lib/member";
+import { getCurrentMember, isAdmin } from "@/lib/member";
 import { myDistrictIds } from "@/lib/attendance";
 import { getPayloadClient } from "@/lib/payload";
 import type { Event, GeoNode } from "@/payload-types";
@@ -29,7 +29,7 @@ export default async function AttendanceList() {
   const fmt = (d?: string | null) => (d ? new Date(d).toLocaleDateString(lang === "ta" ? "ta-IN" : "en-IN") : "");
   return (
     <>
-      <AppBar lang={lang} backHref="/app" backLabel={tr(lang, "appName")} loggedIn nav isAdmin={isStateAdmin(member)} userName={uname} userRole={urole} />
+      <AppBar lang={lang} backHref="/app" backLabel={tr(lang, "appName")} loggedIn nav isAdmin={isAdmin(member)} userName={uname} userRole={urole} />
       <main className="asm-main">
         <div className="asm-listhdr">
           <h1>{tr(lang, "att_title")}</h1>

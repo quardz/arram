@@ -64,6 +64,15 @@ export function isStateAdmin(member: CurrentMember): boolean {
   return member.assignments.some((a) => a.role === "state_admin");
 }
 
+/** state_admin OR super_admin — the "admin or above" gate. */
+export function isAdmin(member: CurrentMember): boolean {
+  return member.assignments.some((a) => a.role === "state_admin" || (a.role as string) === "super_admin");
+}
+
+export function isSuperAdmin(member: CurrentMember): boolean {
+  return member.assignments.some((a) => (a.role as string) === "super_admin");
+}
+
 /** Load any member by person id (person + active assignments). */
 export async function loadMemberById(personId: number): Promise<CurrentMember | null> {
   const payload = await getPayloadClient();

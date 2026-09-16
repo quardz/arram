@@ -3,6 +3,7 @@ import * as migration_20260912_184057_add_alt_names from './20260912_184057_add_
 import * as migration_20260913_173201_add_geo_tables from './20260913_173201_add_geo_tables';
 import * as migration_20260915_073609_add_event_session_fields from './20260915_073609_add_event_session_fields';
 import * as migration_20260915_150000_add_audit_log from './20260915_150000_add_audit_log';
+import * as migration_20260916_090000_super_admin_and_profile from './20260916_090000_super_admin_and_profile';
 
 export const migrations = [
   {
@@ -29,5 +30,10 @@ export const migrations = [
     up: migration_20260915_150000_add_audit_log.up,
     down: migration_20260915_150000_add_audit_log.down,
     name: '20260915_150000_add_audit_log',
+  },
+  {
+    up: migration_20260916_090000_super_admin_and_profile.up,
+    down: migration_20260916_090000_super_admin_and_profile.down,
+    name: '20260916_090000_super_admin_and_profile',
   },
 ];

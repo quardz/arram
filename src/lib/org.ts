@@ -11,7 +11,7 @@ export const LEVEL_ROLE: Record<string, string> = {
 };
 
 export const ROLE_VALUES = [
-  "state_admin", "regional_organiser", "zonal_organiser", "district_organiser",
+  "super_admin", "state_admin", "regional_organiser", "zonal_organiser", "district_organiser",
   "union_coordinator", "panchayat_coordinator", "temple_coordinator",
 ];
 

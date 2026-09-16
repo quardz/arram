@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 type Labels = {
-  menu: string; home: string; attendance: string; activity: string;
-  org: string; people: string; impersonate: string; logout: string; appName: string; lang_ta: string; lang_en: string;
+  menu: string; home: string; attendance: string; org: string; people: string;
+  profile: string; activity: string; impersonate: string; logout: string;
+  appName: string; lang_ta: string; lang_en: string;
   theme: string; theme_light: string; theme_dark: string;
 };
 
@@ -31,12 +32,6 @@ export default function NavDrawer({
     else setThemeState(window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
   }, []);
 
-  const setTheme = (t: "light" | "dark") => {
-    document.documentElement.setAttribute("data-theme", t);
-    document.cookie = `theme=${t}; path=/; max-age=31536000`;
-    setThemeState(t);
-  };
-
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
     document.addEventListener("keydown", onKey);
@@ -53,7 +48,11 @@ export default function NavDrawer({
     setOpen(false);
     router.refresh();
   };
-
+  const setTheme = (t: "light" | "dark") => {
+    document.documentElement.setAttribute("data-theme", t);
+    document.cookie = `theme=${t}; path=/; max-age=31536000`;
+    setThemeState(t);
+  };
   async function logout() {
     await fetch("/api/member/logout", { method: "POST" }).catch(() => {});
     window.location.href = "/app/login";
@@ -74,10 +73,10 @@ export default function NavDrawer({
         </div>
 
         {loggedIn && userName && (
-          <div className="asm-sheet-user">
+          <Link href="/app/profile" className="asm-sheet-user" onClick={close}>
             <div className="nm">{userName}</div>
             {userRole && <div className="role">{userRole}</div>}
-          </div>
+          </Link>
         )}
 
         {loggedIn && (
@@ -87,31 +86,32 @@ export default function NavDrawer({
             <Link href="/app/people" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>🧑‍🤝‍🧑</span>{labels.people}</Link>
             <Link href="/app/org" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>🗂️</span>{labels.org}</Link>
             <Link href="/app/activity" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>🗒️</span>{labels.activity}</Link>
+            <Link href="/app/profile" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>👤</span>{labels.profile}</Link>
             {isAdmin && <Link href="/app/impersonate" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>🧑‍🤝‍🧑</span>{labels.impersonate}</Link>}
           </nav>
         )}
 
-        <div className="asm-sheet-section">
-          <div className="asm-sheet-label">🌐 {labels.menu}</div>
-          <div className="asm-lang-row">
-            <button className={lang === "ta" ? "on" : ""} onClick={() => setLang("ta")}>{labels.lang_ta}</button>
-            <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>{labels.lang_en}</button>
+        <div className="asm-sheet-bottom">
+          <div className="asm-sheet-section">
+            <div className="asm-sheet-label">🌐 {labels.menu}</div>
+            <div className="asm-lang-row">
+              <button className={lang === "ta" ? "on" : ""} onClick={() => setLang("ta")}>{labels.lang_ta}</button>
+              <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>{labels.lang_en}</button>
+            </div>
           </div>
+          <div className="asm-sheet-section">
+            <div className="asm-sheet-label">🎨 {labels.theme}</div>
+            <div className="asm-lang-row">
+              <button className={theme === "light" ? "on" : ""} onClick={() => setTheme("light")}>{labels.theme_light}</button>
+              <button className={theme === "dark" ? "on" : ""} onClick={() => setTheme("dark")}>{labels.theme_dark}</button>
+            </div>
+          </div>
+          {loggedIn && (
+            <div className="asm-sheet-foot">
+              <button className="asm-btn ghost" onClick={logout}>{labels.logout}</button>
+            </div>
+          )}
         </div>
-
-        <div className="asm-sheet-section">
-          <div className="asm-sheet-label">🎨 {labels.theme}</div>
-          <div className="asm-lang-row">
-            <button className={theme === "light" ? "on" : ""} onClick={() => setTheme("light")}>{labels.theme_light}</button>
-            <button className={theme === "dark" ? "on" : ""} onClick={() => setTheme("dark")}>{labels.theme_dark}</button>
-          </div>
-        </div>
-
-        {loggedIn && (
-          <div className="asm-sheet-foot">
-            <button className="asm-btn ghost" onClick={logout}>{labels.logout}</button>
-          </div>
-        )}
       </aside>
     </>
   );

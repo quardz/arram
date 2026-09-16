@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getLang, messages, tr } from "@/lib/i18n";
-import { getCurrentMember, isStateAdmin } from "@/lib/member";
+import { getCurrentMember, isAdmin } from "@/lib/member";
 import { getAccessibleSession } from "@/lib/attendance";
 import type { GeoNode } from "@/payload-types";
 import AppBar from "../../_components/AppBar";
@@ -24,7 +24,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   const fmt = (d?: string | null) => (d ? new Date(d).toLocaleDateString(lang === "ta" ? "ta-IN" : "en-IN") : "");
   return (
     <>
-      <AppBar lang={lang} backHref="/app/attendance" backLabel={tr(lang, "att_title")} loggedIn nav isAdmin={isStateAdmin(member)} userName={uname} userRole={urole} />
+      <AppBar lang={lang} backHref="/app/attendance" backLabel={tr(lang, "att_title")} loggedIn nav isAdmin={isAdmin(member)} userName={uname} userRole={urole} />
       <main className="asm-main">
         <div className="asm-hero">
           <h1>{ev.name}</h1>

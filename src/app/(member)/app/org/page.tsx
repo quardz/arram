@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getLang, messages, tr } from "@/lib/i18n";
-import { getCurrentMember, isStateAdmin } from "@/lib/member";
+import { getCurrentMember, isAdmin } from "@/lib/member";
 import { requireAdminActor } from "@/lib/impersonate";
 import { getPayloadClient } from "@/lib/payload";
 import { ROLE_VALUES } from "@/lib/org";
@@ -38,6 +38,7 @@ export default async function OrgPage() {
       name: p ? (p.name && p.name !== "multiple" ? p.name : p.phone) : "",
       phone: p ? p.phone : "",
       role: a.role as string,
+      fullTime: !!(p as unknown as { fullTime?: boolean })?.fullTime,
     };
   }).filter((a) => a.nodeId);
 
@@ -46,7 +47,7 @@ export default async function OrgPage() {
 
   return (
     <>
-      <AppBar lang={lang} backHref="/app" backLabel={tr(lang, "appName")} loggedIn nav isAdmin={isStateAdmin(member)} />
+      <AppBar lang={lang} backHref="/app" backLabel={tr(lang, "appName")} loggedIn nav isAdmin={isAdmin(member)} />
       <OrgChart nodes={nodes} assignments={assignments} isAdmin={admin} lang={lang} roleLabels={roleLabels} m={messages(lang)} />
     </>
   );

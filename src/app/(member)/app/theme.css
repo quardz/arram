@@ -186,9 +186,9 @@ body{
 .asm-scrim.open{opacity:1;pointer-events:auto}
 
 .asm-sheet{
-  position:fixed;top:0;left:0;height:100dvh;width:90vw;max-width:400px;z-index:50;
+  position:fixed;top:0;right:0;height:100dvh;width:90vw;max-width:400px;z-index:50;
   background:var(--asm-card);display:flex;flex-direction:column;overflow-y:auto;
-  transform:translateX(-100%);transition:transform .28s ease;
+  transform:translateX(100%);transition:transform .28s ease;
   box-shadow:0 0 44px rgba(0,0,0,.32);
 }
 .asm-sheet.open{transform:translateX(0)}
@@ -200,7 +200,9 @@ body{
 .asm-sheet-head .asm-brand{color:#fff;font-size:17px}
 .asm-sheet-close{background:rgba(255,255,255,.16);border:none;color:#fff;width:38px;height:38px;border-radius:10px;font-size:18px;cursor:pointer;flex:none}
 
-.asm-sheet-user{padding:18px;border-bottom:1px solid var(--asm-line)}
+.asm-sheet-bottom{margin-top:auto}
+.asm-sheet-user{display:block;text-decoration:none;color:inherit;padding:18px;border-bottom:1px solid var(--asm-line)}
+.asm-sheet-user:active{background:var(--asm-field)}
 .asm-sheet-user .nm{font-size:19px;font-weight:800;color:var(--asm-maroon)}
 .asm-sheet-user .role{font-size:13.5px;color:var(--asm-muted);margin-top:4px}
 
@@ -405,3 +407,10 @@ body{
   .print-head { break-inside: avoid; }
   .print-table tr { break-inside: avoid; }
 }
+
+/* ---- Profile form ------------------------------------------------------ */
+.prof-hint{font-weight:500;color:var(--asm-muted);font-size:12px}
+.prof-social-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.prof-social-row .asm-input:first-child{flex:0 0 38%}
+.prof-social-row .asm-input:nth-child(2){flex:1;min-width:0}
+.prof-rm{flex:none;width:40px;height:44px;border-radius:12px;border:1.5px solid var(--asm-line);background:var(--asm-card);color:var(--asm-danger);font-size:15px;cursor:pointer;font-family:inherit}

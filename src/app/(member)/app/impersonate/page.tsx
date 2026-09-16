@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getLang, messages, tr } from "@/lib/i18n";
 import { requireAdminActor } from "@/lib/impersonate";
-import { getCurrentMember, isStateAdmin } from "@/lib/member";
+import { getCurrentMember, isAdmin } from "@/lib/member";
 import AppBar from "../_components/AppBar";
 import ImpersonatePicker from "../_components/ImpersonatePicker";
 
@@ -20,7 +20,7 @@ export default async function ImpersonatePage() {
   const roles = ROLE_VALUES.map((v) => ({ value: v, label: tr(lang, `role_${v}`) }));
   return (
     <>
-      <AppBar lang={lang} backHref="/app" backLabel={tr(lang, "appName")} loggedIn nav isAdmin={member ? isStateAdmin(member) : true} />
+      <AppBar lang={lang} backHref="/app" backLabel={tr(lang, "appName")} loggedIn nav isAdmin={member ? isAdmin(member) : true} />
       <main className="asm-main">
         <div className="asm-hero">
           <h1>{tr(lang, "imp_title")}</h1>

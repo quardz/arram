@@ -4,7 +4,7 @@ import { ROLE_VALUES, defaultRoleForLevel } from "@/lib/org";
 import ContactButtons from "./ContactButtons";
 
 type Node = { id: number; name: string; nameTamil: string | null; level: string; parentId: number | null };
-type Asg = { id: number; nodeId: number; personId: number; name: string; phone: string; role: string };
+type Asg = { id: number; nodeId: number; personId: number; name: string; phone: string; role: string; fullTime?: boolean };
 type Props = {
   nodes: Node[]; assignments: Asg[]; isAdmin: boolean;
   lang: "ta" | "en"; roleLabels: Record<string, string>; m: Record<string, string>;
@@ -57,6 +57,7 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
   const [editId, setEditId] = useState<number | null>(null);
   const [eName, setEName] = useState("");
   const [ePhone, setEPhone] = useState("");
+  const [eFullTime, setEFullTime] = useState(false);
 
   function openSheet(n: Node) { setSheetNode(n); setAddName(""); setAddPhone(""); setAddRole(defaultRoleForLevel(n.level)); setEditId(null); }
 
@@ -78,15 +79,15 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
       if (r.ok && d.ok) setAsg((xs) => xs.filter((x) => x.id !== a.id));
     } finally { setBusy(false); }
   }
-  function startEdit(a: Asg) { setEditId(a.id); setEName(a.name); setEPhone(a.phone); }
+  function startEdit(a: Asg) { setEditId(a.id); setEName(a.name); setEPhone(a.phone); setEFullTime(!!a.fullTime); }
   async function doSaveEdit(a: Asg) {
     if (!eName.trim() || !/^[6-9]\d{9}$/.test(ePhone)) return;
     setBusy(true);
     try {
       const r = await fetch("/api/member/org/person", { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ personId: a.personId, name: eName, phone: ePhone }) });
+        body: JSON.stringify({ personId: a.personId, name: eName, phone: ePhone, fullTime: eFullTime }) });
       const d = await r.json();
-      if (r.ok && d.ok) { setAsg((xs) => xs.map((x) => x.personId === a.personId ? { ...x, name: eName, phone: ePhone } : x)); setEditId(null); }
+      if (r.ok && d.ok) { setAsg((xs) => xs.map((x) => x.personId === a.personId ? { ...x, name: eName, phone: ePhone, fullTime: eFullTime } : x)); setEditId(null); }
       else if (d.error === "phone_taken") alert(m.org_phone_taken || "Phone already in use");
     } finally { setBusy(false); }
   }
@@ -175,6 +176,10 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
                     <div className="org-eform">
                       <input className="asm-input" value={eName} onChange={(e) => setEName(e.target.value)} placeholder={m.org_name} />
                       <input className="asm-input" value={ePhone} inputMode="numeric" onChange={(e) => setEPhone(e.target.value.replace(/\D/g, "").slice(0, 10))} placeholder={m.org_phone} />
+                      <div className="asm-seg" style={{ maxWidth: 240, marginBottom: 8 }}>
+                        <button className={eFullTime ? "on" : ""} onClick={() => setEFullTime(true)}>{m.prof_fulltime}: {m.yes}</button>
+                        <button className={!eFullTime ? "on" : ""} onClick={() => setEFullTime(false)}>{m.no}</button>
+                      </div>
                       <div className="org-erow-btns">
                         <button className="asm-btn" disabled={busy} onClick={() => doSaveEdit(a)}>{m.org_save}</button>
                         <button className="asm-btn ghost" onClick={() => setEditId(null)}>{m.org_cancel}</button>

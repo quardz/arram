@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/session";
-import { loadMemberById, isStateAdmin, type CurrentMember } from "@/lib/member";
+import { loadMemberById, isAdmin, type CurrentMember } from "@/lib/member";
 
 /** The REAL member behind the session (the admin, even while impersonating). */
 export async function realActor(): Promise<CurrentMember | null> {
@@ -11,5 +11,5 @@ export async function realActor(): Promise<CurrentMember | null> {
 /** Real actor if they are a state_admin, else null. Impersonation gate. */
 export async function requireAdminActor(): Promise<CurrentMember | null> {
   const a = await realActor();
-  return a && isStateAdmin(a) ? a : null;
+  return a && isAdmin(a) ? a : null;
 }

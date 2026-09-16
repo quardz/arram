@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getLang, messages, tr } from "@/lib/i18n";
-import { getCurrentMember, isStateAdmin } from "@/lib/member";
+import { getCurrentMember, isAdmin } from "@/lib/member";
 import { myDistrictIds } from "@/lib/attendance";
 import { getPayloadClient } from "@/lib/payload";
 import type { GeoNode } from "@/payload-types";
@@ -26,7 +26,7 @@ export default async function NewLocal() {
   const districts = (nodes.docs as GeoNode[]).map((n) => ({ id: n.id as number, name: n.name }));
   return (
     <>
-      <AppBar lang={lang} backHref="/app/attendance" backLabel={tr(lang, "att_title")} loggedIn nav isAdmin={isStateAdmin(member)} userName={uname} userRole={urole} />
+      <AppBar lang={lang} backHref="/app/attendance" backLabel={tr(lang, "att_title")} loggedIn nav isAdmin={isAdmin(member)} userName={uname} userRole={urole} />
       <main className="asm-main">
         <div className="asm-hero"><h1>{tr(lang, "att_new_local")}</h1></div>
         <NewLocalForm districts={districts} m={messages(lang)} />

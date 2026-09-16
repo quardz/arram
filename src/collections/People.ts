@@ -75,6 +75,10 @@ export const People: CollectionConfig = {
     },
     { name: "geoNode", type: "relationship", relationTo: "geoNodes", index: true },
     { name: "otpVerified", type: "checkbox", defaultValue: false, index: true },
+    { name: "email", type: "email" },
+    { name: "secondaryPhone", type: "text" },
+    { name: "fullTime", type: "checkbox", defaultValue: false, admin: { description: "Full-time role — editable by state_admin/super_admin only" } },
+    { name: "socialLinks", type: "json", admin: { description: "[{platform,url}] — edited via the member profile page" } },
     {
       name: "referralCode",
       type: "text",

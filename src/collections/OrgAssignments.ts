@@ -29,6 +29,7 @@ export const OrgAssignments: CollectionConfig = {
       type: "select",
       required: true,
       options: [
+        { label: "Super admin", value: "super_admin" },
         { label: "State admin", value: "state_admin" },
         { label: "Regional organiser", value: "regional_organiser" },
         { label: "Zonal organiser", value: "zonal_organiser" },

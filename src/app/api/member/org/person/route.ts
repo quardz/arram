@@ -18,6 +18,8 @@ export async function POST(req: Request) {
   // phone must stay unique
   const clash = await payload.find({ collection: "people", overrideAccess: true, limit: 1, where: { and: [{ phone: { equals: phone } }, { id: { not_equals: personId } }] } });
   if (clash.docs[0]) return NextResponse.json({ ok: false, error: "phone_taken" }, { status: 409 });
-  const p = (await payload.update({ collection: "people", id: personId, overrideAccess: true, data: { name, phone } })) as Person;
+  const data: Record<string, unknown> = { name, phone };
+  if (typeof body?.fullTime === "boolean") data.fullTime = body.fullTime;
+  const p = (await (payload as unknown as { update: (a: unknown) => Promise<unknown> }).update({ collection: "people", id: personId, overrideAccess: true, data })) as Person;
   return NextResponse.json({ ok: true, person: { personId: p.id, name: p.name, phone: p.phone } });
 }
