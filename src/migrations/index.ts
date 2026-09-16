@@ -7,6 +7,7 @@ import * as migration_20260916_090000_super_admin_and_profile from './20260916_0
 import * as migration_20260916_100000_otp_log_fields from './20260916_100000_otp_log_fields';
 import * as migration_20260916_110000_campaign_windows from './20260916_110000_campaign_windows';
 import * as migration_20260916_120000_people_source_join_form from './20260916_120000_people_source_join_form';
+import * as migration_20260916_130000_people_source_member_added from './20260916_130000_people_source_member_added';
 
 export const migrations = [
   {
@@ -53,5 +54,10 @@ export const migrations = [
     up: migration_20260916_120000_people_source_join_form.up,
     down: migration_20260916_120000_people_source_join_form.down,
     name: '20260916_120000_people_source_join_form',
+  },
+  {
+    up: migration_20260916_130000_people_source_member_added.up,
+    down: migration_20260916_130000_people_source_member_added.down,
+    name: '20260916_130000_people_source_member_added',
   },
 ];

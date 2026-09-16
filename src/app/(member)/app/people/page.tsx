@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getLang, messages, tr } from "@/lib/i18n";
 import { getCurrentMember, isAdmin } from "@/lib/member";
@@ -15,7 +16,10 @@ export default async function PeoplePage() {
     <>
       <AppBar lang={lang} backHref="/app" backLabel={tr(lang, "appName")} loggedIn nav isAdmin={isAdmin(member)} />
       <main className="asm-main">
-        <div className="asm-hero"><h1>{tr(lang, "ppl_title")}</h1></div>
+        <div className="asm-listhdr">
+          <h1>{tr(lang, "ppl_title")}</h1>
+          <Link href="/app/people/bulk" className="asm-add">＋ {tr(lang, "ppl_bulk_add")}</Link>
+        </div>
         <PeopleDirectory m={messages(lang)} />
       </main>
     </>

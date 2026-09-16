@@ -81,13 +81,13 @@ export default async function AttendanceList() {
       <main className="asm-main">
         <div className="asm-listhdr">
           <h1>{tr(lang, "att_title")}</h1>
-          {admin && (
-            <span style={{ display: "flex", gap: 8 }}>
-              <Link href="/app/attendance/campaign/new" className="asm-add">＋ {tr(lang, "att_new_campaign")}</Link>
-              <Link href="/app/attendance/new" className="asm-add ghost">＋ {tr(lang, "att_new_local")}</Link>
-            </span>
-          )}
         </div>
+        {admin && (
+          <div className="asm-actionrow">
+            <Link href="/app/attendance/campaign/new" className="asm-add wide">＋ {tr(lang, "att_new_campaign")}</Link>
+            <Link href="/app/attendance/new" className="asm-add ghost wide">＋ {tr(lang, "att_new_local")}</Link>
+          </div>
+        )}
 
         {!hasAny ? (
           <div className="asm-empty"><div className="big">🛕</div>{tr(lang, "att_no_campaigns")}</div>

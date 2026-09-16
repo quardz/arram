@@ -93,6 +93,7 @@ export const People: CollectionConfig = {
       options: [
         { label: "Self signup", value: "signup" },
         { label: "Join form (website)", value: "join-form" },
+        { label: "Added by member (bulk)", value: "member-added" },
         { label: "Excel import", value: "excel-import" },
         { label: "Added by org", value: "org-added" },
         { label: "Event", value: "event" },
