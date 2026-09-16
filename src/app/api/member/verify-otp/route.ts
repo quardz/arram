@@ -20,7 +20,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  if (!/^[6-9]\d{9}$/.test(phone) || !/^\d{6}$/.test(code))
+  // Accept any configured OTP length (4..8 digits); the actual value is checked
+  // against the stored hash, so length here is just an input sanity guard.
+  if (!/^[6-9]\d{9}$/.test(phone) || !/^\d{4,8}$/.test(code))
     return NextResponse.json({ ok: false, error: "bad_input" }, { status: 400 });
 
   const v = await verifyOtp(phone, code);

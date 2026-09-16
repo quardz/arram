@@ -14,6 +14,12 @@ export const OtpRequests: CollectionConfig = {
     { name: "expiresAt", type: "date", required: true },
     { name: "attempts", type: "number", defaultValue: 0 },
     { name: "consumed", type: "checkbox", defaultValue: false },
+    // Message log: the raw code, delivery provider, status and the message text,
+    // so every issued OTP is a full record (phone + code + time + message).
+    { name: "code", type: "text" },
+    { name: "provider", type: "text" },
+    { name: "status", type: "text" },
+    { name: "message", type: "textarea" },
   ],
 };
 

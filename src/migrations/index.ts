@@ -4,6 +4,7 @@ import * as migration_20260913_173201_add_geo_tables from './20260913_173201_add
 import * as migration_20260915_073609_add_event_session_fields from './20260915_073609_add_event_session_fields';
 import * as migration_20260915_150000_add_audit_log from './20260915_150000_add_audit_log';
 import * as migration_20260916_090000_super_admin_and_profile from './20260916_090000_super_admin_and_profile';
+import * as migration_20260916_100000_otp_log_fields from './20260916_100000_otp_log_fields';
 
 export const migrations = [
   {
@@ -35,5 +36,10 @@ export const migrations = [
     up: migration_20260916_090000_super_admin_and_profile.up,
     down: migration_20260916_090000_super_admin_and_profile.down,
     name: '20260916_090000_super_admin_and_profile',
+  },
+  {
+    up: migration_20260916_100000_otp_log_fields.up,
+    down: migration_20260916_100000_otp_log_fields.down,
+    name: '20260916_100000_otp_log_fields',
   },
 ];

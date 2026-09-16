@@ -21,6 +21,15 @@ export const env = {
   // Fast2SMS "OTP" route (DLT-exempt) vs "q"/"v3" transactional route.
   FAST2SMS_ROUTE: str(process.env.FAST2SMS_ROUTE) || "otp",
 
+  // OTP behaviour — all optional with safe defaults.
+  // Number of digits in the code (default 6). Clamped to 4..8 at use.
+  OTP_LENGTH: Number(str(process.env.OTP_LENGTH)) || 6,
+  // How long a code stays valid, in seconds (default 900 = 15 min).
+  OTP_TTL_SECONDS: Number(str(process.env.OTP_TTL_SECONDS)) || 900,
+  // Delivery provider: "console" (default) logs the OTP to the server console;
+  // "fast2sms" sends a real SMS via Fast2SMS (needs FAST2SMS_API_KEY).
+  SMS_PROVIDER: (str(process.env.SMS_PROVIDER) || "console").toLowerCase(),
+
   R2_ENDPOINT: str(process.env.R2_ENDPOINT), // https://<accountid>.r2.cloudflarestorage.com
   R2_BUCKET: str(process.env.R2_BUCKET),
   R2_ACCESS_KEY_ID: str(process.env.R2_ACCESS_KEY_ID),

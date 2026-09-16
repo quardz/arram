@@ -28,7 +28,7 @@ export default function LoginForm({ m }: { m: Msgs }) {
 
   async function verify() {
     setError("");
-    if (!/^\d{4,6}$/.test(code)) { setError(m.err_generic); return; }
+    if (!/^\d{4,8}$/.test(code)) { setError(m.err_generic); return; }
     setBusy(true);
     try {
       const r = await fetch("/api/member/verify-otp", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone, code }) });
@@ -61,7 +61,7 @@ export default function LoginForm({ m }: { m: Msgs }) {
       <label className="asm-fld">{m.otp_label}</label>
       <input
         className="asm-input asm-otp" inputMode="numeric" autoFocus value={code}
-        onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+        onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 8))}
         placeholder={m.otp_ph}
       />
       <button className="asm-btn" onClick={verify} disabled={busy}>
