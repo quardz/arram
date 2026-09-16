@@ -24,7 +24,8 @@ export default function AppBar({ lang, title, backHref, backLabel, loggedIn, nav
         </Link>
       ) : (
         <div className="asm-brand">
-          <span className="asm-om" aria-hidden>ॐ</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-square.png" alt="" className="asm-logo" width={30} height={30} />
           <span className="t">{title}</span>
         </div>
       )}

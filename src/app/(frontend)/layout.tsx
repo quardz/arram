@@ -16,7 +16,8 @@ export const metadata: Metadata = {
     description: site.tagline,
     type: "website",
   },
-  icons: { icon: "/logo.png" },
+  // Favicon comes from the square seal (src/app/icon.png + apple-icon.png),
+  // applied domain-wide via Next's icon file convention.
 };
 
 export default function RootLayout({

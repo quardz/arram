@@ -50,6 +50,7 @@ body{
 .asm-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;min-width:0}
 .asm-brand .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .asm-om{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center;font-size:16px;flex:none}
+.asm-logo{width:30px;height:30px;border-radius:50%;object-fit:cover;background:#fff;flex:none}
 .asm-back{display:inline-flex;align-items:center;gap:8px;color:#fff;text-decoration:none;font-weight:700;font-size:16px}
 .asm-back .arw{font-size:22px;line-height:1}
 
@@ -139,13 +140,12 @@ body{
 .asm-actionrow{display:flex;gap:10px;margin:2px 0 16px}
 .asm-add.wide{flex:1;justify-content:center;padding:12px 15px}
 
-/* bulk add rows */
-.asm-bulkrow{display:flex;gap:6px;margin-bottom:8px;align-items:center}
-.asm-bulkrow .asm-input{margin:0;min-width:0;padding:9px 10px;font-size:13px}
-.asm-bulkrow .asm-input:nth-child(1){flex:1.3}
-.asm-bulkrow .asm-input:nth-child(2){flex:1.1}
-.asm-bulkrow .asm-input:nth-child(3){flex:1}
-.asm-rowdel{flex:none;width:30px;height:30px;border:none;background:var(--asm-tint);color:var(--asm-muted);border-radius:8px;font-size:18px;line-height:1}
+/* bulk add — one card per person, fields stacked (mobile-first) */
+.asm-bulkcard{background:var(--asm-card);border:1px solid var(--asm-line);border-radius:14px;padding:12px 12px 4px;margin-bottom:12px;box-shadow:var(--asm-shadow)}
+.asm-bulkcard-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.asm-bulkcard-hd .n{font-size:12px;font-weight:700;color:var(--asm-muted);text-transform:uppercase;letter-spacing:.04em}
+.asm-bulkcard .asm-input{width:100%;margin:0 0 8px}
+.asm-rowdel{border:none;background:transparent;color:#a35;font-size:13px;font-weight:600;padding:2px 4px}
 
 /* campaign banners */
 .asm-banner{border-radius:12px;padding:11px 14px;font-size:13.5px;font-weight:600;margin:0 0 14px;line-height:1.5}

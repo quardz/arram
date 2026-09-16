@@ -208,6 +208,8 @@ const en: Dict = {
   bulk_added: "Added",
   bulk_exists: "Already there",
   bulk_invalid: "Invalid",
+  bulk_person: "Person",
+  bulk_remove: "Remove",
 };
 const ta: Dict = {
   appName: "ASM உறுப்பினர்",
@@ -408,6 +410,8 @@ const ta: Dict = {
   bulk_added: "சேர்க்கப்பட்டது",
   bulk_exists: "ஏற்கனவே உள்ளது",
   bulk_invalid: "தவறானது",
+  bulk_person: "நபர்",
+  bulk_remove: "நீக்கு",
 };
 const dict: Record<Lang, Dict> = { en, ta };
 

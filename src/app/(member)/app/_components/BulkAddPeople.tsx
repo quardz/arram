@@ -68,13 +68,18 @@ export default function BulkAddPeople({ m }: { m: Record<string, string> }) {
     <div>
       <p className="asm-note">{m.bulk_hint}</p>
       {rows.map((r, i) => (
-        <div key={i} className="asm-bulkrow">
+        <div key={i} className="asm-bulkcard">
+          <div className="asm-bulkcard-hd">
+            <span className="n">{m.bulk_person} {i + 1}</span>
+            {rows.length > 1 && (
+              <button type="button" className="asm-rowdel" onClick={() => removeRow(i)}>× {m.bulk_remove}</button>
+            )}
+          </div>
           <input className="asm-input" value={r.name} onChange={(e) => update(i, "name", e.target.value)} placeholder={m.bulk_name_ph} />
           <input className="asm-input" inputMode="numeric" value={r.phone}
             onChange={(e) => update(i, "phone", e.target.value.replace(/\D/g, "").slice(0, 10))} placeholder={m.bulk_phone_ph} />
           <input className="asm-input" inputMode="numeric" value={r.pincode}
             onChange={(e) => update(i, "pincode", e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder={m.bulk_pincode_ph} />
-          <button type="button" className="asm-rowdel" onClick={() => removeRow(i)} aria-label="remove">×</button>
         </div>
       ))}
       <button type="button" className="asm-btn ghost" onClick={addRow}>＋ {m.bulk_add_row}</button>
