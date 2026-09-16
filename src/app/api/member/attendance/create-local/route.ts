@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCurrentMember } from "@/lib/member";
+import { getCurrentMember, isAdmin } from "@/lib/member";
 import { myDistrictIds } from "@/lib/attendance";
 import { getPayloadClient } from "@/lib/payload";
 import { audit, auditActor } from "@/lib/audit";
@@ -7,6 +7,7 @@ import { audit, auditActor } from "@/lib/audit";
 export async function POST(req: Request) {
   const member = await getCurrentMember();
   if (!member?.assignments.length) return NextResponse.json({ ok: false }, { status: 403 });
+  if (!isAdmin(member)) return NextResponse.json({ ok: false, error: "forbidden" }, { status: 403 });
   const body = await req.json().catch(() => ({}));
   const title = String(body?.title || "").trim();
   const districtId = Number(body?.districtId);

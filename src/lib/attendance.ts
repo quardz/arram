@@ -1,7 +1,7 @@
 import { getPayloadClient } from "@/lib/payload";
-import { districtIdsUnder } from "@/lib/campaign";
-import type { CurrentMember } from "@/lib/member";
-import type { Event, GeoNode, Person } from "@/payload-types";
+import { districtIdsUnder, presentPersonIdsInCampaign } from "@/lib/campaign";
+import { isAdmin, type CurrentMember } from "@/lib/member";
+import type { Event, Person } from "@/payload-types";
 
 const rel = (v: unknown): number | undefined =>
   v == null ? undefined : typeof v === "object" ? (v as { id?: number }).id : (v as number);
@@ -18,13 +18,27 @@ export async function myDistrictIds(member: CurrentMember): Promise<number[]> {
   return [...set];
 }
 
-/** Load a session the member is allowed to fill, else null. */
+/** The exact org node ids this member holds (their assignment nodes). */
+export function myNodeIds(member: CurrentMember): number[] {
+  return member.assignments.map((a) => rel(a.geoNode)).filter((x): x is number => x != null);
+}
+
+/** Load a session the member is allowed to fill, else null.
+ *  - local: creator, or the district is within the member's assignment subtree.
+ *  - campaign_session: an admin, or the member holds the exact node the session
+ *    is for (the office-holder at the campaign's taker level). */
 export async function getAccessibleSession(member: CurrentMember, eventId: number) {
   const payload = await getPayloadClient();
   const ev = (await payload
     .findByID({ collection: "events", id: eventId, overrideAccess: true, depth: 1 })
     .catch(() => null)) as (Event | null);
   if (!ev) return null;
+  if ((ev.kind as string) === "campaign_session") {
+    if (isAdmin(member)) return ev;
+    const nodeId = rel(ev.geoNode);
+    return nodeId != null && myNodeIds(member).includes(nodeId) ? ev : null;
+  }
+  // local (and any legacy) events
   const districtId = rel(ev.geoNode);
   const mine = await myDistrictIds(member);
   const createdByMe = rel(ev.createdBy) === member.person.id;
@@ -34,28 +48,41 @@ export async function getAccessibleSession(member: CurrentMember, eventId: numbe
 
 export type Attendee = { id: number; name: string | null; phone: string; present: boolean };
 
-/** ALL people in the session's district that this member is assigned to.
-    Returns nothing if the session's district is not within the member's assignment
-    (belt-and-suspenders on top of getAccessibleSession). Loaded once; the client
-    filters locally. No sub-district (union/pincode) filtering yet. */
+/** People this member can mark for a session, with present state, loaded once.
+ *  - Area = every district under the session's node (district session → that
+ *    district; region/state session → all districts beneath it).
+ *  - If the session has a funnelParent, the pool is narrowed to people who were
+ *    marked present in that previous campaign (the gradual funnel). */
 export async function listAttendees(ev: Event, member: CurrentMember): Promise<Attendee[]> {
   const payload = await getPayloadClient();
-  const districtId = rel(ev.geoNode);
-  if (!districtId) return [];
-  const mine = await myDistrictIds(member);
-  if (!mine.includes(districtId)) return []; // only people in the member's assigned district(s)
+  const scopeNode = rel(ev.geoNode);
+  if (!scopeNode) return [];
+  const areaDistricts =
+    (ev.kind as string) === "campaign_session"
+      ? await districtIdsUnder(payload, scopeNode)
+      : (await myDistrictIds(member)).includes(scopeNode) ? [scopeNode] : [];
+  if (!areaDistricts.length) return [];
+
+  const funnelParentId = rel((ev as unknown as { funnelParent?: unknown }).funnelParent);
+  const funnelSet = funnelParentId != null ? await presentPersonIdsInCampaign(payload, funnelParentId) : null;
+
   const ppl = await payload.find({
-    collection: "people", overrideAccess: true, depth: 0, limit: 20000,
-    where: { geoNode: { equals: districtId } }, sort: "name",
+    collection: "people", overrideAccess: true, depth: 0, limit: 50000,
+    where: { geoNode: { in: areaDistricts } }, sort: "name",
   });
-  // Everyone marked present for this event (not capped to a search page).
+
+  // Everyone marked present for THIS event.
   const present = new Set<number>();
   const at = await payload.find({
-    collection: "attendance", overrideAccess: true, depth: 0, limit: 20000,
+    collection: "attendance", overrideAccess: true, depth: 0, limit: 50000,
     where: { and: [{ event: { equals: ev.id } }, { present: { equals: true } }] },
   });
   for (const a of at.docs) present.add(rel((a as { person: unknown }).person) as number);
-  return (ppl.docs as Person[]).map((p) => ({
+
+  let people = ppl.docs as Person[];
+  if (funnelSet) people = people.filter((p) => funnelSet.has(p.id as number) || present.has(p.id as number));
+
+  return people.map((p) => ({
     id: p.id as number, name: p.name ?? null, phone: p.phone, present: present.has(p.id as number),
   }));
 }

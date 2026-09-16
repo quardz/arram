@@ -131,6 +131,16 @@ body{
 .asm-badge{font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;flex:none;white-space:nowrap}
 .asm-badge.campaign{background:#fdeccb;color:#9a6a12}
 .asm-badge.local{background:#f0e6d8;color:#8a715c}
+.asm-badge.open{background:#d7f0dc;color:#1d6b34}
+.asm-badge.upcoming{background:#e4e9f7;color:#3a4b86}
+.asm-badge.closed{background:#eee1e1;color:#8a5b5b}
+.asm-add.ghost{background:transparent;color:var(--asm-brand);border:1px solid var(--asm-brand)}
+
+/* campaign banners */
+.asm-banner{border-radius:12px;padding:11px 14px;font-size:13.5px;font-weight:600;margin:0 0 14px;line-height:1.5}
+.asm-banner.closed{background:#f6e7e7;color:#8a4b4b}
+.asm-banner.upcoming{background:#e8edfa;color:#3a4b86}
+.asm-banner.funnel{background:#fdeccb;color:#8a6412}
 
 /* empty state */
 .asm-empty{

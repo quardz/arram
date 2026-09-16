@@ -4,6 +4,7 @@ import { getAccessibleSession, markAttendance } from "@/lib/attendance";
 import { normalizePhone } from "@/lib/member";
 import { getPayloadClient } from "@/lib/payload";
 import { audit, auditActor } from "@/lib/audit";
+import { campaignOpen } from "@/lib/campaign";
 
 const rel = (v: unknown) => (v && typeof v === "object" ? (v as { id?: number }).id : (v as number | undefined));
 
@@ -13,6 +14,11 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   const { id } = await ctx.params;
   const ev = await getAccessibleSession(member, Number(id));
   if (!ev) return NextResponse.json({ ok: false, error: "no_access" }, { status: 403 });
+  if (!campaignOpen(ev as unknown as { startAt?: string | null; endAt?: string | null })) return NextResponse.json({ ok: false, error: "closed" }, { status: 409 });
+  // A funnel (child) campaign's pool is fixed to people present in its parent —
+  // adding brand-new people would bypass the funnel, so it's disabled there.
+  if (rel((ev as unknown as { funnelParent?: unknown }).funnelParent) != null)
+    return NextResponse.json({ ok: false, error: "funnel_locked" }, { status: 409 });
   const body = await req.json().catch(() => ({}));
   const name = String(body?.name || "").trim();
   const phone = normalizePhone(String(body?.phone || ""));

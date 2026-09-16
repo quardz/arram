@@ -90,6 +90,7 @@ export interface Config {
     activities: Activity;
     galleryAlbums: GalleryAlbum;
     pages: Page;
+    auditLog: AuditLog;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -119,6 +120,7 @@ export interface Config {
     activities: ActivitiesSelect<false> | ActivitiesSelect<true>;
     galleryAlbums: GalleryAlbumsSelect<false> | GalleryAlbumsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    auditLog: AuditLogSelect<false> | AuditLogSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -228,6 +230,24 @@ export interface Person {
   programId?: (number | null) | Project;
   geoNode?: (number | null) | GeoNode;
   otpVerified?: boolean | null;
+  email?: string | null;
+  secondaryPhone?: string | null;
+  /**
+   * Full-time role — editable by state_admin/super_admin only
+   */
+  fullTime?: boolean | null;
+  /**
+   * [{platform,url}] — edited via the member profile page
+   */
+  socialLinks?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * Base-36 of phone, 7-char uppercase
    */
@@ -384,6 +404,7 @@ export interface OrgAssignment {
   person: number | Person;
   geoNode: number | GeoNode;
   role:
+    | 'super_admin'
     | 'state_admin'
     | 'regional_organiser'
     | 'zonal_organiser'
@@ -590,6 +611,10 @@ export interface OtpRequest {
   expiresAt: string;
   attempts?: number | null;
   consumed?: boolean | null;
+  code?: string | null;
+  provider?: string | null;
+  status?: string | null;
+  message?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -692,6 +717,22 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "auditLog".
+ */
+export interface AuditLog {
+  id: number;
+  action: 'login' | 'logout' | 'create_session' | 'quickadd_person' | 'impersonate_start' | 'impersonate_stop';
+  actor: number | Person;
+  actorRole?: string | null;
+  impersonatedPerson?: (number | null) | Person;
+  event?: (number | null) | Event;
+  targetPerson?: (number | null) | Person;
+  detail?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -804,6 +845,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'auditLog';
+        value: number | AuditLog;
       } | null);
   globalSlug?: string | null;
   user:
@@ -895,6 +940,10 @@ export interface PeopleSelect<T extends boolean = true> {
   programId?: T;
   geoNode?: T;
   otpVerified?: T;
+  email?: T;
+  secondaryPhone?: T;
+  fullTime?: T;
+  socialLinks?: T;
   referralCode?: T;
   source?: T;
   rawGeoText?:
@@ -1181,6 +1230,10 @@ export interface OtpRequestsSelect<T extends boolean = true> {
   expiresAt?: T;
   attempts?: T;
   consumed?: T;
+  code?: T;
+  provider?: T;
+  status?: T;
+  message?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1242,6 +1295,21 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "auditLog_select".
+ */
+export interface AuditLogSelect<T extends boolean = true> {
+  action?: T;
+  actor?: T;
+  actorRole?: T;
+  impersonatedPerson?: T;
+  event?: T;
+  targetPerson?: T;
+  detail?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

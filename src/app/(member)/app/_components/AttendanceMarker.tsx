@@ -9,7 +9,7 @@ const IDLE_COUNT = 10;   // rows shown (alphabetical) when the search box is emp
 function displayName(p: P) { return p.name && p.name !== "multiple" ? p.name : p.phone; }
 function initials(p: P) { const s = displayName(p).trim(); return s ? s[0] : "?"; }
 
-export default function AttendanceMarker({ eventId, m }: { eventId: number; m: Record<string, string> }) {
+export default function AttendanceMarker({ eventId, m, open = true, canAdd = true }: { eventId: number; m: Record<string, string>; open?: boolean; canAdd?: boolean }) {
   const [all, setAll] = useState<P[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [tab, setTab] = useState<"select" | "selected">("select");
@@ -43,6 +43,7 @@ export default function AttendanceMarker({ eventId, m }: { eventId: number; m: R
   }, [q, all]);
 
   async function toggle(p: P) {
+    if (!open) return; // window closed → read-only
     const present = !p.present;
     setAll((xs) => xs.map((x) => (x.id === p.id ? { ...x, present } : x)));
     await fetch(`/api/member/attendance/${eventId}/mark`, {
@@ -67,7 +68,7 @@ export default function AttendanceMarker({ eventId, m }: { eventId: number; m: R
     <li key={p.id} className="asm-person">
       <span className="asm-avatar">{initials(p)}</span>
       <span className="asm-pnm"><b>{displayName(p)}</b><small>{p.phone}</small></span>
-      <button className={`asm-mark ${p.present ? "on" : ""}`} onClick={() => toggle(p)} aria-label={m.att_present}>
+      <button className={`asm-mark ${p.present ? "on" : ""}`} onClick={() => toggle(p)} disabled={!open} aria-label={m.att_present}>
         {p.present ? "✓" : "＋"}
       </button>
     </li>
@@ -94,7 +95,7 @@ export default function AttendanceMarker({ eventId, m }: { eventId: number; m: R
             {loaded && view.length === 0 && <li className="asm-note" style={{ padding: "22px 0" }}>{m.att_none_found}</li>}
           </ul>
           {truncated && <p className="asm-note">{m.att_refine || "…"}</p>}
-          {!showAdd ? (
+          {!canAdd ? null : !showAdd ? (
             <button className="asm-btn ghost" style={{ marginTop: 18 }} onClick={() => setShowAdd(true)}>＋ {m.att_add_new}</button>
           ) : (
             <div className="asm-quick">

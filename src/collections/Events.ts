@@ -41,6 +41,11 @@ export const Events: CollectionConfig = {
     },
     { name: "parentEvent", type: "relationship", relationTo: "events", index: true, admin: { description: "The campaign this district session belongs to." } },
     { name: "date", type: "date", admin: { date: { pickerAppearance: "dayAndTime" } } },
+    // Campaign window + funnel (used by campaign_parent / campaign_session).
+    { name: "startAt", type: "date", admin: { date: { pickerAppearance: "dayAndTime" }, description: "Campaign opens: attendance can be taken from this time." } },
+    { name: "endAt", type: "date", admin: { date: { pickerAppearance: "dayAndTime" }, description: "Campaign closes: attendance locks after this time." } },
+    { name: "takerLevel", type: "text", admin: { description: "Org level that takes this campaign: state | region | mandalam | district." } },
+    { name: "funnelParent", type: "relationship", relationTo: "events", index: true, admin: { description: "Previous campaign; only people marked present there form this campaign's pool." } },
     { name: "createdBy", type: "relationship", relationTo: "people" },
     { name: "organisers", type: "relationship", relationTo: "people", hasMany: true, admin: { description: "District reps running this event" } },
   ],
