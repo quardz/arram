@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { cookies } from "next/headers";
 import "./theme.css";
 import ImpersonationBanner from "./_components/ImpersonationBanner";
+import Analytics from "@/components/Analytics";
 
 export const metadata = { title: "ASM உறுப்பினர்", robots: { index: false } };
 
@@ -23,6 +24,7 @@ export default async function MemberLayout({ children }: { children: ReactNode }
           <ImpersonationBanner />
           {children}
         </div>
+        <Analytics />
       </body>
     </html>
   );
