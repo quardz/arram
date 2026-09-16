@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 type Campaign = { id: number; name: string };
-const LEVELS = ["district", "mandalam", "region", "state"] as const;
 
 /** All times are entered in IST (the app is Tamil Nadu only); we attach the
  *  +05:30 offset so the stored instant is unambiguous regardless of server tz. */
@@ -17,13 +16,12 @@ export default function CampaignForm({ campaigns, m }: { campaigns: Campaign[]; 
   const router = useRouter();
   const [name, setName] = useState("");
   const [funnelParentId, setFunnelParentId] = useState("");
-  const [level, setLevel] = useState<string>("district");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
-  const valid = name.trim() && level && start && end && istToIso(start) && istToIso(end) && new Date(`${end}:00+05:30`) > new Date(`${start}:00+05:30`);
+  const valid = name.trim() && start && end && istToIso(start) && istToIso(end) && new Date(`${end}:00+05:30`) > new Date(`${start}:00+05:30`);
 
   async function create() {
     if (!valid) { setError(m.cf_bad); return; }
@@ -33,7 +31,6 @@ export default function CampaignForm({ campaigns, m }: { campaigns: Campaign[]; 
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: name.trim(),
-          takerLevel: level,
           startAt: istToIso(start),
           endAt: istToIso(end),
           funnelParentId: funnelParentId || undefined,
@@ -49,11 +46,6 @@ export default function CampaignForm({ campaigns, m }: { campaigns: Campaign[]; 
     <div>
       <label className="asm-fld">{m.cf_name}</label>
       <input className="asm-input" value={name} onChange={(e) => setName(e.target.value)} placeholder={m.cf_name_ph} />
-
-      <label className="asm-fld">{m.cf_level}</label>
-      <select className="asm-input asm-select" value={level} onChange={(e) => setLevel(e.target.value)}>
-        {LEVELS.map((lv) => <option key={lv} value={lv}>{m[`level_${lv}`] || lv}</option>)}
-      </select>
 
       <label className="asm-fld">{m.cf_parent}</label>
       <select className="asm-input asm-select" value={funnelParentId} onChange={(e) => setFunnelParentId(e.target.value)}>

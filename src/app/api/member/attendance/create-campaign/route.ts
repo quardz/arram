@@ -3,24 +3,23 @@ import { requireAdminActor } from "@/lib/impersonate";
 import { getPayloadClient } from "@/lib/payload";
 import { audit, auditActor } from "@/lib/audit";
 
-const LEVELS = ["state", "region", "mandalam", "district"];
-
 // Create a funnel campaign (state leader / super admin only). Stored as a
 // campaign_parent event; the Events afterChange hook fans it out to one session
-// per node at the chosen taker level. Optional funnelParent restricts each
-// session's pool to people present in that earlier campaign.
+// per DISTRICT (attendance is always taken at district level). Optional
+// funnelParent restricts each session's pool to people present in that earlier
+// campaign.
 export async function POST(req: Request) {
   const admin = await requireAdminActor();
   if (!admin) return NextResponse.json({ ok: false, error: "forbidden" }, { status: 403 });
 
   const body = await req.json().catch(() => ({}));
   const name = String(body?.name || "").trim();
-  const takerLevel = String(body?.takerLevel || "");
+  const takerLevel = "district"; // attendance is always district-level
   const startAt = body?.startAt ? new Date(String(body.startAt)) : null;
   const endAt = body?.endAt ? new Date(String(body.endAt)) : null;
   const funnelParentId = body?.funnelParentId ? Number(body.funnelParentId) : undefined;
 
-  if (!name || !LEVELS.includes(takerLevel)) return NextResponse.json({ ok: false, error: "bad_input" }, { status: 400 });
+  if (!name) return NextResponse.json({ ok: false, error: "bad_input" }, { status: 400 });
   if (!startAt || !endAt || isNaN(+startAt) || isNaN(+endAt) || +endAt <= +startAt)
     return NextResponse.json({ ok: false, error: "bad_window" }, { status: 400 });
 
