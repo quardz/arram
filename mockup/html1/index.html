@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASM — Theme 1 · Temple Warm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6ede0;           /* cream backdrop */
+    --card:#fffaf2;         /* screen surface */
+    --ink:#3a2416;          /* dark brown text */
+    --muted:#8a715c;        /* secondary text */
+    --line:#ecdcc7;         /* borders */
+    --brand:#c1440e;        /* deep saffron-red */
+    --brand-2:#e8751a;      /* saffron */
+    --gold:#b8860b;         /* gold accent */
+    --maroon:#7b1e1e;       /* header */
+    --ok:#2f8f5b;
+    --field:#fbf3e8;
+    --shadow:0 10px 30px rgba(123,30,30,.12);
+    --radius:20px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Noto Sans Tamil','Poppins',system-ui,sans-serif;
+    background:
+      radial-gradient(1200px 500px at 50% -200px, #fbe3c9 0%, transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    padding:28px 16px 60px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page-head{max-width:1180px;margin:0 auto 22px;text-align:center}
+  .page-head h1{font-size:22px;letter-spacing:.3px;color:var(--maroon)}
+  .page-head .tag{display:inline-block;margin-top:8px;font-size:13px;color:var(--muted)}
+  .swatches{display:flex;gap:8px;justify-content:center;margin-top:14px}
+  .sw{width:26px;height:26px;border-radius:50%;box-shadow:inset 0 0 0 2px rgba(0,0,0,.06)}
+  .grid{
+    max-width:1180px;margin:0 auto;
+    display:flex;flex-wrap:wrap;gap:26px;justify-content:center;align-items:flex-start;
+  }
+  .col{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .col .caption{font-size:13px;color:var(--muted);font-weight:500}
+
+  /* phone frame */
+  .phone{
+    width:340px;background:var(--card);border-radius:38px;
+    box-shadow:var(--shadow);border:1px solid var(--line);
+    overflow:hidden;position:relative;
+  }
+  .screen{height:660px;display:flex;flex-direction:column}
+  .status{height:26px}
+  /* app header */
+  .appbar{
+    background:linear-gradient(120deg,var(--maroon),var(--brand));
+    color:#fff;padding:16px 18px 18px;display:flex;align-items:center;justify-content:space-between;
+    position:relative;
+  }
+  .appbar::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:14px;
+    background:repeating-linear-gradient(90deg,var(--gold) 0 10px,transparent 10px 20px);opacity:.5}
+  .appbar .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+  .om{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.16);
+    display:grid;place-items:center;font-size:16px}
+  .lang{display:flex;gap:6px;font-size:12px}
+  .lang span{padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.15)}
+  .lang .on{background:#fff;color:var(--maroon);font-weight:700}
+  .back{font-size:20px;line-height:1}
+
+  .body{padding:22px 20px;flex:1;overflow:auto}
+  .hero{margin-bottom:20px}
+  .hero h2{font-size:22px;color:var(--maroon);font-weight:800}
+  .hero p{font-size:14px;color:var(--muted);margin-top:6px;line-height:1.5}
+
+  label.fld{display:block;font-size:14px;font-weight:600;color:var(--ink);margin:18px 0 8px}
+  .input{
+    width:100%;background:var(--field);border:1.5px solid var(--line);border-radius:14px;
+    padding:15px 16px;font-size:18px;color:var(--ink);font-family:inherit;
+  }
+  .input::placeholder{color:#c3ac93}
+  .otpbox{letter-spacing:.5em;text-align:center;font-size:24px;font-weight:700}
+  .btn{
+    width:100%;margin-top:22px;background:linear-gradient(120deg,var(--brand-2),var(--brand));
+    color:#fff;border:none;border-radius:16px;padding:17px;font-size:18px;font-weight:700;
+    font-family:inherit;box-shadow:0 8px 18px rgba(193,68,14,.28);
+  }
+  .btn.gold{background:linear-gradient(120deg,#d99a2b,var(--gold));box-shadow:0 8px 18px rgba(184,134,11,.25)}
+  .row-links{display:flex;justify-content:space-between;margin-top:16px;font-size:14px;color:var(--brand);font-weight:600}
+  .helper{margin-top:14px;background:#fff4e0;border:1px solid #f2d9a8;color:#9a6a12;border-radius:12px;padding:10px 12px;font-size:13px;text-align:center}
+
+  /* list */
+  .listhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .listhdr h2{font-size:19px;color:var(--maroon);font-weight:800}
+  .pill-add{background:var(--brand);color:#fff;border-radius:999px;padding:9px 14px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px}
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;margin-bottom:14px;box-shadow:0 4px 14px rgba(123,30,30,.05);
+    display:flex;gap:14px;align-items:center;
+  }
+  .card .icn{width:46px;height:46px;border-radius:14px;background:#fbe6d3;display:grid;place-items:center;font-size:22px;flex:none}
+  .card .meta{flex:1;min-width:0}
+  .card .meta b{display:block;font-size:16px;color:var(--ink);font-weight:700}
+  .card .meta small{color:var(--muted);font-size:13px}
+  .card .cnt{text-align:center;flex:none}
+  .card .cnt b{font-size:20px;color:var(--brand)}
+  .card .cnt small{display:block;color:var(--muted);font-size:11px}
+  .empty{text-align:center;color:var(--muted);padding:50px 20px}
+  .empty .big{font-size:44px;margin-bottom:10px}
+
+  select.input{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='%238a715c' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>");background-repeat:no-repeat;background-position:right 14px center}
+
+  /* mark attendance */
+  .search{position:relative;margin-bottom:6px}
+  .search .input{padding-left:44px}
+  .search .mag{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--muted)}
+  .person{display:flex;align-items:center;gap:12px;padding:14px 4px;border-bottom:1px solid var(--line)}
+  .avatar{width:42px;height:42px;border-radius:50%;background:#f0dcc6;display:grid;place-items:center;font-weight:700;color:var(--brand);flex:none}
+  .person .nm{flex:1}
+  .person .nm b{display:block;font-size:16px}
+  .person .nm small{color:var(--muted);font-size:12.5px}
+  .mark{width:44px;height:44px;border-radius:50%;border:2px solid var(--line);background:#fff;display:grid;place-items:center;font-size:20px;color:#cbb69c;flex:none}
+  .mark.on{background:var(--ok);border-color:var(--ok);color:#fff}
+  .quickadd{margin-top:16px;text-align:center;font-size:14px;color:var(--brand);font-weight:600}
+  .bottombar{padding:14px 16px;border-top:1px solid var(--line);background:var(--card)}
+  .bottombar .btn{margin:0}
+  .count-note{font-size:13px;color:var(--muted);text-align:center;margin:10px 0 4px}
+</style>
+</head>
+<body>
+  <div class="page-head">
+    <h1>அறம் · ASM — Theme 1 “Temple Warm”</h1>
+    <div class="tag">Warm & devotional · saffron / maroon · large friendly buttons · Tamil-first</div>
+    <div class="swatches">
+      <div class="sw" style="background:#7b1e1e"></div>
+      <div class="sw" style="background:#c1440e"></div>
+      <div class="sw" style="background:#e8751a"></div>
+      <div class="sw" style="background:#b8860b"></div>
+      <div class="sw" style="background:#f6ede0"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- 1. LOGIN - phone -->
+    <div class="col">
+      <div class="phone"><div class="screen">
+        <div class="appbar">
+          <div class="brand"><span class="om">ॐ</span> ASM உறுப்பினர்</div>
+          <div class="lang"><span class="on">த</span><span>EN</span></div>
+        </div>
+        <div class="body">
+          <div class="hero">
+            <h2>வணக்கம் 🙏</h2>
+            <p>உறுப்பினர் உள்நுழைவு<br>உங்கள் கைபேசி எண்ணால் உள்நுழையவும்</p>
+          </div>
+          <label class="fld">கைபேசி எண்</label>
+          <input class="input" inputmode="numeric" placeholder="90000 00000" value="99013 57171">
+          <button class="btn">OTP அனுப்பு →</button>
+          <div class="helper">உங்கள் எண்ணுக்கு 6 இலக்க குறியீடு வரும்</div>
+        </div>
+      </div></div>
+      <div class="caption">1 · உள்நுழைவு (Login)</div>
+    </div>
+
+    <!-- 2. LOGIN - OTP -->
+    <div class="col">
+      <div class="phone"><div class="screen">
+        <div class="appbar">
+          <div class="brand"><span class="om">ॐ</span> ASM உறுப்பினர்</div>
+          <div class="lang"><span class="on">த</span><span>EN</span></div>
+        </div>
+        <div class="body">
+          <div class="hero">
+            <h2>குறியீட்டை உள்ளிடவும்</h2>
+            <p>99013 57171 க்கு அனுப்பப்பட்டது</p>
+          </div>
+          <label class="fld">6 இலக்க OTP</label>
+          <input class="input otpbox" value="●●●●●●">
+          <button class="btn">சரிபார்த்து உள்நுழை ✓</button>
+          <div class="row-links"><span>← எண்ணை மாற்று</span><span>மீண்டும் அனுப்பு</span></div>
+        </div>
+      </div></div>
+      <div class="caption">2 · OTP சரிபார்ப்பு</div>
+    </div>
+
+    <!-- 3. HOME list -->
+    <div class="col">
+      <div class="phone"><div class="screen">
+        <div class="appbar">
+          <div class="brand"><span class="back">←</span> வருகைப் பதிவு</div>
+          <div class="lang"><span class="on">த</span><span>EN</span></div>
+        </div>
+        <div class="body">
+          <div class="listhdr">
+            <h2>அமர்வுகள்</h2>
+            <span class="pill-add">＋ புதிய வருகை</span>
+          </div>
+          <div class="card">
+            <div class="icn">🛕</div>
+            <div class="meta"><b>கோவில் தூய்மைப் பணி</b><small>திருப்பூர் · 12 செப். 2026</small></div>
+            <div class="cnt"><b>34</b><small>வருகை</small></div>
+          </div>
+          <div class="card">
+            <div class="icn">📿</div>
+            <div class="meta"><b>பஜனை கூட்டம்</b><small>அவினாசி · 08 செப். 2026</small></div>
+            <div class="cnt"><b>58</b><small>வருகை</small></div>
+          </div>
+          <div class="card">
+            <div class="icn">🤝</div>
+            <div class="meta"><b>உறுப்பினர் சந்திப்பு</b><small>ஈரோடு · 02 செப். 2026</small></div>
+            <div class="cnt"><b>21</b><small>வருகை</small></div>
+          </div>
+        </div>
+      </div></div>
+      <div class="caption">3 · முகப்பு (Sessions)</div>
+    </div>
+
+    <!-- 4. NEW attendance -->
+    <div class="col">
+      <div class="phone"><div class="screen">
+        <div class="appbar">
+          <div class="brand"><span class="back">←</span> புதிய வருகை</div>
+          <div class="lang"><span class="on">த</span><span>EN</span></div>
+        </div>
+        <div class="body">
+          <label class="fld">தலைப்பு</label>
+          <input class="input" placeholder="எ.கா. கோவில் தூய்மைப் பணி">
+          <label class="fld">மாவட்டம்</label>
+          <select class="input"><option>திருப்பூர்</option></select>
+          <label class="fld">தேதி</label>
+          <input class="input" value="12 / 09 / 2026">
+          <button class="btn gold">உருவாக்கு ✚</button>
+        </div>
+      </div></div>
+      <div class="caption">4 · புதிய அமர்வு (New)</div>
+    </div>
+
+    <!-- 5. MARK attendance -->
+    <div class="col">
+      <div class="phone"><div class="screen">
+        <div class="appbar">
+          <div class="brand"><span class="back">←</span> வருகை பதிதல்</div>
+          <div class="lang"><span class="on">த</span><span>EN</span></div>
+        </div>
+        <div class="body" style="padding-bottom:8px">
+          <div class="search">
+            <span class="mag">🔍</span>
+            <input class="input" placeholder="பெயர் / எண் தேடவும்">
+          </div>
+          <div class="count-note">திருப்பூர் · 34 பேர் வருகை பதிந்தது</div>
+          <div class="person"><div class="avatar">அ</div><div class="nm"><b>அருள்மொழி</b><small>99xxxx1234 · அவினாசி</small></div><div class="mark on">✓</div></div>
+          <div class="person"><div class="avatar">க</div><div class="nm"><b>கலைச்செல்வி</b><small>98xxxx5678 · திருப்பூர்</small></div><div class="mark on">✓</div></div>
+          <div class="person"><div class="avatar">மு</div><div class="nm"><b>முருகன்</b><small>90xxxx9012 · பல்லடம்</small></div><div class="mark">＋</div></div>
+          <div class="person"><div class="avatar">ரா</div><div class="nm"><b>ராஜேஸ்வரி</b><small>73xxxx3456 · உடுமலை</small></div><div class="mark">＋</div></div>
+          <div class="quickadd">＋ பட்டியலில் இல்லையா? புதியவரைச் சேர்க்கவும்</div>
+        </div>
+        <div class="bottombar"><button class="btn">முடிந்தது ✓</button></div>
+      </div></div>
+      <div class="caption">5 · வருகை பதிதல் (Mark)</div>
+    </div>
+
+  </div>
+</body>
+</html>
