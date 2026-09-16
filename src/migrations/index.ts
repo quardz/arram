@@ -6,6 +6,7 @@ import * as migration_20260915_150000_add_audit_log from './20260915_150000_add_
 import * as migration_20260916_090000_super_admin_and_profile from './20260916_090000_super_admin_and_profile';
 import * as migration_20260916_100000_otp_log_fields from './20260916_100000_otp_log_fields';
 import * as migration_20260916_110000_campaign_windows from './20260916_110000_campaign_windows';
+import * as migration_20260916_120000_people_source_join_form from './20260916_120000_people_source_join_form';
 
 export const migrations = [
   {
@@ -47,5 +48,10 @@ export const migrations = [
     up: migration_20260916_110000_campaign_windows.up,
     down: migration_20260916_110000_campaign_windows.down,
     name: '20260916_110000_campaign_windows',
+  },
+  {
+    up: migration_20260916_120000_people_source_join_form.up,
+    down: migration_20260916_120000_people_source_join_form.down,
+    name: '20260916_120000_people_source_join_form',
   },
 ];

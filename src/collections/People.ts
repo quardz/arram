@@ -20,7 +20,7 @@ export const People: CollectionConfig = {
   },
   admin: {
     useAsTitle: "name",
-    defaultColumns: ["name", "phone", "otpVerified", "geoNode"],
+    defaultColumns: ["name", "phone", "source", "otpVerified", "geoNode"],
     group: "People & Org",
   },
   access: {
@@ -92,6 +92,7 @@ export const People: CollectionConfig = {
       defaultValue: "signup",
       options: [
         { label: "Self signup", value: "signup" },
+        { label: "Join form (website)", value: "join-form" },
         { label: "Excel import", value: "excel-import" },
         { label: "Added by org", value: "org-added" },
         { label: "Event", value: "event" },

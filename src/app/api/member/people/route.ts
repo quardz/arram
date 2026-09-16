@@ -20,6 +20,7 @@ export async function GET(req: Request) {
   const r = await payload.find({ collection: "people", overrideAccess: true, depth: 0, limit: 30, page, sort: "name", where });
   const people = (r.docs as Person[]).map((p) => ({
     id: p.id as number, name: p.name && p.name !== "multiple" ? p.name : p.phone, phone: p.phone,
+    source: (p as { source?: string }).source ?? null,
   }));
   return NextResponse.json({ ok: true, people, hasMore: !!r.hasNextPage, page });
 }

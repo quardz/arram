@@ -108,6 +108,106 @@ export async function presentPersonIdsInCampaign(payload: Payload, campaignParen
   return ids;
 }
 
+/** Map person id → their district geoNode id (chunked lookup). */
+export async function peopleDistrictOf(payload: Payload, personIds: number[]): Promise<Map<number, number>> {
+  const map = new Map<number, number>();
+  const ids = [...new Set(personIds)];
+  for (let i = 0; i < ids.length; i += 300) {
+    const chunk = ids.slice(i, i + 300);
+    if (!chunk.length) break;
+    const r = await payload.find({
+      collection: "people", overrideAccess: true, depth: 0, limit: chunk.length,
+      where: { id: { in: chunk } },
+    });
+    for (const p of r.docs) {
+      const d = rel((p as { geoNode?: unknown }).geoNode);
+      if (d != null) map.set(p.id as number, d);
+    }
+  }
+  return map;
+}
+
+export type CampaignRollup = { eligible: number; checked: number; districtsTotal: number; districtsStarted: number };
+export type DistrictStat = { districtId: number; name: string; sessionId: number; eligible: number; checked: number; started: boolean };
+
+type CampaignRow = Record<string, unknown> & { id: number; startAt?: string | null; endAt?: string | null; funnelParent?: unknown };
+
+async function areaSessions(payload: Payload, campaignId: number, areaDistrictIds: number[], depth = 0) {
+  if (!areaDistrictIds.length) return [];
+  const r = await payload.find({
+    collection: "events", overrideAccess: true, depth, limit: 5000,
+    where: { and: [{ kind: { equals: "campaign_session" } }, { parentEvent: { equals: campaignId } }, { geoNode: { in: areaDistrictIds } }] },
+  });
+  return r.docs;
+}
+
+/** Summary numbers for a campaign within the viewer's area (cheap; for cards). */
+export async function campaignRollup(payload: Payload, campaign: CampaignRow, areaDistrictIds: number[]): Promise<CampaignRollup> {
+  const sessions = await areaSessions(payload, campaign.id, areaDistrictIds);
+  const sessionIds = sessions.map((s) => s.id as number);
+  const districtsTotal = sessionIds.length;
+  const open = campaignOpen(campaign);
+  const districtsStarted = open ? districtsTotal : 0;
+  let checked = 0;
+  if (sessionIds.length) {
+    checked = (await payload.count({
+      collection: "attendance", overrideAccess: true,
+      where: { and: [{ event: { in: sessionIds } }, { present: { equals: true } }] },
+    })).totalDocs;
+  }
+  let eligible = 0;
+  const funnelParentId = rel(campaign.funnelParent);
+  if (funnelParentId != null) {
+    const present = await presentPersonIdsInCampaign(payload, funnelParentId);
+    const dmap = await peopleDistrictOf(payload, [...present]);
+    const area = new Set(areaDistrictIds);
+    for (const d of dmap.values()) if (area.has(d)) eligible++;
+  } else if (areaDistrictIds.length) {
+    eligible = (await payload.count({ collection: "people", overrideAccess: true, where: { geoNode: { in: areaDistrictIds } } })).totalDocs;
+  }
+  return { eligible, checked, districtsTotal, districtsStarted };
+}
+
+/** Per-district breakdown for a campaign within the viewer's area. */
+export async function campaignDistrictStats(payload: Payload, campaign: CampaignRow, areaDistrictIds: number[]): Promise<DistrictStat[]> {
+  const sessions = await areaSessions(payload, campaign.id, areaDistrictIds, 1);
+  const open = campaignOpen(campaign);
+  const sessionIds = sessions.map((s) => s.id as number);
+
+  const checkedByEvent = new Map<number, number>();
+  if (sessionIds.length) {
+    const at = await payload.find({
+      collection: "attendance", overrideAccess: true, depth: 0, limit: 50000,
+      where: { and: [{ event: { in: sessionIds } }, { present: { equals: true } }] },
+    });
+    for (const a of at.docs) {
+      const e = rel((a as { event?: unknown }).event);
+      if (e != null) checkedByEvent.set(e, (checkedByEvent.get(e) || 0) + 1);
+    }
+  }
+
+  const eligByDistrict = new Map<number, number>();
+  const funnelParentId = rel(campaign.funnelParent);
+  if (funnelParentId != null) {
+    const present = await presentPersonIdsInCampaign(payload, funnelParentId);
+    const dmap = await peopleDistrictOf(payload, [...present]);
+    for (const d of dmap.values()) eligByDistrict.set(d, (eligByDistrict.get(d) || 0) + 1);
+  } else {
+    for (const s of sessions) {
+      const d = rel((s as { geoNode?: unknown }).geoNode);
+      if (d == null) continue;
+      eligByDistrict.set(d, (await payload.count({ collection: "people", overrideAccess: true, where: { geoNode: { equals: d } } })).totalDocs);
+    }
+  }
+
+  return sessions.map((s) => {
+    const node = (s as { geoNode?: unknown }).geoNode;
+    const d = rel(node) as number;
+    const name = (node && typeof node === "object" ? (node as { name?: string }).name : undefined) || String(d);
+    return { districtId: d, name, sessionId: s.id as number, eligible: eligByDistrict.get(d) || 0, checked: checkedByEvent.get(s.id as number) || 0, started: open };
+  }).sort((a, b) => a.name.localeCompare(b.name));
+}
+
 /** Create one session per node at the campaign's takerLevel under its scope,
  *  copying the window + funnel parent so each session is self-contained. */
 export async function fanoutCampaign(payload: Payload, parent: Record<string, unknown>, req?: PayloadRequest) {

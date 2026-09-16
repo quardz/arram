@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import ContactButtons from "./ContactButtons";
 
-type P = { id: number; name: string; phone: string };
+type P = { id: number; name: string; phone: string; source?: string | null };
 
 export default function PeopleDirectory({ m }: { m: Record<string, string> }) {
   const [q, setQ] = useState("");
@@ -48,7 +48,10 @@ export default function PeopleDirectory({ m }: { m: Record<string, string> }) {
             {people.map((p) => (
               <li key={p.id} className="asm-person">
                 <span className="asm-avatar">{p.name[0]}</span>
-                <span className="asm-pnm"><b>{p.name}</b><small>{p.phone}</small></span>
+                <span className="asm-pnm">
+                  <b>{p.name}{p.source === "join-form" && <span className="asm-badge web" style={{ marginLeft: 6 }}>{m.ppl_web || "Web"}</span>}</b>
+                  <small>{p.phone}</small>
+                </span>
                 <ContactButtons phone={p.phone} m={m} />
               </li>
             ))}

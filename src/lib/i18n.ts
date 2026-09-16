@@ -186,6 +186,15 @@ const en: Dict = {
   err_forbidden: "You don’t have permission for this.",
   err_closed: "This campaign is closed.",
   err_funnel_locked: "This campaign’s list is fixed to the previous campaign.",
+  att_stat_checked: "checked",
+  att_stat_districts: "districts open",
+  att_status_upcoming: "Upcoming",
+  cst_checked: "Checked in",
+  cst_eligible: "Eligible",
+  cst_rate: "Rate",
+  cst_districts_started: "Districts open",
+  cst_breakdown: "By district",
+  ppl_web: "Web join",
 };
 const ta: Dict = {
   appName: "ASM உறுப்பினர்",
@@ -364,6 +373,15 @@ const ta: Dict = {
   err_forbidden: "இதற்கு உங்களுக்கு அனுமதி இல்லை.",
   err_closed: "இந்தப் பிரச்சாரம் மூடப்பட்டது.",
   err_funnel_locked: "இந்தப் பிரச்சாரத்தின் பட்டியல் முந்தைய பிரச்சாரத்துடன் நிலைநிறுத்தப்பட்டுள்ளது.",
+  att_stat_checked: "பதிவு",
+  att_stat_districts: "மாவட்டங்கள் திறந்தன",
+  att_status_upcoming: "வரவிருக்கிறது",
+  cst_checked: "வருகை பதிந்தவர்",
+  cst_eligible: "தகுதியானவர்",
+  cst_rate: "விகிதம்",
+  cst_districts_started: "திறந்த மாவட்டங்கள்",
+  cst_breakdown: "மாவட்ட வாரியாக",
+  ppl_web: "இணையம்",
 };
 const dict: Record<Lang, Dict> = { en, ta };
 

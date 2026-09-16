@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   REFERRAL_COOKIE,
@@ -15,12 +15,12 @@ import {
   clearAuth,
   upsertMember,
   getReferralTree,
-  generateOtp,
   type AuthUser,
   type Member,
 } from "@/lib/referral";
+import { submitJoin } from "@/app/actions";
 
-type Step = "form" | "otp" | "dashboard";
+type Step = "form" | "dashboard";
 
 const inputCls =
   "w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-ink outline-none transition focus:border-maroon focus:ring-2 focus:ring-maroon/20";
@@ -38,11 +38,9 @@ export default function JoinFlow({ urlReferral }: { urlReferral?: string }) {
   const [gender, setGender] = useState<"" | "Male" | "Female">("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // otp state
-  const otpRef = useRef("");
-  const [otp, setOtp] = useState("");
-  const [otpError, setOtpError] = useState("");
-  const [otpNote, setOtpNote] = useState("");
+  // submit state
+  const [busy, setBusy] = useState(false);
+  const [formError, setFormError] = useState("");
 
   // referral list for dashboard
   const [tree, setTree] = useState<{ member: Member; referredCount: number }[]>([]);
@@ -77,8 +75,8 @@ export default function JoinFlow({ urlReferral }: { urlReferral?: string }) {
     }
   }, [step, user]);
 
-  /* --------------------------- step 1: the form --------------------------- */
-  function submitForm(e: React.FormEvent) {
+  /* ----------------------------- submit the form ---------------------------- */
+  async function submitForm(e: React.FormEvent) {
     e.preventDefault();
     const errs: Record<string, string> = {};
     if (!name.trim()) errs.name = "Please enter your name.";
@@ -91,51 +89,33 @@ export default function JoinFlow({ urlReferral }: { urlReferral?: string }) {
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
-    const code = generateOtp();
-    otpRef.current = code;
-    // No backend: print the OTP so it can be used in the demo.
-    console.log(`[join] OTP for +91 ${phone}: ${code}`);
-    setOtpNote("A 6-digit OTP has been generated (printed to the browser console for this demo).");
-    setOtp("");
-    setOtpError("");
-    setStep("otp");
-  }
+    setBusy(true);
+    setFormError("");
+    try {
+      const res = await submitJoin({ name, phone, pincode, referral, dob, gender });
+      if (!res.ok) { setFormError(res.message); return; }
 
-  /* --------------------------- step 2: verify OTP -------------------------- */
-  function verifyOtp(e: React.FormEvent) {
-    e.preventDefault();
-    // Demo mode: accept any 6-digit OTP.
-    if (!/^\d{6}$/.test(otp.trim())) {
-      setOtpError("Please enter the 6-digit OTP.");
-      return;
+      const referralCode = res.referralCode || phoneToReferral(phone);
+      const member: Member = {
+        name: name.trim(),
+        phone,
+        referralCode,
+        referredBy: referral.trim() ? referral.trim().toUpperCase() : null,
+        pincode,
+        dob: dob || undefined,
+        gender: gender || "",
+        createdAt: new Date().toISOString(),
+      };
+      upsertMember(member); // local dashboard/referral-tree cache
+      const authUser: AuthUser = { name: member.name, phone, referralCode };
+      setAuth(authUser);
+      setUser(authUser);
+      setStep("dashboard");
+    } catch {
+      setFormError("Something went wrong. Please try again.");
+    } finally {
+      setBusy(false);
     }
-
-    const referralCode = phoneToReferral(phone);
-    const member: Member = {
-      name: name.trim(),
-      phone,
-      referralCode,
-      referredBy: referral.trim() ? referral.trim().toUpperCase() : null,
-      pincode,
-      dob: dob || undefined,
-      gender: gender || "",
-      createdAt: new Date().toISOString(),
-    };
-    upsertMember(member);
-    const authUser: AuthUser = { name: member.name, phone, referralCode };
-    setAuth(authUser);
-    console.log("[join] verified & registered:", member);
-
-    setUser(authUser);
-    setStep("dashboard");
-  }
-
-  function resendOtp() {
-    const code = generateOtp();
-    otpRef.current = code;
-    console.log(`[join] OTP (resent) for +91 ${phone}: ${code}`);
-    setOtpNote("A new OTP has been generated (see browser console).");
-    setOtpError("");
   }
 
   function logout() {
@@ -146,8 +126,7 @@ export default function JoinFlow({ urlReferral }: { urlReferral?: string }) {
     setPincode("");
     setDob("");
     setGender("");
-    setOtp("");
-    otpRef.current = "";
+    setFormError("");
     const fromCookie = getCookie(REFERRAL_COOKIE);
     setReferral(fromCookie || "");
     setStep("form");
@@ -257,60 +236,6 @@ export default function JoinFlow({ urlReferral }: { urlReferral?: string }) {
             </button>
           </div>
         </div>
-      </div>
-    );
-  }
-
-  if (step === "otp") {
-    return (
-      <div className="mx-auto max-w-md">
-        <form
-          onSubmit={verifyOtp}
-          className="rounded-2xl border border-gold/20 bg-white p-8 shadow-sm"
-        >
-          <h2 className="font-display text-2xl text-maroon">Verify your number</h2>
-          <p className="mt-2 text-sm text-ink/70">
-            Enter the OTP sent to <strong>+91 {phone}</strong>.
-          </p>
-          {otpNote && (
-            <p className="mt-3 rounded-md bg-cream px-4 py-2 text-xs text-ink/70">
-              {otpNote}
-            </p>
-          )}
-
-          <input
-            value={otp}
-            onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-            inputMode="numeric"
-            placeholder="6-digit OTP"
-            className={`${inputCls} mt-5 text-center text-lg tracking-[0.4em]`}
-          />
-          {otpError && <p className="mt-2 text-sm text-red-700">{otpError}</p>}
-
-          <button
-            type="submit"
-            className="mt-5 w-full rounded-full bg-maroon px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-maroon-600"
-          >
-            Verify &amp; Join
-          </button>
-
-          <div className="mt-4 flex justify-between text-sm">
-            <button
-              type="button"
-              onClick={() => setStep("form")}
-              className="text-ink/60 hover:text-maroon"
-            >
-              ← Edit details
-            </button>
-            <button
-              type="button"
-              onClick={resendOtp}
-              className="font-semibold text-saffron hover:text-maroon"
-            >
-              Resend OTP
-            </button>
-          </div>
-        </form>
       </div>
     );
   }
@@ -436,11 +361,14 @@ export default function JoinFlow({ urlReferral }: { urlReferral?: string }) {
           </div>
         </div>
 
+        {formError && <p className="text-sm text-red-700">{formError}</p>}
+
         <button
           type="submit"
-          className="w-full rounded-full bg-maroon px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-maroon-600"
+          disabled={busy}
+          className="w-full rounded-full bg-maroon px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-maroon-600 disabled:opacity-60"
         >
-          Continue
+          {busy ? "Joining…" : "Join"}
         </button>
       </form>
     </div>
