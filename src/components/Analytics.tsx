@@ -18,7 +18,7 @@ declare global {
   }
 }
 
-export default function Analytics() {
+export default function Analytics({ userId }: { userId?: string }) {
   const pathname = usePathname();
   const first = useRef(true);
 
@@ -26,10 +26,13 @@ export default function Analytics() {
   useEffect(() => {
     if (!GA_ID) return;
     if (first.current) { first.current = false; return; }
-    window.gtag?.("event", "page_view", { page_path: pathname });
-  }, [pathname]);
+    window.gtag?.("event", "page_view", { page_path: pathname, ...(userId ? { user_id: userId } : {}) });
+  }, [pathname, userId]);
 
   if (!GA_ID) return null;
+  // user_id ties all events to one member across sessions/devices (internal id
+  // only — never phone/name, which would violate Google's PII policy).
+  const cfg = userId ? `, { user_id: ${JSON.stringify(userId)} }` : "";
   return (
     <>
       <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
@@ -37,7 +40,7 @@ export default function Analytics() {
         {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', '${GA_ID}');`}
+gtag('config', '${GA_ID}'${cfg});`}
       </Script>
     </>
   );

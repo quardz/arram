@@ -3,12 +3,15 @@ import { cookies } from "next/headers";
 import "./theme.css";
 import ImpersonationBanner from "./_components/ImpersonationBanner";
 import Analytics from "@/components/Analytics";
+import { getSession } from "@/lib/session";
 
 export const metadata = { title: "ASM உறுப்பினர்", robots: { index: false } };
 
 export default async function MemberLayout({ children }: { children: ReactNode }) {
   const theme = (await cookies()).get("theme")?.value;
   const themeAttr = theme === "dark" || theme === "light" ? theme : undefined;
+  const session = await getSession().catch(() => null);
+  const gaUserId = session?.personId ? `u${session.personId}` : undefined;
   return (
     <html lang="ta" {...(themeAttr ? { "data-theme": themeAttr } : {})}>
       <head>
@@ -24,7 +27,7 @@ export default async function MemberLayout({ children }: { children: ReactNode }
           <ImpersonationBanner />
           {children}
         </div>
-        <Analytics />
+        <Analytics userId={gaUserId} />
       </body>
     </html>
   );
