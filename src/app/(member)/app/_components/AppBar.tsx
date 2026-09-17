@@ -45,6 +45,7 @@ export default function AppBar({ lang, title, backHref, backLabel, loggedIn, nav
           profile: tr(lang, "nav_profile"),
           activity: tr(lang, "act_title"),
           impersonate: tr(lang, "nav_impersonate"),
+          coverage: tr(lang, "nav_coverage"),
           logout: tr(lang, "home_logout"),
           appName: tr(lang, "appName"),
           lang_ta: "தமிழ்",

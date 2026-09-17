@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 type Labels = {
   menu: string; home: string; attendance: string; org: string; people: string;
-  profile: string; activity: string; impersonate: string; logout: string;
+  profile: string; activity: string; impersonate: string; coverage: string; logout: string;
   appName: string; lang_ta: string; lang_en: string;
   theme: string; theme_light: string; theme_dark: string;
 };
@@ -88,6 +88,7 @@ export default function NavDrawer({
             <Link href="/app/activity" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>🗒️</span>{labels.activity}</Link>
             <Link href="/app/profile" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>👤</span>{labels.profile}</Link>
             {isAdmin && <Link href="/app/impersonate" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>🧑‍🤝‍🧑</span>{labels.impersonate}</Link>}
+            {isAdmin && <Link href="/app/coverage" className="asm-navlink" onClick={close}><span className="ic" aria-hidden>📊</span>{labels.coverage}</Link>}
           </nav>
         )}
 
