@@ -153,6 +153,15 @@ body{
 .asm-banner.upcoming{background:#e8edfa;color:#3a4b86}
 .asm-banner.funnel{background:#fdeccb;color:#8a6412}
 
+/* attendance union/pincode filters + grouping */
+.asm-filters{display:flex;gap:8px;margin:2px 0 10px}
+.asm-filters .asm-select{flex:1;min-width:0;margin:0;font-size:13px;padding:9px 10px}
+.asm-group{margin-top:14px}
+.asm-group-hd{font-size:14px;font-weight:800;color:var(--asm-maroon);padding:6px 0;border-bottom:2px solid var(--asm-line)}
+.asm-group-hd span{color:var(--asm-muted);font-weight:600}
+.asm-subgroup-hd{font-size:12.5px;font-weight:700;color:var(--asm-brand);margin:8px 0 2px}
+.asm-subgroup-hd span{color:var(--asm-muted);font-weight:600}
+
 /* campaign status tiles + breakdown */
 .asm-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:4px 0 18px}
 .asm-stat{background:var(--asm-card);border:1px solid var(--asm-line);border-radius:14px;padding:12px 6px;text-align:center;box-shadow:var(--asm-shadow)}

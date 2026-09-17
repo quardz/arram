@@ -46,7 +46,7 @@ export async function getAccessibleSession(member: CurrentMember, eventId: numbe
   return ev;
 }
 
-export type Attendee = { id: number; name: string | null; phone: string; present: boolean };
+export type Attendee = { id: number; name: string | null; phone: string; present: boolean; union: string | null; pincode: string | null };
 
 /** People this member can mark for a session, with present state, loaded once.
  *  - Area = every district under the session's node (district session → that
@@ -82,9 +82,14 @@ export async function listAttendees(ev: Event, member: CurrentMember): Promise<A
   let people = ppl.docs as Person[];
   if (funnelSet) people = people.filter((p) => funnelSet.has(p.id as number) || present.has(p.id as number));
 
-  return people.map((p) => ({
-    id: p.id as number, name: p.name ?? null, phone: p.phone, present: present.has(p.id as number),
-  }));
+  return people.map((p) => {
+    const raw = (p as unknown as { rawGeoText?: { union?: string | null } | null }).rawGeoText;
+    return {
+      id: p.id as number, name: p.name ?? null, phone: p.phone, present: present.has(p.id as number),
+      union: (raw?.union ?? null) || null,
+      pincode: (p.pincode ?? null) || null,
+    };
+  });
 }
 
 /** Set present/absent for a person in an event (upsert). */
