@@ -13,6 +13,8 @@ type Props = {
 export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels, m }: Props) {
   const [asg, setAsg] = useState<Asg[]>(assignments);
   const [edit, setEdit] = useState(false);
+  const [tab, setTab] = useState<"browse" | "search">("browse");
+  const [sq, setSq] = useState("");
 
   const byId = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
   const childrenBy = useMemo(() => {
@@ -93,6 +95,20 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
   }
   const sheetPeople = sheetNode ? peopleAt(sheetNode.id) : [];
 
+  // Member search across all assignments (name / role / location / phone).
+  const results = useMemo(() => {
+    const t = sq.trim().toLowerCase();
+    if (!t) return [] as Asg[];
+    const digits = t.replace(/\D/g, "");
+    return asg.filter((a) => {
+      const node = byId.get(a.nodeId);
+      const roleL = (roleLabels[a.role] || a.role).toLowerCase();
+      const nn = (node ? `${nodeLabel(node)} ${node.name} ${node.nameTamil || ""}` : "").toLowerCase();
+      return a.name.toLowerCase().includes(t) || (digits && a.phone.includes(digits)) || roleL.includes(t) || nn.includes(t);
+    }).slice(0, 100);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sq, asg, byId, roleLabels, lang]);
+
   return (
     <main className="asm-main org2">
       <div className="org2-bar">
@@ -100,6 +116,42 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
         {isAdmin ? <button className={`org-editbtn ${edit ? "on" : ""}`} onClick={() => setEdit((e) => !e)}>{edit ? m.org_done : m.org_edit}</button> : null}
       </div>
 
+      <div className="asm-seg" style={{ marginBottom: 12 }}>
+        <button className={tab === "browse" ? "on" : ""} onClick={() => setTab("browse")}>{m.org_tab_browse}</button>
+        <button className={tab === "search" ? "on" : ""} onClick={() => setTab("search")}>{m.org_tab_search}</button>
+      </div>
+
+      {tab === "search" && (
+        <div className="org2-searchwrap">
+          <div className="asm-search">
+            <span className="mag" aria-hidden>🔍</span>
+            <input className="asm-input" value={sq} onChange={(e) => setSq(e.target.value)} placeholder={m.org_search_ph} autoFocus />
+          </div>
+          {sq.trim() === "" ? (
+            <div className="org-empty" style={{ marginTop: 12 }}>{m.org_search_hint}</div>
+          ) : results.length === 0 ? (
+            <div className="org-empty" style={{ marginTop: 12 }}>{m.att_none_found}</div>
+          ) : (
+            <ul className="org2-list">
+              {results.map((a) => {
+                const node = byId.get(a.nodeId);
+                return (
+                  <li key={a.id} className="org2-row">
+                    <div className="org2-row-main" onClick={() => { go(a.nodeId); setTab("browse"); }}>
+                      <div className="org2-row-name">{a.name}</div>
+                      <div className="org2-row-sub">{roleLabels[a.role] || a.role}{node ? ` · ${nodeLabel(node)}` : ""} · {a.phone}</div>
+                    </div>
+                    <ContactButtons phone={a.phone} m={m} />
+                    <span className="org2-chev" aria-hidden onClick={() => { go(a.nodeId); setTab("browse"); }}>›</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      )}
+
+      {tab === "browse" && (<>
       <div className="org2-crumbs">
         {roots.length > 1 && (
           <button className={`org2-crumb ${current == null ? "on" : ""}`} onClick={() => go(null)}>{m.org_root}</button>
@@ -160,6 +212,7 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
           </ul>
         )}
       </div>
+      </>)}
 
       {sheetNode ? (
         <>
