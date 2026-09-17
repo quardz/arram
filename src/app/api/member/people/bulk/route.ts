@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCurrentMember, normalizePhone } from "@/lib/member";
+import { getCurrentMember, isAdmin, normalizePhone } from "@/lib/member";
 import { myDistrictIds } from "@/lib/attendance";
 import { pincodeToGeoNode } from "@/lib/pincodeGeo";
 import { getPayloadClient } from "@/lib/payload";
@@ -16,11 +16,12 @@ function phoneToReferral(phone: string): string {
 type InRow = { name?: string; phone?: string; pincode?: string };
 type OutRow = { name: string; phone: string; status: "added" | "exists" | "invalid"; reason?: string };
 
-// Bulk-add people. Any member with an active assignment may add; each new person
-// is referred by the adder (referredBy) and tagged source="member-added".
+// Bulk-add people. Admins only; each new person is referred by the adder
+// (referredBy) and tagged source="member-added".
 export async function POST(req: Request) {
   const member = await getCurrentMember();
   if (!member?.assignments.length) return NextResponse.json({ ok: false }, { status: 403 });
+  if (!isAdmin(member)) return NextResponse.json({ ok: false, error: "forbidden" }, { status: 403 });
 
   const body = await req.json().catch(() => ({}));
   const rows: InRow[] = Array.isArray(body?.rows) ? body.rows.slice(0, MAX_ROWS) : [];

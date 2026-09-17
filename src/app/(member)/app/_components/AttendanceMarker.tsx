@@ -35,32 +35,35 @@ export default function AttendanceMarker({ eventId, m, open = true, canAdd = tru
 
   const present = useMemo(() => all.filter((p) => p.present), [all]);
   const presentCount = present.length;
+  // Select tab shows only people NOT yet marked present — once selected, they
+  // move to the Selected tab and disappear from here.
+  const selectable = useMemo(() => all.filter((p) => !p.present), [all]);
 
   // distinct unions (for the first filter)
   const unions = useMemo(() => {
     const map = new Map<string, { value: string; label: string; count: number }>();
-    for (const p of all) {
+    for (const p of selectable) {
       const v = p.union ?? NONE; const label = p.union || m.att_no_union;
       const e = map.get(v) || { value: v, label, count: 0 }; e.count++; map.set(v, e);
     }
     return [...map.values()].sort((a, b) => a.value === NONE ? 1 : b.value === NONE ? -1 : a.label.localeCompare(b.label));
-  }, [all, m]);
+  }, [selectable, m]);
 
   // distinct pincodes within the chosen union (dependent second filter)
   const pincodes = useMemo(() => {
-    const pool = unionF ? all.filter((p) => matchUnion(p, unionF)) : all;
+    const pool = unionF ? selectable.filter((p) => matchUnion(p, unionF)) : selectable;
     const map = new Map<string, { value: string; label: string; count: number }>();
     for (const p of pool) {
       const v = p.pincode ?? NONE; const label = p.pincode || m.att_no_pincode;
       const e = map.get(v) || { value: v, label, count: 0 }; e.count++; map.set(v, e);
     }
     return [...map.values()].sort((a, b) => a.value === NONE ? 1 : b.value === NONE ? -1 : a.label.localeCompare(b.label));
-  }, [all, unionF, m]);
+  }, [selectable, unionF, m]);
 
   const { view, truncated } = useMemo(() => {
     const term = q.trim().toLowerCase();
     const digits = term.replace(/\D/g, "");
-    let list = all.filter((p) => matchUnion(p, unionF) && matchPin(p, pinF));
+    let list = selectable.filter((p) => matchUnion(p, unionF) && matchPin(p, pinF));
     if (term) list = list.filter((p) => {
       const nm = (p.name || "").toLowerCase();
       return nm.includes(term) || (digits && p.phone.includes(digits)) || (digits && (p.pincode || "").includes(digits));
@@ -68,7 +71,7 @@ export default function AttendanceMarker({ eventId, m, open = true, canAdd = tru
     const active = term || unionF || pinF;
     if (!active) return { view: list.slice(0, IDLE_COUNT), truncated: list.length > IDLE_COUNT };
     return { view: list.slice(0, DISPLAY_CAP), truncated: list.length > DISPLAY_CAP };
-  }, [q, all, unionF, pinF]);
+  }, [q, selectable, unionF, pinF]);
 
   // present people grouped: union → pincode
   const grouped = useMemo(() => {

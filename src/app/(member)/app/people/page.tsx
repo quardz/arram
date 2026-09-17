@@ -12,13 +12,14 @@ export default async function PeoplePage() {
   if (!member) redirect("/app/login");
   if (!member.assignments.length) redirect("/app/no-access");
   const lang = await getLang();
+  const admin = isAdmin(member);
   return (
     <>
-      <AppBar lang={lang} backHref="/app" backLabel={tr(lang, "appName")} loggedIn nav isAdmin={isAdmin(member)} />
+      <AppBar lang={lang} backHref="/app" backLabel={tr(lang, "appName")} loggedIn nav isAdmin={admin} />
       <main className="asm-main">
         <div className="asm-listhdr">
           <h1>{tr(lang, "ppl_title")}</h1>
-          <Link href="/app/people/bulk" className="asm-add">＋ {tr(lang, "ppl_bulk_add")}</Link>
+          {admin && <Link href="/app/people/bulk" className="asm-add">＋ {tr(lang, "ppl_bulk_add")}</Link>}
         </div>
         <PeopleDirectory m={messages(lang)} />
       </main>

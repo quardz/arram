@@ -28,7 +28,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   const status = isCampaign ? campaignStatus(evx) : "open";
   const open = status === "open";
   const funnel = evx.funnelParent != null;
-  const canAdd = open && !funnel; // funnel campaigns have a fixed pool
+  const canAdd = open && !funnel && isAdmin(member); // funnel = fixed pool; quick-add is admin-only
 
   const fmt = (d?: string | null) =>
     d ? new Date(d).toLocaleString(lang === "ta" ? "ta-IN" : "en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";

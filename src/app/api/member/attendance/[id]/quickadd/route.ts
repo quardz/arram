@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { getCurrentMember } from "@/lib/member";
+import { getCurrentMember, isAdmin, normalizePhone } from "@/lib/member";
 import { getAccessibleSession, markAttendance } from "@/lib/attendance";
-import { normalizePhone } from "@/lib/member";
 import { getPayloadClient } from "@/lib/payload";
 import { audit, auditActor } from "@/lib/audit";
 import { campaignOpen } from "@/lib/campaign";
@@ -11,6 +10,7 @@ const rel = (v: unknown) => (v && typeof v === "object" ? (v as { id?: number })
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const member = await getCurrentMember();
   if (!member?.assignments.length) return NextResponse.json({ ok: false }, { status: 403 });
+  if (!isAdmin(member)) return NextResponse.json({ ok: false, error: "forbidden" }, { status: 403 });
   const { id } = await ctx.params;
   const ev = await getAccessibleSession(member, Number(id));
   if (!ev) return NextResponse.json({ ok: false, error: "no_access" }, { status: 403 });

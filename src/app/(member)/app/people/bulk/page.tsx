@@ -10,6 +10,7 @@ export default async function BulkAddPage() {
   const member = await getCurrentMember();
   if (!member) redirect("/app/login");
   if (!member.assignments.length) redirect("/app/no-access");
+  if (!isAdmin(member)) redirect("/app/people"); // bulk add is admin-only
   const lang = await getLang();
   return (
     <>
