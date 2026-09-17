@@ -37,6 +37,7 @@ export const OrgAssignments: CollectionConfig = {
         { label: "Union coordinator", value: "union_coordinator" },
         { label: "Panchayat coordinator", value: "panchayat_coordinator" },
         { label: "Temple coordinator", value: "temple_coordinator" },
+        { label: "State functionary (read-only)", value: "state_functionary" },
       ],
     },
     { name: "active", type: "checkbox", defaultValue: true, index: true },

@@ -12,8 +12,11 @@ export const LEVEL_ROLE: Record<string, string> = {
 
 export const ROLE_VALUES = [
   "super_admin", "state_admin", "regional_organiser", "zonal_organiser", "district_organiser",
-  "union_coordinator", "panchayat_coordinator", "temple_coordinator",
+  "union_coordinator", "panchayat_coordinator", "temple_coordinator", "state_functionary",
 ];
+
+/** Roles that can only read the app — no create/edit/attendance/impersonate. */
+export const READONLY_ROLES = new Set(["state_functionary"]);
 
 export function defaultRoleForLevel(level?: string): string {
   return (level && LEVEL_ROLE[level]) || "district_organiser";

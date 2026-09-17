@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getLang, messages, tr } from "@/lib/i18n";
-import { getCurrentMember, isAdmin } from "@/lib/member";
+import { getCurrentMember, isAdmin, isReadOnly } from "@/lib/member";
 import type { GeoNode } from "@/payload-types";
 import AppBar from "../_components/AppBar";
 import ProfileForm from "../_components/ProfileForm";
@@ -32,7 +32,7 @@ export default async function ProfilePage() {
       <AppBar lang={lang} backHref="/app" backLabel={tr(lang, "appName")} loggedIn nav isAdmin={isAdmin(member)} userName={initial.name || p.phone} userRole={roleText} />
       <main className="asm-main">
         <div className="asm-hero"><h1>{tr(lang, "prof_title")}</h1></div>
-        <ProfileForm initial={initial} roleText={roleText} isAdmin={isAdmin(member)} m={messages(lang)} />
+        <ProfileForm initial={initial} roleText={roleText} isAdmin={isAdmin(member)} readOnly={isReadOnly(member)} m={messages(lang)} />
       </main>
     </>
   );

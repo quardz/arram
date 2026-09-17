@@ -44,6 +44,17 @@ export async function POST(req: Request) {
 
     await setSessionCookie(await createSessionToken({ personId: person.id as number, phone }));
     await audit({ actorId: person.id as number, action: "login", detail: phone });
+    // Stamp last login. Only real logins pass through here — admin impersonation
+    // sets the session token directly and never touches this, so "view as" does
+    // not count as the member logging in.
+    try {
+      const { getPayloadClient } = await import("@/lib/payload");
+      const payload = await getPayloadClient();
+      await (payload as unknown as { update: (a: unknown) => Promise<unknown> }).update({
+        collection: "people", id: person.id as number, overrideAccess: true,
+        data: { lastLoginAt: new Date().toISOString() },
+      });
+    } catch (e) { console.warn(`[login] lastLoginAt update failed personId=${person.id}`, (e as Error)?.message); }
     console.log(`[login] password success phone=${phone} personId=${person.id}`);
     return NextResponse.json({ ok: true });
   } catch (e) {

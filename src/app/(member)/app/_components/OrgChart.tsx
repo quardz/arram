@@ -5,7 +5,7 @@ import ContactButtons from "./ContactButtons";
 import PasswordShareButtons from "./PasswordShareButtons";
 
 type Node = { id: number; name: string; nameTamil: string | null; level: string; parentId: number | null };
-type Asg = { id: number; nodeId: number; personId: number; name: string; phone: string; role: string; fullTime?: boolean; displayName?: string; password?: string };
+type Asg = { id: number; nodeId: number; personId: number; name: string; phone: string; role: string; fullTime?: boolean; displayName?: string; password?: string; lastLoginAt?: string | null };
 type Props = {
   nodes: Node[]; assignments: Asg[]; isAdmin: boolean;
   lang: "ta" | "en"; roleLabels: Record<string, string>; m: Record<string, string>;
@@ -39,6 +39,15 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [byId]);
   const go = (id: number | null) => { window.location.hash = id != null ? String(id) : ""; };
+
+  const lastLoginText = (a: Asg) => {
+    if (a.lastLoginAt === undefined) return null; // not an admin viewer
+    const label = m.org_last_login || "Last login";
+    if (!a.lastLoginAt) return `${label}: ${m.org_never || "Never"}`;
+    const d = new Date(a.lastLoginAt);
+    const when = d.toLocaleString(lang === "ta" ? "ta-IN" : "en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+    return `${label}: ${when}`;
+  };
 
   const nodeLabel = (n: Node) => (lang === "ta" && n.nameTamil ? n.nameTamil : n.name);
   const nodeAlt = (n: Node) => (lang === "ta" ? n.name : n.nameTamil || "");
@@ -141,6 +150,7 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
                     <div className="org2-row-main" onClick={() => { go(a.nodeId); setTab("browse"); }}>
                       <div className="org2-row-name">{a.name}</div>
                       <div className="org2-row-sub">{roleLabels[a.role] || a.role}{node ? ` · ${nodeLabel(node)}` : ""} · {a.phone}</div>
+                      {isAdmin && lastLoginText(a) ? <div className="org2-row-sub org2-lastlogin">🕐 {lastLoginText(a)}</div> : null}
                     </div>
                     <ContactButtons phone={a.phone} m={m} />
                     {isAdmin && a.password ? <PasswordShareButtons phone={a.phone} name={a.displayName || ""} password={a.password} m={m} /> : null}
@@ -181,7 +191,7 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
             ) : peopleAt(current.id).map((p) => (
               <div key={p.id} className="org2-person">
                 <span className="org2-pav">{p.name[0]}</span>
-                <span className="org2-pinfo"><b>{p.name}</b><small>{p.phone} · {roleLabels[p.role] || p.role}</small></span>
+                <span className="org2-pinfo"><b>{p.name}</b><small>{p.phone} · {roleLabels[p.role] || p.role}</small>{isAdmin && lastLoginText(p) ? <small className="org2-lastlogin">🕐 {lastLoginText(p)}</small> : null}</span>
                 <ContactButtons phone={p.phone} m={m} />
                 {isAdmin && p.password ? <PasswordShareButtons phone={p.phone} name={p.displayName || ""} password={p.password} m={m} /> : null}
               </div>

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCurrentMember, isAdmin, normalizePhone } from "@/lib/member";
+import { getCurrentMember, isAdmin, isReadOnly, normalizePhone } from "@/lib/member";
 import { getPayloadClient } from "@/lib/payload";
 
 // Update the current member's own profile. full_time is only applied when the
@@ -7,6 +7,7 @@ import { getPayloadClient } from "@/lib/payload";
 export async function POST(req: Request) {
   const member = await getCurrentMember();
   if (!member) return NextResponse.json({ ok: false }, { status: 401 });
+  if (isReadOnly(member)) return NextResponse.json({ ok: false, error: "forbidden" }, { status: 403 });
   const body = await req.json().catch(() => ({}));
   const name = String(body?.name || "").trim();
   const email = String(body?.email || "").trim();

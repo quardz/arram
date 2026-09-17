@@ -27,6 +27,11 @@ export default async function MemberHome() {
           <span className="asm-cmeta"><b>{tr(lang, "home_attendance")}</b></span>
           <span aria-hidden style={{ color: "var(--asm-brand)", fontSize: 22 }}>→</span>
         </Link>
+        <Link href="/app/analytics" className="asm-card" style={{ fontSize: 17, fontWeight: 700 }}>
+          <span className="asm-icn">📈</span>
+          <span className="asm-cmeta"><b>{tr(lang, "an_title")}</b></span>
+          <span aria-hidden style={{ color: "var(--asm-brand)", fontSize: 22 }}>→</span>
+        </Link>
       </main>
     </>
   );

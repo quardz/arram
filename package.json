@@ -14,7 +14,7 @@
     "generate:importmap": "payload generate:importmap",
     "migrate": "payload migrate",
     "migrate:create": "payload migrate:create",
-    "vercel-build": "if [ -n \"$DATABASE_URI_DIRECT\" ] || [ -n \"$DATABASE_URI\" ]; then payload migrate && (node scripts/seed-geo.mjs || echo \"seed-geo skipped\") && (node scripts/seed-org.mjs || echo \"seed-org skipped\") && (node scripts/import-people.mjs || echo \"import-people skipped\") && (node scripts/seed-person-geo.mjs || echo \"seed-person-geo skipped\") && (node scripts/seed-super-admin.mjs || echo \"seed-super-admin skipped\"); fi && payload generate:types && next build"
+    "vercel-build": "if [ -n \"$DATABASE_URI_DIRECT\" ] || [ -n \"$DATABASE_URI\" ]; then payload migrate && (node scripts/seed-geo.mjs || echo \"seed-geo skipped\") && (node scripts/seed-org.mjs || echo \"seed-org skipped\") && (node scripts/import-people.mjs || echo \"import-people skipped\") && (node scripts/seed-person-geo.mjs || echo \"seed-person-geo skipped\") && (node scripts/seed-super-admin.mjs || echo \"seed-super-admin skipped\") && (node scripts/seed-state-functionaries.mjs || echo \"seed-state-functionaries skipped\"); fi && payload generate:types && next build"
   },
   "dependencies": {
     "next": "16.2.9",

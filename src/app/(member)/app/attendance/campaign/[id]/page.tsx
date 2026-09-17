@@ -1,12 +1,12 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { getLang, tr } from "@/lib/i18n";
+import { getLang, messages, tr } from "@/lib/i18n";
 import { getCurrentMember, isAdmin } from "@/lib/member";
 import { myDistrictIds, myNodeIds } from "@/lib/attendance";
 import { campaignStatus, campaignDistrictStats } from "@/lib/campaign";
 import { getPayloadClient } from "@/lib/payload";
-import type { Event } from "@/payload-types";
+import type { Event, GeoNode } from "@/payload-types";
 import AppBar from "../../../_components/AppBar";
+import CampaignCharts from "../../../_components/CampaignCharts";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +30,16 @@ export default async function CampaignStatus({ params }: { params: Promise<{ id:
   const stats = await campaignDistrictStats(payload, campaign as unknown as { id: number; startAt?: string | null; endAt?: string | null; funnelParent?: unknown }, area);
   if (!stats.length) notFound();
 
-  const held = new Set(myNodeIds(member));
+  // Geo tree for the drill-down chart (state → region → mandalam → district).
+  const nodesR = await payload.find({ collection: "geoNodes", overrideAccess: true, depth: 0, limit: 5000 });
+  const chartNodes = (nodesR.docs as GeoNode[]).map((n) => ({
+    id: n.id as number, name: n.name, nameTamil: n.nameTamil ?? null,
+    level: (n.level as string) ?? "",
+    parentId: n.parent == null ? null : (typeof n.parent === "object" ? ((n.parent as { id?: number }).id ?? null) : (n.parent as number)),
+  }));
+  const heldNodeIds = myNodeIds(member);
+  const startNodeId = heldNodeIds[0] ?? null;
+
   const primary = member.assignments[0];
   const pnode = typeof primary.geoNode === "object" ? (primary.geoNode as { name?: string }) : null;
   const uname = member.person.name && member.person.name !== "multiple" ? member.person.name : member.person.phone;
@@ -60,32 +69,8 @@ export default async function CampaignStatus({ params }: { params: Promise<{ id:
           <div className="asm-stat"><b>{districtsStarted}/{stats.length}</b><small>{tr(lang, "cst_districts_started")}</small></div>
         </div>
 
-        <h2 className="asm-subhead">{tr(lang, "cst_breakdown")}</h2>
-        <ul className="asm-cards">
-          {stats.map((s) => {
-            const takeable = admin || held.has(s.districtId);
-            const dpct = s.eligible ? Math.round((s.checked / s.eligible) * 100) : 0;
-            const inner = (
-              <>
-                <span className="asm-cmeta">
-                  <span className="top">
-                    <b>{s.name}</b>
-                    <span className={`asm-badge ${s.started ? "open" : "closed"}`}>{tr(lang, s.started ? "att_status_open" : "att_status_closed")}</span>
-                  </span>
-                  <small className="asm-statline">✓ {s.checked}/{s.eligible} · {dpct}%</small>
-                </span>
-                {takeable && <span className="asm-chev">›</span>}
-              </>
-            );
-            return (
-              <li key={s.districtId}>
-                {takeable
-                  ? <Link href={`/app/attendance/${s.sessionId}`} className="asm-card">{inner}</Link>
-                  : <div className="asm-card asm-card-static">{inner}</div>}
-              </li>
-            );
-          })}
-        </ul>
+        <h2 className="asm-subhead">{tr(lang, "cst_by_level")}</h2>
+        <CampaignCharts stats={stats} nodes={chartNodes} startNodeId={startNodeId} heldNodeIds={heldNodeIds} admin={admin} lang={lang} m={messages(lang)} />
       </main>
     </>
   );

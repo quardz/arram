@@ -12,7 +12,7 @@ function initials(p: P) { const s = displayName(p).trim(); return s ? s[0] : "?"
 const matchUnion = (p: P, f: string) => !f || (f === NONE ? !p.union : p.union === f);
 const matchPin = (p: P, f: string) => !f || (f === NONE ? !p.pincode : p.pincode === f);
 
-export default function AttendanceMarker({ eventId, m, open = true, canAdd = true }: { eventId: number; m: Record<string, string>; open?: boolean; canAdd?: boolean }) {
+export default function AttendanceMarker({ eventId, m, open = true, canAdd = true, readOnly = false }: { eventId: number; m: Record<string, string>; open?: boolean; canAdd?: boolean; readOnly?: boolean }) {
   const [all, setAll] = useState<P[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [tab, setTab] = useState<"select" | "selected">("select");
@@ -93,7 +93,7 @@ export default function AttendanceMarker({ eventId, m, open = true, canAdd = tru
   }, [present, m]);
 
   async function toggle(p: P) {
-    if (!open) return;
+    if (!open || readOnly) return;
     const nowPresent = !p.present;
     setAll((xs) => xs.map((x) => (x.id === p.id ? { ...x, present: nowPresent } : x)));
     await fetch(`/api/member/attendance/${eventId}/mark`, {
@@ -118,8 +118,8 @@ export default function AttendanceMarker({ eventId, m, open = true, canAdd = tru
     <li key={p.id} className="asm-person">
       <span className="asm-avatar">{initials(p)}</span>
       <span className="asm-pnm"><b>{displayName(p)}</b><small>{p.phone}</small></span>
-      <button className={`asm-mark ${p.present ? "on" : ""}`} onClick={() => toggle(p)} disabled={!open} aria-label={m.att_present}>
-        {p.present ? "✓" : "＋"}
+      <button className={`asm-mark ${p.present ? "on" : ""}`} onClick={() => toggle(p)} disabled={!open || readOnly} aria-label={m.att_present}>
+        {p.present ? "✓" : readOnly ? "·" : "＋"}
       </button>
     </li>
   );

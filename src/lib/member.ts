@@ -1,5 +1,6 @@
 import { getPayloadClient } from "@/lib/payload";
 import { getSession } from "@/lib/session";
+import { READONLY_ROLES } from "@/lib/org";
 import type { OrgAssignment, Person } from "@/payload-types";
 
 export const normalizePhone = (raw: string) =>
@@ -71,6 +72,13 @@ export function isAdmin(member: CurrentMember): boolean {
 
 export function isSuperAdmin(member: CurrentMember): boolean {
   return member.assignments.some((a) => (a.role as string) === "super_admin");
+}
+
+/** Read-only member: has assignments, and EVERY active assignment is a
+ *  read-only role (e.g. State functionary). Such members may view but never
+ *  create, edit, take attendance, or impersonate. */
+export function isReadOnly(member: CurrentMember): boolean {
+  return member.assignments.length > 0 && member.assignments.every((a) => READONLY_ROLES.has(a.role as string));
 }
 
 /** Load any member by person id (person + active assignments). */

@@ -40,6 +40,7 @@ export default function AppBar({ lang, title, backHref, backLabel, loggedIn, nav
           menu: tr(lang, "menu_title"),
           home: tr(lang, "nav_home"),
           attendance: tr(lang, "home_attendance"),
+          analytics: tr(lang, "nav_analytics"),
           org: tr(lang, "nav_org"),
           people: tr(lang, "nav_people"),
           profile: tr(lang, "nav_profile"),

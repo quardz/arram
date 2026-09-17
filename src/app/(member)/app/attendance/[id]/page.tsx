@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getLang, messages, tr } from "@/lib/i18n";
-import { getCurrentMember, isAdmin } from "@/lib/member";
+import { getCurrentMember, isAdmin, isReadOnly } from "@/lib/member";
 import { getAccessibleSession } from "@/lib/attendance";
 import { campaignStatus } from "@/lib/campaign";
 import type { GeoNode } from "@/payload-types";
@@ -28,7 +28,8 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   const status = isCampaign ? campaignStatus(evx) : "open";
   const open = status === "open";
   const funnel = evx.funnelParent != null;
-  const canAdd = open && !funnel && isAdmin(member); // funnel = fixed pool; quick-add is admin-only
+  const readOnly = isReadOnly(member);
+  const canAdd = open && !funnel && isAdmin(member) && !readOnly; // funnel = fixed pool; quick-add is admin-only
 
   const fmt = (d?: string | null) =>
     d ? new Date(d).toLocaleString(lang === "ta" ? "ta-IN" : "en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
@@ -50,7 +51,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
         {funnel && (
           <p className="asm-banner funnel">🎯 {tr(lang, "att_funnel_note")}</p>
         )}
-        <AttendanceMarker eventId={ev.id as number} m={messages(lang)} open={open} canAdd={canAdd} />
+        <AttendanceMarker eventId={ev.id as number} m={messages(lang)} open={open} canAdd={canAdd} readOnly={readOnly} />
       </main>
     </>
   );

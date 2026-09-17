@@ -75,6 +75,11 @@ export const People: CollectionConfig = {
     },
     { name: "geoNode", type: "relationship", relationTo: "geoNodes", index: true },
     { name: "otpVerified", type: "checkbox", defaultValue: false, index: true },
+    {
+      name: "lastLoginAt",
+      type: "date",
+      admin: { readOnly: true, description: "Last successful app login (not counted during admin impersonation)" },
+    },
     { name: "email", type: "email" },
     { name: "secondaryPhone", type: "text" },
     { name: "fullTime", type: "checkbox", defaultValue: false, admin: { description: "Full-time role — editable by state_admin/super_admin only" } },

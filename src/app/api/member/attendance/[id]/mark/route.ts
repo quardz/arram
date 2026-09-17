@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import { getCurrentMember } from "@/lib/member";
+import { getCurrentMember, isReadOnly } from "@/lib/member";
 import { getAccessibleSession, markAttendance } from "@/lib/attendance";
 import { campaignOpen } from "@/lib/campaign";
 
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const member = await getCurrentMember();
   if (!member?.assignments.length) return NextResponse.json({ ok: false }, { status: 403 });
+  if (isReadOnly(member)) return NextResponse.json({ ok: false, error: "forbidden" }, { status: 403 });
   const { id } = await ctx.params;
   const ev = await getAccessibleSession(member, Number(id));
   if (!ev) return NextResponse.json({ ok: false, error: "no_access" }, { status: 403 });

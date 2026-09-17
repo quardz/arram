@@ -43,6 +43,8 @@ export default async function OrgPage() {
       fullTime: !!(p as unknown as { fullTime?: boolean })?.fullTime,
       // Password shared only to admins (login credential; derived from phone).
       password: admin && p?.phone ? memberPassword(p.phone) : undefined,
+      // Last successful login — admin-only; null when they've never logged in.
+      lastLoginAt: admin ? ((p as unknown as { lastLoginAt?: string | null })?.lastLoginAt ?? null) : undefined,
     };
   }).filter((a) => a.nodeId);
 
