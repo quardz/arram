@@ -400,7 +400,14 @@ body{
 .org2-cur-name{font-size:20px;font-weight:800;color:var(--asm-ink)}
 .org2-cur-alt{font-size:13.5px;color:var(--asm-muted);margin-top:2px}
 .org2-people{margin-top:12px;display:flex;flex-direction:column;gap:10px}
-.org2-person{display:flex;align-items:center;gap:12px}
+.org2-person{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+
+/* password share (admin): SMS + WhatsApp, sit on their own line under a member */
+.asm-pwshare{flex-basis:100%;display:flex;gap:8px;margin:8px 0 2px;padding-left:54px}
+.asm-pwbtn{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;text-decoration:none}
+.asm-pwbtn.sms{background:#e7edf7;font-size:15px}
+.asm-pwbtn.wa{background:#25d366}
+.org2-row .asm-pwshare{padding-left:0;flex-basis:auto;margin:0}
 .org2-pav{width:40px;height:40px;border-radius:50%;background:var(--asm-tint);color:var(--asm-brand);display:grid;place-items:center;font-weight:800;flex:none}
 .org2-pinfo{flex:1;min-width:0}
 .org2-pinfo b{display:block;font-size:15.5px;font-weight:700;color:var(--asm-ink)}

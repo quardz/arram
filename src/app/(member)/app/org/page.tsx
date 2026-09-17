@@ -4,6 +4,7 @@ import { getCurrentMember, isAdmin } from "@/lib/member";
 import { requireAdminActor } from "@/lib/impersonate";
 import { getPayloadClient } from "@/lib/payload";
 import { ROLE_VALUES } from "@/lib/org";
+import { memberPassword } from "@/lib/password";
 import type { GeoNode, OrgAssignment, Person } from "@/payload-types";
 import AppBar from "../_components/AppBar";
 import OrgChart from "../_components/OrgChart";
@@ -36,9 +37,12 @@ export default async function OrgPage() {
       id: a.id as number, nodeId: rel(a.geoNode) as number,
       personId: p ? (p.id as number) : (rel(a.person) as number),
       name: p ? (p.name && p.name !== "multiple" ? p.name : p.phone) : "",
+      displayName: p ? (p.name ?? "") : "",
       phone: p ? p.phone : "",
       role: a.role as string,
       fullTime: !!(p as unknown as { fullTime?: boolean })?.fullTime,
+      // Password shared only to admins (login credential; derived from phone).
+      password: admin && p?.phone ? memberPassword(p.phone) : undefined,
     };
   }).filter((a) => a.nodeId);
 

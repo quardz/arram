@@ -2,9 +2,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { ROLE_VALUES, defaultRoleForLevel } from "@/lib/org";
 import ContactButtons from "./ContactButtons";
+import PasswordShareButtons from "./PasswordShareButtons";
 
 type Node = { id: number; name: string; nameTamil: string | null; level: string; parentId: number | null };
-type Asg = { id: number; nodeId: number; personId: number; name: string; phone: string; role: string; fullTime?: boolean };
+type Asg = { id: number; nodeId: number; personId: number; name: string; phone: string; role: string; fullTime?: boolean; displayName?: string; password?: string };
 type Props = {
   nodes: Node[]; assignments: Asg[]; isAdmin: boolean;
   lang: "ta" | "en"; roleLabels: Record<string, string>; m: Record<string, string>;
@@ -142,6 +143,7 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
                       <div className="org2-row-sub">{roleLabels[a.role] || a.role}{node ? ` · ${nodeLabel(node)}` : ""} · {a.phone}</div>
                     </div>
                     <ContactButtons phone={a.phone} m={m} />
+                    {isAdmin && a.password ? <PasswordShareButtons phone={a.phone} name={a.displayName || ""} password={a.password} m={m} /> : null}
                     <span className="org2-chev" aria-hidden onClick={() => { go(a.nodeId); setTab("browse"); }}>›</span>
                   </li>
                 );
@@ -181,6 +183,7 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
                 <span className="org2-pav">{p.name[0]}</span>
                 <span className="org2-pinfo"><b>{p.name}</b><small>{p.phone} · {roleLabels[p.role] || p.role}</small></span>
                 <ContactButtons phone={p.phone} m={m} />
+                {isAdmin && p.password ? <PasswordShareButtons phone={p.phone} name={p.displayName || ""} password={p.password} m={m} /> : null}
               </div>
             ))}
           </div>
