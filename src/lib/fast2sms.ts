@@ -54,19 +54,21 @@ export async function sendOtpSms(
     const data: unknown = await res.json().catch(() => ({}));
     const ret = (data as { return?: boolean | string })?.return;
     if (res.ok && (ret === true || ret === "true")) return { ok: true, provider: "fast2sms" };
+    // Log the exact Fast2SMS response (status + body) so failures are debuggable.
+    console.error(`[otp:fast2sms] send failed phone=${phone} httpStatus=${res.status} body=${JSON.stringify(data)}`);
     if (!isProd) {
-      console.log(`[otp:fast2sms:dev-fallback] ${phone} -> ${code}`, data);
       return { ok: true, provider: "fast2sms", devCode: code };
     }
     const msg = (data as { message?: unknown })?.message;
+    const arrMsg = Array.isArray(msg) ? msg.join("; ") : msg;
     return {
       ok: false,
       provider: "fast2sms",
-      error: typeof msg === "string" ? msg : "send failed",
+      error: typeof arrMsg === "string" && arrMsg ? arrMsg : `send failed (HTTP ${res.status})`,
     };
   } catch (e) {
+    console.error(`[otp:fast2sms] send threw phone=${phone}`, e);
     if (!isProd) {
-      console.log(`[otp:fast2sms:dev-exc] ${phone} -> ${code}`);
       return { ok: true, provider: "fast2sms", devCode: code };
     }
     return { ok: false, provider: "fast2sms", error: (e as Error).message };

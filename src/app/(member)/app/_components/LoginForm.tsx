@@ -11,7 +11,9 @@ export default function LoginForm({ m }: { m: Msgs }) {
   const [error, setError] = useState("");
   const [dev, setDev] = useState<string | null>(null);
 
-  const errMsg = (e: string) => m[`err_${e}`] || m.err_generic;
+  // Map an error code to a message, and append the code so it's reportable
+  // even without opening the console (helps debugging in the field).
+  const errMsg = (e: string) => `${m[`err_${e}`] || m.err_generic}${e && e !== "generic" ? ` (${e})` : ""}`;
 
   async function sendOtp() {
     setError("");
@@ -19,23 +21,37 @@ export default function LoginForm({ m }: { m: Msgs }) {
     setBusy(true);
     try {
       const r = await fetch("/api/member/request-otp", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone }) });
-      const d = await r.json();
-      if (!r.ok || !d.ok) { setError(errMsg(d.error || "generic")); return; }
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok || !d.ok) {
+        console.error("[login] request-otp failed", { status: r.status, body: d });
+        setError(errMsg(d.error || "generic"));
+        return;
+      }
       if (d.devCode) setDev(d.devCode);
       setStep("otp");
-    } catch { setError(m.err_generic); } finally { setBusy(false); }
+    } catch (e) {
+      console.error("[login] request-otp network error", e);
+      setError(m.err_generic);
+    } finally { setBusy(false); }
   }
 
   async function verify() {
     setError("");
-    if (!/^\d{4,8}$/.test(code)) { setError(m.err_generic); return; }
+    if (!/^\d{4,8}$/.test(code)) { setError(errMsg("bad_input")); return; }
     setBusy(true);
     try {
       const r = await fetch("/api/member/verify-otp", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone, code }) });
-      const d = await r.json();
-      if (!r.ok || !d.ok) { setError(errMsg(d.error || "generic")); return; }
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok || !d.ok) {
+        console.error("[login] verify-otp failed", { status: r.status, body: d });
+        setError(errMsg(d.error || "generic"));
+        return;
+      }
       window.location.href = "/app";
-    } catch { setError(m.err_generic); } finally { setBusy(false); }
+    } catch (e) {
+      console.error("[login] verify-otp network error", e);
+      setError(m.err_generic);
+    } finally { setBusy(false); }
   }
 
   if (step === "phone") {
