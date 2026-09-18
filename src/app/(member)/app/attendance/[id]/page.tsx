@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getLang, messages, tr } from "@/lib/i18n";
-import { getCurrentMember, isAdmin, isReadOnly } from "@/lib/member";
-import { getAccessibleSession } from "@/lib/attendance";
+import { getCurrentMember, isAdmin } from "@/lib/member";
+import { getAccessibleSession, canTakeSession } from "@/lib/attendance";
 import { campaignStatus } from "@/lib/campaign";
 import type { GeoNode } from "@/payload-types";
 import AppBar from "../../_components/AppBar";
@@ -28,8 +28,11 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   const status = isCampaign ? campaignStatus(evx) : "open";
   const open = status === "open";
   const funnel = evx.funnelParent != null;
-  const readOnly = isReadOnly(member);
-  const canAdd = open && !funnel && isAdmin(member) && !readOnly; // funnel = fixed pool; quick-add is admin-only
+  // Only the district office-holder marks; everyone else (admins, higher levels,
+  // read-only) sees the roster read-only.
+  const canTake = await canTakeSession(member, ev);
+  const readOnly = !canTake;
+  const canAdd = open && !funnel && canTake && isAdmin(member); // quick-add stays admin-gated
 
   const fmt = (d?: string | null) =>
     d ? new Date(d).toLocaleString(lang === "ta" ? "ta-IN" : "en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";

@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getLang, tr } from "@/lib/i18n";
+import { getLang, messages, tr } from "@/lib/i18n";
 import { getCurrentMember, isAdmin } from "@/lib/member";
 import { myDistrictIds, myNodeIds } from "@/lib/attendance";
 import { campaignStatus, campaignRollup, type CampaignRollup } from "@/lib/campaign";
 import { getPayloadClient } from "@/lib/payload";
 import type { Event } from "@/payload-types";
 import AppBar from "../_components/AppBar";
+import DeleteEventButton from "../_components/DeleteEventButton";
 
 export const dynamic = "force-dynamic";
 
@@ -124,7 +125,7 @@ export default async function AttendanceList() {
             {(locals.docs as Event[]).map((ev) => {
               const node = typeof ev.geoNode === "object" ? (ev.geoNode as { name?: string }) : null;
               return (
-                <li key={`l${ev.id}`}>
+                <li key={`l${ev.id}`} className={admin ? "att-row-wrap" : undefined}>
                   <Link href={`/app/attendance/${ev.id}`} className="asm-card">
                     <span className="asm-icn">🛕</span>
                     <span className="asm-cmeta">
@@ -135,6 +136,7 @@ export default async function AttendanceList() {
                       <small>{node?.name}{ev.date ? ` · ${fmt(ev.date)}` : ""}</small>
                     </span>
                   </Link>
+                  {admin && <DeleteEventButton eventId={ev.id as number} kind="local" variant="icon" m={messages(lang)} />}
                 </li>
               );
             })}

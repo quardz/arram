@@ -2,7 +2,7 @@ import { getPayloadClient } from "@/lib/payload";
 import { getSession } from "@/lib/session";
 
 export type AuditAction =
-  | "login" | "logout" | "create_session"
+  | "login" | "logout" | "create_session" | "delete_session"
   | "quickadd_person" | "impersonate_start" | "impersonate_stop";
 
 /**

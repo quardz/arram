@@ -7,6 +7,7 @@ import { getPayloadClient } from "@/lib/payload";
 import type { Event, GeoNode } from "@/payload-types";
 import AppBar from "../../../_components/AppBar";
 import CampaignCharts from "../../../_components/CampaignCharts";
+import DeleteEventButton from "../../../_components/DeleteEventButton";
 
 export const dynamic = "force-dynamic";
 
@@ -71,6 +72,8 @@ export default async function CampaignStatus({ params }: { params: Promise<{ id:
 
         <h2 className="asm-subhead">{tr(lang, "cst_by_level")}</h2>
         <CampaignCharts stats={stats} nodes={chartNodes} startNodeId={startNodeId} heldNodeIds={heldNodeIds} admin={admin} lang={lang} m={messages(lang)} />
+
+        {admin && <DeleteEventButton eventId={campaign.id as number} kind="campaign_parent" redirectTo="/app/attendance" m={messages(lang)} />}
       </main>
     </>
   );

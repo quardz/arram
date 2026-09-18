@@ -1,6 +1,6 @@
 import { getPayloadClient } from "@/lib/payload";
 import { districtIdsUnder, presentPersonIdsInCampaign } from "@/lib/campaign";
-import { isAdmin, type CurrentMember } from "@/lib/member";
+import { isAdmin, isReadOnly, type CurrentMember } from "@/lib/member";
 import type { Event, Person } from "@/payload-types";
 
 const rel = (v: unknown): number | undefined =>
@@ -44,6 +44,24 @@ export async function getAccessibleSession(member: CurrentMember, eventId: numbe
   const createdByMe = rel(ev.createdBy) === member.person.id;
   if (!createdByMe && (!districtId || !mine.includes(districtId))) return null;
   return ev;
+}
+
+/** Who may actually MARK attendance for a session: the district office-holder
+ *  (the member who holds the exact node the session is for). State / super admins
+ *  and all higher levels are view-only — they see progress but do not take
+ *  attendance; read-only members never take. Local events: the creator or a
+ *  member whose subtree covers the event's district. */
+export async function canTakeSession(member: CurrentMember, ev: Event): Promise<boolean> {
+  if (isReadOnly(member)) return false;
+  if ((ev.kind as string) === "campaign_session") {
+    const nodeId = rel(ev.geoNode);
+    return nodeId != null && myNodeIds(member).includes(nodeId);
+  }
+  // local (and any legacy) events
+  const districtId = rel(ev.geoNode);
+  if (rel(ev.createdBy) === member.person.id) return true;
+  const mine = await myDistrictIds(member);
+  return districtId != null && mine.includes(districtId);
 }
 
 export type Attendee = { id: number; name: string | null; phone: string; present: boolean; union: string | null; pincode: string | null };

@@ -28,6 +28,7 @@ export const AuditLog: CollectionConfig = {
         { label: "Quick-add person", value: "quickadd_person" },
         { label: "Impersonate start", value: "impersonate_start" },
         { label: "Impersonate stop", value: "impersonate_stop" },
+        { label: "Delete session/campaign", value: "delete_session" },
       ],
     },
     { name: "actor", type: "relationship", relationTo: "people", required: true, index: true },
