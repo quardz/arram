@@ -16,17 +16,20 @@ import fs from "node:fs"; import path from "node:path"; import pg from "pg";
 function loadEnvLocal(){try{const t=fs.readFileSync(path.resolve(process.cwd(),".env.local"),"utf8");for(const l of t.split(/\r?\n/)){const m=l.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/i);if(m&&!(m[1]in process.env))process.env[m[1]]=m[2].trim().replace(/^["']|["']$/g,"");}}catch{}}
 loadEnvLocal();
 
-const MARKER = "district-import-v1"; // bump when new district files are added
-// district key -> case-insensitive name pattern for the DISTRICT-level geo node.
+const MARKER = "district-import-v2"; // bump when new district files / patterns change
+// district key -> case-insensitive name pattern(s) for the DISTRICT-level geo node.
+// Patterns are matched against the LIVE geo_nodes names (from org_structure.json);
+// spelling there differs from other snapshots, so patterns are kept tolerant and
+// each key must still resolve to exactly ONE district.
 const PATTERNS = {
-  kallakurichi:  "%கள்ளக்குறிச்சி%",
-  kovai_kilakku: "%கோவை%கிழக்கு%",
-  kovai_merkku:  "%கோவை%மேற்கு%",
-  mettupalayam:  "%மேட்டுப்பாளையம்%",
-  raveeshwar:    "%ரவிஸ்வரர்%",
-  thenkasi:      "%தென்காசி%",
-  viluppuram:    "%விழுப்புரம்%",
-  virudhunagar:  "%விருதுநகர்%",
+  kallakurichi:  ["%கள்ள%குறிச்சி%"],                 // live: கள்ளகுறிச்சி
+  kovai_kilakku: ["%கோவை%கிழக்கு%"],
+  kovai_merkku:  ["%கோவை%மேற்கு%"],
+  mettupalayam:  ["%மேட்டு%ளையம்%"],                  // live: மேட்டுபாளையம்
+  raveeshwar:    ["%ரவீஸ்வரர்%", "%ரவிஸ்வரர்%", "%வீஸ்வரர்%"], // live: ரவீஸ்வரர்
+  thenkasi:      ["%தென்காசி%"],
+  viluppuram:    ["%விழுப்புரம்%"],
+  virudhunagar:  ["%விருதுநகர்%"],
 };
 const referral = (phone) => { const n = parseInt(phone,10); return Number.isFinite(n) ? n.toString(36).toUpperCase().padStart(7,"0") : null; };
 
@@ -47,11 +50,16 @@ try{
   const keys = [...new Set(rows.map(r=>r.dk))];
   const idFor = {}; const unresolved = [];
   for(const dk of keys){
-    const pat = PATTERNS[dk];
-    if(!pat){ unresolved.push(`${dk} (no pattern)`); continue; }
-    const r = await c.query("SELECT id,name FROM geo_nodes WHERE level='district' AND name ILIKE $1 AND (merged_into_id IS NULL)",[pat]);
-    if(r.rows.length===1){ idFor[dk]=r.rows[0].id; console.log(`  ${dk} → [${r.rows[0].id}] ${r.rows[0].name}`); }
-    else { unresolved.push(`${dk} → ${r.rows.length} matches [${r.rows.map(x=>x.name).join(" | ")}]`); }
+    const pats = PATTERNS[dk];
+    if(!pats || !pats.length){ unresolved.push(`${dk} (no pattern)`); continue; }
+    // Union matches across all of the key's patterns, dedup by id.
+    const found = new Map();
+    for(const pat of pats){
+      const r = await c.query("SELECT id,name FROM geo_nodes WHERE level='district' AND name ILIKE $1 AND (merged_into_id IS NULL)",[pat]);
+      for(const row of r.rows) found.set(row.id, row.name);
+    }
+    if(found.size===1){ const [id,name]=[...found][0]; idFor[dk]=id; console.log(`  ${dk} → [${id}] ${name}`); }
+    else { unresolved.push(`${dk} → ${found.size} matches [${[...found.values()].join(" | ")}]`); }
   }
   if(unresolved.length) console.log("import-district-people: UNRESOLVED (skipped this run):\n  - " + unresolved.join("\n  - "));
 

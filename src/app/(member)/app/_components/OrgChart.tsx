@@ -105,6 +105,49 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
   }
   const sheetPeople = sheetNode ? peopleAt(sheetNode.id) : [];
 
+  // ---- member roles sheet (attach one member to multiple units) ----
+  const [rolesPid, setRolesPid] = useState<number | null>(null);
+  const [assignOpen, setAssignOpen] = useState(false);
+  const [nodeQ, setNodeQ] = useState("");
+  const [picked, setPicked] = useState<number[]>([]);
+  const [assignRole, setAssignRole] = useState("district_organiser");
+  const [abusy, setAbusy] = useState(false);
+
+  const memberAsgs = (pid: number) => asg.filter((a) => a.personId === pid);
+  const memberOf = (pid: number) => memberAsgs(pid)[0];
+  function openRoles(pid: number) { setRolesPid(pid); setAssignOpen(false); setNodeQ(""); setPicked([]); setAssignRole("district_organiser"); }
+  const togglePick = (id: number) => setPicked((xs) => xs.includes(id) ? xs.filter((x) => x !== id) : [...xs, id]);
+
+  // Node picker candidates (search by name; hide until the admin types).
+  const pickResults = useMemo(() => {
+    const t = nodeQ.trim().toLowerCase();
+    if (!t) return [] as Node[];
+    return nodes.filter((n) => `${nodeLabel(n)} ${n.name} ${n.nameTamil || ""}`.toLowerCase().includes(t)).slice(0, 60);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodeQ, nodes, lang]);
+
+  async function doAssignMulti() {
+    if (!rolesPid || !picked.length) return;
+    setAbusy(true);
+    try {
+      const r = await fetch("/api/member/org/assign-multi", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ personId: rolesPid, nodeIds: picked, role: assignRole }) });
+      const d = await r.json();
+      if (r.ok && d.ok) {
+        const t = memberOf(rolesPid);
+        setAsg((xs) => {
+          const have = new Set(xs.map((a) => a.id));
+          const add = (d.created as { id: number; nodeId: number; role: string }[])
+            .filter((c) => !have.has(c.id))
+            .map((c) => ({ id: c.id, nodeId: c.nodeId, personId: rolesPid, name: t?.name || "", phone: t?.phone || "", role: c.role,
+              fullTime: t?.fullTime, displayName: t?.displayName, password: t?.password, lastLoginAt: t?.lastLoginAt }));
+          return [...xs, ...add];
+        });
+        setPicked([]); setNodeQ(""); setAssignOpen(false);
+      }
+    } finally { setAbusy(false); }
+  }
+
   // Member search across all assignments (name / role / location / phone).
   const results = useMemo(() => {
     const t = sq.trim().toLowerCase();
@@ -154,6 +197,7 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
                     </div>
                     <ContactButtons phone={a.phone} m={m} />
                     {isAdmin && a.password ? <PasswordShareButtons phone={a.phone} name={a.displayName || ""} password={a.password} m={m} /> : null}
+                    {isAdmin && edit ? <button className="org2-roles" onClick={(e) => { e.stopPropagation(); openRoles(a.personId); }}>🧩 {m.org_manage_roles}</button> : null}
                     <span className="org2-chev" aria-hidden onClick={() => { go(a.nodeId); setTab("browse"); }}>›</span>
                   </li>
                 );
@@ -194,6 +238,7 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
                 <span className="org2-pinfo"><b>{p.name}</b><small>{p.phone} · {roleLabels[p.role] || p.role}</small>{isAdmin && lastLoginText(p) ? <small className="org2-lastlogin">🕐 {lastLoginText(p)}</small> : null}</span>
                 <ContactButtons phone={p.phone} m={m} />
                 {isAdmin && p.password ? <PasswordShareButtons phone={p.phone} name={p.displayName || ""} password={p.password} m={m} /> : null}
+                {isAdmin && edit ? <button className="org2-roles" onClick={() => openRoles(p.personId)}>🧩 {m.org_manage_roles}</button> : null}
               </div>
             ))}
           </div>
@@ -275,6 +320,75 @@ export default function OrgChart({ nodes, assignments, isAdmin, lang, roleLabels
           </div>
         </>
       ) : null}
+
+      {rolesPid != null ? (() => {
+        const mine = memberAsgs(rolesPid);
+        const t = mine[0];
+        const nm = t ? t.name : "";
+        return (
+          <>
+            <div className="asm-scrim open" onClick={() => setRolesPid(null)} />
+            <div className="org-sheet">
+              <div className="org-sheet-head">
+                <div><b>{nm}</b><small>{t?.phone}{" · "}{m.org_member_roles}</small></div>
+                <button className="asm-sheet-close" onClick={() => setRolesPid(null)}>✕</button>
+              </div>
+              <div className="org-sheet-body">
+                <div className="org-add-h">{m.org_current_roles}</div>
+                {mine.length === 0 ? <p className="asm-note">{m.org_no_other_roles}</p> : mine.map((a) => {
+                  const node = byId.get(a.nodeId);
+                  return (
+                    <div key={a.id} className="org-erow">
+                      <div className="org-erow-info"><b>{roleLabels[a.role] || a.role}</b><small>{node ? nodeLabel(node) : `#${a.nodeId}`}</small></div>
+                      <div className="org-erow-btns">
+                        <button className="org-mini danger" disabled={busy} onClick={() => doRemove(a)}>{m.org_remove}</button>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {!assignOpen ? (
+                  <button className="asm-btn ghost" style={{ marginTop: 14 }} onClick={() => setAssignOpen(true)}>{m.org_assign_more}</button>
+                ) : (
+                  <div className="org-add" style={{ marginTop: 8 }}>
+                    <div className="org-add-h">{m.org_assign_more.replace("＋ ", "")}</div>
+                    <p className="asm-note" style={{ marginTop: 0 }}>{m.org_pick_units_hint}</p>
+                    <label className="asm-fld" style={{ marginTop: 4 }}>{m.org_role_label}</label>
+                    <select className="asm-input asm-select" value={assignRole} onChange={(e) => setAssignRole(e.target.value)}>
+                      {ROLE_VALUES.map((r) => <option key={r} value={r}>{roleLabels[r] || r}</option>)}
+                    </select>
+                    {picked.length > 0 && (
+                      <div className="org-chips">
+                        {picked.map((id) => { const n = byId.get(id); return (
+                          <span key={id} className="org-chip" onClick={() => togglePick(id)}>{n ? nodeLabel(n) : `#${id}`} ✕</span>
+                        ); })}
+                      </div>
+                    )}
+                    <div className="asm-search" style={{ marginTop: 8 }}>
+                      <span className="mag" aria-hidden>🔍</span>
+                      <input className="asm-input" value={nodeQ} onChange={(e) => setNodeQ(e.target.value)} placeholder={m.org_search_units} />
+                    </div>
+                    <ul className="org-pick-list">
+                      {pickResults.map((n) => {
+                        const on = picked.includes(n.id);
+                        return (
+                          <li key={n.id} className={`org-pick ${on ? "on" : ""}`} onClick={() => togglePick(n.id)}>
+                            <span className="org-pick-box">{on ? "☑" : "☐"}</span>
+                            <span className="org-pick-name">{nodeLabel(n)}<small>{scope(n.level)}</small></span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    <button className="asm-btn" disabled={abusy || !picked.length} onClick={doAssignMulti}>
+                      {m.org_assign_units}{picked.length ? ` (${picked.length})` : ""}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
+        );
+      })() : null}
     </main>
   );
 }

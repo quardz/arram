@@ -501,3 +501,16 @@ body{
 .att-del-yes,.att-del-no{margin-top:0;padding:8px 14px;font-size:14px;width:auto}
 .att-row-wrap{display:flex;align-items:center;gap:6px}
 .att-row-wrap .asm-card{flex:1;min-width:0}
+
+/* ---- Org: multi-unit role assignment ---- */
+.org2-roles{background:var(--asm-field);border:1px solid var(--asm-line);border-radius:999px;font-family:inherit;font-size:12px;font-weight:700;color:var(--asm-brand);padding:6px 10px;cursor:pointer;flex:none;white-space:nowrap}
+.org2-roles:active{background:var(--asm-card)}
+.org-chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px}
+.org-chip{background:#e7f0e9;color:#1d6b34;border-radius:999px;padding:5px 10px;font-size:12.5px;font-weight:700;cursor:pointer}
+.org-pick-list{list-style:none;margin:10px 0 12px;padding:0;max-height:280px;overflow:auto;border:1px solid var(--asm-line);border-radius:12px}
+.org-pick{display:flex;align-items:center;gap:10px;padding:11px 12px;border-bottom:1px solid var(--asm-line);cursor:pointer}
+.org-pick:last-child{border-bottom:none}
+.org-pick.on{background:var(--asm-field)}
+.org-pick-box{font-size:18px;color:var(--asm-brand);flex:none}
+.org-pick-name{display:flex;flex-direction:column;font-size:15px;font-weight:600;color:var(--asm-ink)}
+.org-pick-name small{font-weight:600;color:var(--asm-muted);font-size:12px}
