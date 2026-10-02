@@ -5,7 +5,8 @@ import { requireAdminActor } from "@/lib/impersonate";
 import { getPayloadClient } from "@/lib/payload";
 import { ROLE_VALUES } from "@/lib/org";
 import { memberPassword } from "@/lib/password";
-import type { GeoNode, OrgAssignment, Person } from "@/payload-types";
+import { getGeoNodesLite } from "@/lib/geonodes";
+import type { OrgAssignment, Person } from "@/payload-types";
 import AppBar from "../_components/AppBar";
 import OrgChart from "../_components/OrgChart";
 
@@ -21,11 +22,7 @@ export default async function OrgPage() {
   const admin = (await requireAdminActor()) != null;
   const payload = await getPayloadClient();
 
-  const nodesR = await payload.find({ collection: "geoNodes", overrideAccess: true, depth: 0, limit: 5000, sort: "name" });
-  const nodes = (nodesR.docs as GeoNode[]).map((n) => ({
-    id: n.id as number, name: n.name, nameTamil: n.nameTamil ?? null,
-    level: (n.level as string) ?? "", parentId: rel(n.parent),
-  }));
+  const nodes = await getGeoNodesLite();
 
   const asgR = await payload.find({
     collection: "orgAssignments", overrideAccess: true, depth: 1, limit: 5000,

@@ -4,7 +4,8 @@ import { getCurrentMember, isAdmin } from "@/lib/member";
 import { myDistrictIds, myNodeIds } from "@/lib/attendance";
 import { campaignStatus, campaignDistrictStats } from "@/lib/campaign";
 import { getPayloadClient } from "@/lib/payload";
-import type { Event, GeoNode } from "@/payload-types";
+import { getGeoNodesLite } from "@/lib/geonodes";
+import type { Event } from "@/payload-types";
 import AppBar from "../../../_components/AppBar";
 import CampaignCharts from "../../../_components/CampaignCharts";
 import DeleteEventButton from "../../../_components/DeleteEventButton";
@@ -32,12 +33,7 @@ export default async function CampaignStatus({ params }: { params: Promise<{ id:
   if (!stats.length) notFound();
 
   // Geo tree for the drill-down chart (state → region → mandalam → district).
-  const nodesR = await payload.find({ collection: "geoNodes", overrideAccess: true, depth: 0, limit: 5000 });
-  const chartNodes = (nodesR.docs as GeoNode[]).map((n) => ({
-    id: n.id as number, name: n.name, nameTamil: n.nameTamil ?? null,
-    level: (n.level as string) ?? "",
-    parentId: n.parent == null ? null : (typeof n.parent === "object" ? ((n.parent as { id?: number }).id ?? null) : (n.parent as number)),
-  }));
+  const chartNodes = await getGeoNodesLite();
   const heldNodeIds = myNodeIds(member);
   const startNodeId = heldNodeIds[0] ?? null;
 

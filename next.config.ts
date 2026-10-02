@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
     // Local images served from /public. Long cache TTL for the optimizer.
     minimumCacheTTL: 31536000,
     formats: ["image/avif", "image/webp"],
+    // Cap the number of generated variants to cut Image-Optimization
+    // transformations + /_next/image requests. Fewer widths/qualities, same look.
+    deviceSizes: [640, 828, 1200, 1920],
+    imageSizes: [64, 128, 256],
+    qualities: [75],
   },
 
   async headers() {
