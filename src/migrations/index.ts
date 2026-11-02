@@ -11,6 +11,7 @@ import * as migration_20260916_130000_people_source_member_added from './2026091
 import * as migration_20260917_100000_state_functionary_and_lastlogin from './20260917_100000_state_functionary_and_lastlogin';
 import * as migration_20260918_100000_audit_delete_session from './20260918_100000_audit_delete_session';
 import * as migration_20261102_100000_extend_event_116 from './20261102_100000_extend_event_116';
+import * as migration_20261102_110000_extend_campaign_of_116 from './20261102_110000_extend_campaign_of_116';
 
 export const migrations = [
   {
@@ -77,5 +78,10 @@ export const migrations = [
     up: migration_20261102_100000_extend_event_116.up,
     down: migration_20261102_100000_extend_event_116.down,
     name: '20261102_100000_extend_event_116',
+  },
+  {
+    up: migration_20261102_110000_extend_campaign_of_116.up,
+    down: migration_20261102_110000_extend_campaign_of_116.down,
+    name: '20261102_110000_extend_campaign_of_116',
   },
 ];
