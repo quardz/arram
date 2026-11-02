@@ -10,6 +10,7 @@ import * as migration_20260916_120000_people_source_join_form from './20260916_1
 import * as migration_20260916_130000_people_source_member_added from './20260916_130000_people_source_member_added';
 import * as migration_20260917_100000_state_functionary_and_lastlogin from './20260917_100000_state_functionary_and_lastlogin';
 import * as migration_20260918_100000_audit_delete_session from './20260918_100000_audit_delete_session';
+import * as migration_20261102_100000_extend_event_116 from './20261102_100000_extend_event_116';
 
 export const migrations = [
   {
@@ -71,5 +72,10 @@ export const migrations = [
     up: migration_20260918_100000_audit_delete_session.up,
     down: migration_20260918_100000_audit_delete_session.down,
     name: '20260918_100000_audit_delete_session',
+  },
+  {
+    up: migration_20261102_100000_extend_event_116.up,
+    down: migration_20261102_100000_extend_event_116.down,
+    name: '20261102_100000_extend_event_116',
   },
 ];
